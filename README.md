@@ -1,6 +1,6 @@
 # 🍽️ CrazyCook — Restaurant Template
 
-> **Branch `feature/restaurant-ui`** : Adaptation de CrazyCook en template pour restaurants.  
+> **Branch `feature/restaurant-ui`** : Adaptation de CrazyCook en template pour restaurants.
 > No frameworks, no build tools — HTML, CSS, JavaScript pur.
 
 ---

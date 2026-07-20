@@ -8,7 +8,7 @@ Décrivez brièvement ce que vous avez fait dans cette PR.
 - [ ] Autre 🧐
 
 # Comment tester 🧪
-Décrivez comment tester les changements proposés. 
+Décrivez comment tester les changements proposés.
 - Avez-vous ajouté des tests ? ✅
 - Quelle est l'étendue de la couverture des tests ? 📊
 

@@ -368,12 +368,13 @@ ul {
 }
 
 .cart-badge.bump {
-    animation: cart-bump 0.4s ease;
+    animation: cart-bump 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 @keyframes cart-bump {
     0% { transform: scale(1); }
-    50% { transform: scale(1.25); }
+    40% { transform: scale(1.45); }
+    70% { transform: scale(0.9); }
     100% { transform: scale(1); }
 }
 
@@ -389,7 +390,7 @@ ul {
 
 .cart-overlay.is-visible {
     opacity: 1;
-    pointer-events: auto;
+    pointer-events: none;
 }
 
 .cart-drawer {

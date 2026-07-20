@@ -15,4 +15,3 @@
 - [ ] Optimisation mobile. 📱
 - [ ] Tableaux de bord pour les administrateurs. 📊
 - [ ] Intégration de paiements en ligne. 💳
-
