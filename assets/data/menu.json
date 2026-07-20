@@ -1,0 +1,22 @@
+{
+  "menu": [
+    {
+      "title": "Brochettes d'agneau",
+      "category": "Plats",
+      "description": "Marinées au gingembre, servies avec du couscous grillé.",
+      "price": "14€"
+    },
+    {
+      "title": "Soupe de haricot noir",
+      "category": "Entrées",
+      "description": "Une soupe réconfortante, épicée et parfumée.",
+      "price": "8€"
+    },
+    {
+      "title": "Pavlova à la mangue",
+      "category": "Desserts",
+      "description": "Crème fouettée, fruits frais et notes de vanille.",
+      "price": "9€"
+    }
+  ]
+}

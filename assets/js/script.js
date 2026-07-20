@@ -1,139 +1,271 @@
 document.addEventListener('DOMContentLoaded', () => {
-    loadRecipes();
-    initForms();
-});
+    const header = document.querySelector('.site-header');
+    const revealItems = document.querySelectorAll('.reveal');
+    const cartToggle = document.getElementById('header-cart-toggle');
+    const cartDrawer = document.getElementById('cart-drawer');
+    const cartOverlay = document.getElementById('cart-overlay');
+    const drawerClose = document.getElementById('drawer-close');
+    const cartValidateButton = document.getElementById('cart-validate');
+    const cartBody = document.getElementById('cart-drawer-body');
+    const cartTotalPrice = document.getElementById('cart-total-price');
+    const cartCountBadge = document.getElementById('header-cart-count');
 
-async function loadRecipes() {
-    const container = document.getElementById('recipes-container');
-    if (!container) return;
+    const state = {
+        items: [],
+        step: 'cart',
+        delivery: {
+            name: '',
+            phone: '',
+            address: '',
+            note: ''
+        }
+    };
 
-    try {
-        const response = await fetch('../assets/data/recipes.json');
-        const data = await response.json();
-        const recipes = data.recipes;
+    const toggleHeader = () => {
+        if (!header) return;
+        header.classList.toggle('scrolled', window.scrollY > 24);
+    };
 
-        const categoryFilter = document.getElementById('category-filter');
-        const difficultyFilter = document.getElementById('difficulty-filter');
+    const formatPrice = (value) => `${value.toLocaleString('fr-FR')} GNF`;
 
-        function renderRecipes(recipesToRender) {
-            if (recipesToRender.length === 0) {
-                container.innerHTML = '<div class="loading">Aucune recette trouvée</div>';
-                return;
+    const getSubtotal = () => state.items.reduce((total, item) => total + item.quantity * item.price, 0);
+
+    const bumpBadge = () => {
+        cartCountBadge?.classList.remove('bump');
+        void cartCountBadge?.offsetWidth;
+        cartCountBadge?.classList.add('bump');
+    };
+
+    const renderCart = () => {
+        if (!cartBody) return;
+
+        const itemCount = state.items.reduce((total, item) => total + item.quantity, 0);
+        cartCountBadge.textContent = itemCount;
+
+        if (!state.items.length) {
+            cartBody.innerHTML = '<p class="empty-state">Ajoutez un plat pour composer votre commande.</p>';
+            cartTotalPrice.textContent = '0 GNF';
+            cartValidateButton.textContent = 'Valider ma commande';
+            return;
+        }
+
+        if (state.step === 'cart') {
+            cartBody.innerHTML = `
+                <div class="cart-items">
+                    ${state.items.map((item) => `
+                        <article class="cart-item-card">
+                            <div class="cart-item-card__top">
+                                <div>
+                                    <strong>${item.name}</strong>
+                                    <p>${formatPrice(item.price)} / unité</p>
+                                </div>
+                                <button type="button" class="cart-remove" data-remove="${item.name}">Supprimer</button>
+                            </div>
+                            <div class="cart-item-card__meta">
+                                <div class="cart-stepper">
+                                    <button type="button" data-change="-" data-name="${item.name}">−</button>
+                                    <span>${item.quantity}</span>
+                                    <button type="button" data-change="+" data-name="${item.name}">+</button>
+                                </div>
+                                <strong>${formatPrice(item.quantity * item.price)}</strong>
+                            </div>
+                        </article>
+                    `).join('')}
+                </div>
+            `;
+            cartTotalPrice.textContent = formatPrice(getSubtotal());
+            cartValidateButton.textContent = 'Valider ma commande';
+            return;
+        }
+
+        if (state.step === 'delivery') {
+            cartBody.innerHTML = `
+                <form class="cart-form" id="delivery-form">
+                    <label>
+                        Nom
+                        <input type="text" name="name" value="${state.delivery.name}" required>
+                    </label>
+                    <label>
+                        Téléphone
+                        <input type="tel" name="phone" value="${state.delivery.phone}" required>
+                    </label>
+                    <label>
+                        Adresse de livraison
+                        <input type="text" name="address" value="${state.delivery.address}" required>
+                    </label>
+                    <label>
+                        Note pour le chef
+                        <textarea name="note">${state.delivery.note}</textarea>
+                    </label>
+                    <div class="cart-actions">
+                        <button type="button" class="button button-light" id="back-to-cart">Retour</button>
+                        <button type="submit" class="button button-dark">Continuer</button>
+                    </div>
+                </form>
+            `;
+            cartValidateButton.textContent = 'Passer à la livraison';
+            return;
+        }
+
+        if (state.step === 'confirmation') {
+            cartBody.innerHTML = `
+                <div class="cart-confirmation">
+                    <h4>Commande enregistrée</h4>
+                    <p>Prototype de livraison — rien n’est réellement traité.</p>
+                    <p><strong>Client :</strong> ${state.delivery.name || 'À renseigner'}</p>
+                    <p><strong>Téléphone :</strong> ${state.delivery.phone || 'À renseigner'}</p>
+                    <p><strong>Adresse :</strong> ${state.delivery.address || 'À renseigner'}</p>
+                    <div class="cart-summary">
+                        <div class="cart-summary__row"><span>Sous-total</span><strong>${formatPrice(getSubtotal())}</strong></div>
+                        <div class="cart-summary__row"><span>Livraison</span><strong>2 000 GNF</strong></div>
+                        <div class="cart-summary__row"><span>Total</span><strong>${formatPrice(getSubtotal() + 2000)}</strong></div>
+                    </div>
+                    <button type="button" class="button button-dark full" id="restart-order">Nouvelle commande</button>
+                </div>
+            `;
+            cartTotalPrice.textContent = formatPrice(getSubtotal() + 2000);
+            cartValidateButton.textContent = 'Commande prête';
+        }
+    };
+
+    const openCart = () => {
+        if (!cartDrawer) return;
+        cartDrawer.classList.add('is-open');
+        cartDrawer.setAttribute('aria-hidden', 'false');
+        cartOverlay?.classList.add('is-visible');
+        cartToggle?.setAttribute('aria-expanded', 'true');
+    };
+
+    const closeCart = () => {
+        if (!cartDrawer) return;
+        cartDrawer.classList.remove('is-open');
+        cartDrawer.setAttribute('aria-hidden', 'true');
+        cartOverlay?.classList.remove('is-visible');
+        cartToggle?.setAttribute('aria-expanded', 'false');
+    };
+
+    const addToCart = (name, price) => {
+        const existingItem = state.items.find((item) => item.name === name);
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            state.items.push({ name, price, quantity: 1 });
+        }
+        bumpBadge();
+        renderCart();
+        openCart();
+    };
+
+    const updateQuantity = (name, delta) => {
+        state.items = state.items
+            .map((item) => item.name === name ? { ...item, quantity: item.quantity + delta } : item)
+            .filter((item) => item.quantity > 0);
+        renderCart();
+    };
+
+    const removeItem = (name) => {
+        state.items = state.items.filter((item) => item.name !== name);
+        renderCart();
+    };
+
+    const validateOrder = () => {
+        if (!state.items.length) return;
+        if (state.step === 'cart') {
+            state.step = 'delivery';
+            renderCart();
+            return;
+        }
+        if (state.step === 'delivery') {
+            const form = document.getElementById('delivery-form');
+            if (!form) return;
+            const data = new FormData(form);
+            state.delivery = Object.fromEntries(data.entries());
+            state.step = 'confirmation';
+            renderCart();
+        }
+    };
+
+    const restartOrder = () => {
+        state.items = [];
+        state.step = 'cart';
+        state.delivery = { name: '', phone: '', address: '', note: '' };
+        renderCart();
+        closeCart();
+    };
+
+    toggleHeader();
+    window.addEventListener('scroll', toggleHeader, { passive: true });
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
             }
-
-            container.innerHTML = recipesToRender.map(recipe => `
-                <article class="recipe-card" data-category="${recipe.category}" data-difficulty="${recipe.difficulty}">
-                    <div class="recipe-image">
-                        <img src="${recipe.image}" alt="${recipe.title}">
-                    </div>
-                    <div class="recipe-content">
-                        <h3>${recipe.title}</h3>
-                        <p>${recipe.description}</p>
-                        <div class="recipe-meta">
-                            <span class="recipe-time">⏱ ${recipe.time}</span>
-                            <span class="recipe-difficulty">${recipe.difficulty}</span>
-                        </div>
-                    </div>
-                </article>
-            `).join('');
-        }
-
-        renderRecipes(recipes);
-
-        function filterRecipes() {
-            const category = categoryFilter?.value || '';
-            const difficulty = difficultyFilter?.value || '';
-
-            const filtered = recipes.filter(recipe => {
-                const matchCategory = !category || recipe.category === category;
-                const matchDifficulty = !difficulty || recipe.difficulty === difficulty;
-                return matchCategory && matchDifficulty;
-            });
-
-            renderRecipes(filtered);
-        }
-
-        categoryFilter?.addEventListener('change', filterRecipes);
-        difficultyFilter?.addEventListener('change', filterRecipes);
-
-        const searchParams = new URLSearchParams(window.location.search);
-        const searchQuery = searchParams.get('q');
-        if (searchQuery) {
-            const searchFiltered = recipes.filter(recipe =>
-                recipe.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                recipe.description.toLowerCase().includes(searchQuery.toLowerCase())
-            );
-            renderRecipes(searchFiltered);
-        }
-
-    } catch (error) {
-        container.innerHTML = '<div class="loading">Erreur lors du chargement des recettes</div>';
-        console.error('Error loading recipes:', error);
-    }
-}
-
-function initForms() {
-    const signupForm = document.querySelector('form[action*="signup"]');
-    if (signupForm) {
-        signupForm.addEventListener('submit', validateSignup);
-    }
-
-    const loginForm = document.querySelector('form[action*="login"]');
-    if (loginForm) {
-        loginForm.addEventListener('submit', validateLogin);
-    }
-
-    const contactForm = document.querySelector('.contact-form');
-    if (contactForm) {
-        contactForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert('Message envoyé ! Nous vous répondrons bientôt.');
-            contactForm.reset();
         });
-    }
-}
+    }, {
+        threshold: 0.15
+    });
 
-function validateSignup(e) {
-    e.preventDefault();
+    revealItems.forEach((item) => observer.observe(item));
 
-    const password = document.getElementById('password');
-    const passwordConfirm = document.getElementById('password-confirm');
-    const email = document.getElementById('email');
+    document.querySelectorAll('.add-to-cart').forEach((button) => {
+        button.addEventListener('click', () => {
+            addToCart(button.dataset.name, Number(button.dataset.price));
+        });
+    });
 
-    let errors = [];
+    cartToggle?.addEventListener('click', () => {
+        const isOpen = cartDrawer?.classList.contains('is-open');
+        if (isOpen) {
+            closeCart();
+        } else {
+            openCart();
+        }
+    });
 
-    if (password.value.length < 8) {
-        errors.push('Le mot de passe doit contenir au moins 8 caractères');
-    }
+    drawerClose?.addEventListener('click', closeCart);
+    cartOverlay?.addEventListener('click', closeCart);
 
-    if (password.value !== passwordConfirm.value) {
-        errors.push('Les mots de passe ne correspondent pas');
-    }
+    cartBody?.addEventListener('click', (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLElement)) return;
 
-    if (!email.value.includes('@')) {
-        errors.push('Veuillez entrer une adresse email valide');
-    }
+        if (target.matches('[data-remove]')) {
+            removeItem(target.dataset.remove);
+            return;
+        }
 
-    if (errors.length > 0) {
-        alert('Erreurs:\n' + errors.join('\n'));
-        return;
-    }
+        if (target.matches('[data-change]')) {
+            updateQuantity(target.dataset.name, target.dataset.change === '+' ? 1 : -1);
+            return;
+        }
 
-    alert('Compte créé avec succès !');
-    e.target.submit();
-}
+        if (target.id === 'back-to-cart') {
+            state.step = 'cart';
+            renderCart();
+            return;
+        }
 
-function validateLogin(e) {
-    e.preventDefault();
+        if (target.id === 'restart-order') {
+            restartOrder();
+        }
+    });
 
-    const email = document.querySelector('input[type="email"]') || document.getElementById('email');
-    const password = document.querySelector('input[type="password"]');
+    cartBody?.addEventListener('submit', (event) => {
+        if (event.target instanceof HTMLFormElement && event.target.id === 'delivery-form') {
+            event.preventDefault();
+            validateOrder();
+        }
+    });
 
-    if (!email.value || !password.value) {
-        alert('Veuillez remplir tous les champs');
-        return;
-    }
+    cartValidateButton?.addEventListener('click', () => {
+        if (state.step === 'confirmation') {
+            restartOrder();
+            return;
+        }
+        validateOrder();
+    });
 
-    alert('Connexion réussie !');
-    e.target.submit();
-}
+    renderCart();
+});

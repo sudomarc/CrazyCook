@@ -1,45 +1,30 @@
 const { test, expect } = require('@playwright/test');
 
-test.describe('Homepage Tests', () => {
-  test('should have the correct title and hero heading', async ({ page }) => {
-    // Navigate to the index.html page within the components directory
-    // Adjust the path as necessary based on how files are served during testing.
-    // For local testing, you might run a server from the project root.
-    // For GitHub Actions, files are checked out, so relative paths from the root should work.
-    await page.goto('/components/index.html', { waitUntil: 'networkidle' });
+test.describe('CrazyCook restaurant template', () => {
+  test('should show the hero section and main navigation', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'networkidle' });
 
-    // Check the page title
-    await expect(page).toHaveTitle('CrazyCook');
+    await expect(page).toHaveTitle(/CrazyCook/i);
 
-    // Check for the hero section heading
-    const heroHeading = page.locator('section.hero h2');
-    await expect(heroHeading).toBeVisible();
-    await expect(heroHeading).toHaveText('Éveillez vos papilles avec nos recettes exclusives !');
-
-    // Optional: Check if the main navigation links are present
-    const navLinks = page.locator('header nav ul li a');
-    await expect(navLinks.first()).toBeVisible();
+    await expect(page.locator('header .logo')).toBeVisible();
+    await expect(page.locator('section.hero h1')).toContainText('Cuisine de rue');
+    await expect(page.locator('nav.main-nav a[href="#menu"]')).toBeVisible();
   });
 
-  test('should navigate to signup page from hero button', async ({ page }) => {
-    await page.goto('components/index.html', { waitUntil: 'networkidle' });
+  test('should add a dish to the cart and reach the delivery form', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'networkidle' });
 
-    // Click the "Créer un compte" button
-    // Assuming the button has an onclick attribute that changes window.location or similar
-    // For robustness, it's better to use a more specific selector if available (e.g., an ID)
-    const createAccountButton = page.locator('button:has-text("Créer un compte")');
+    await expect(page.locator('#menu')).toBeVisible();
+    await expect(page.locator('#galerie')).toBeVisible();
 
-    // Using page.waitForNavigation is important if the click triggers a full page load
-    await Promise.all([
-      page.waitForNavigation({ url: /\/components\/signup\.html$/, waitUntil: 'networkidle' }),
-      createAccountButton.click()
-    ]);
+    await page.locator('#header-cart-toggle').click();
+    await expect(page.locator('#cart-drawer')).toHaveAttribute('aria-hidden', 'false');
 
-    // Check if the URL is the signup page
-    await expect(page).toHaveURL(/\/components\/signup\.html$/);
+    await page.locator('.add-to-cart').first().click();
+    await expect(page.locator('#header-cart-count')).toContainText('1');
+    await expect(page.locator('#cart-drawer')).toContainText('Soupe de haricot noir');
 
-    // Check for a unique element on the signup page, e.g., the form title
-    const signupHeading = page.locator('h1'); // Adjust selector if needed
-    await expect(signupHeading).toHaveText('Inscription');
+    await page.locator('#cart-validate').click();
+    await expect(page.locator('#cart-drawer')).toContainText('Informations de livraison');
   });
 });
