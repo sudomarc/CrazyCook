@@ -17,13 +17,17 @@ test.describe('CrazyCook restaurant template', () => {
     await expect(page.locator('#menu')).toBeVisible();
     await expect(page.locator('#galerie')).toBeVisible();
 
-    await page.locator('#header-cart-toggle').click();
-    await expect(page.locator('#cart-drawer')).toHaveAttribute('aria-hidden', 'false');
-
+    // Add a dish first (cart modal should not open automatically)
     await page.locator('.add-to-cart').first().click();
     await expect(page.locator('#header-cart-count')).toContainText('1');
+    await expect(page.locator('#cart-drawer')).toHaveAttribute('aria-hidden', 'true');
+
+    // Click the toggle to open the cart modal manually
+    await page.locator('#header-cart-toggle').click();
+    await expect(page.locator('#cart-drawer')).toHaveAttribute('aria-hidden', 'false');
     await expect(page.locator('#cart-drawer')).toContainText('Soupe de haricot noir');
 
+    // Proceed with validating the order
     await page.locator('#cart-validate').click();
     await expect(page.locator('#cart-drawer')).toContainText('Informations de livraison');
   });

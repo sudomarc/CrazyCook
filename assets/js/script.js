@@ -192,7 +192,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         bumpBadge();
         renderCart();
-        openCart();
     };
 
     // Mettre à jour les quantités d'un plat
