@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </label>
                         <label>
                             Numéro de téléphone
-                            <input type="tel" name="phone" value="${deliveryInfo.phone}" placeholder="Ex: +224 620 12 34 56" required>
+                            <input type="tel" name="phone" value="${deliveryInfo.phone}" placeholder="Ex: +224 628 06 94 79" required>
                         </label>
                         <label>
                             Adresse de livraison (ou lien Google Maps)
@@ -243,7 +243,7 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
 
         // Encodage complet de l'URL WhatsApp
         const encodedMessage = encodeURIComponent(message);
-        const phoneNumber = '224620123456'; // Restaurant localisé à Conakry, Guinée (+224)
+        const phoneNumber = '224628069479'; // Restaurant localisé à Conakry, Guinée (+224)
         const whatsAppUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
 
         // Redirige ou ouvre la discussion WhatsApp dans une nouvelle fenêtre
