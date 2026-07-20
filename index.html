@@ -3,109 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="CrazyCook - Des recettes exclusives pour éveiller vos papilles">
-    <title>CrazyCook - Recettes exclusives</title>
+    <meta name="description" content="CrazyCook — cuisine africaine chaleureuse, plats maison et ambiance rustique">
+    <title>CrazyCook | Restaurant</title>
     <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
+    <!-- Header / Navigation -->
     <header class="site-header">
         <div class="header-container">
             <a href="index.html" class="logo">
                 <img src="assets/img/logo.svg" alt="CrazyCook">
                 <span>CrazyCook</span>
             </a>
+            <nav class="main-nav" aria-label="Navigation principale">
+                <ul>
+                    <li><a href="index.html" class="active">Accueil</a></li>
+                    <li><a href="#menu">Menu</a></li>
+                    <li><a href="#galerie">Galerie</a></li>
+                    <li><a href="pages/contact.html">Contact</a></li>
+                    <li>
+                        <button type="button" class="cart-icon-button" id="header-cart-toggle" aria-label="Ouvrir le panier" aria-expanded="false">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M3 4h2l2.4 9.2a1 1 0 0 0 1 .8h8.4a1 1 0 0 0 1-.8L17 6H7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="10" cy="19" r="1.5" fill="currentColor"/>
+                                <circle cx="17" cy="19" r="1.5" fill="currentColor"/>
+                            </svg>
+                            <span class="cart-badge" id="header-cart-count">0</span>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
         </div>
-        <nav class="main-nav">
-            <ul>
-                <li><a href="index.html" class="active">Accueil</a></li>
-                <li><a href="pages/recettes.html">Recettes</a></li>
-                <li><a href="#">Blog culinaire</a></li>
-                <li><a href="#">Astuces</a></li>
-                <li><a href="#">À propos</a></li>
-                <li><a href="pages/contact.html">Contact</a></li>
-            </ul>
-        </nav>
     </header>
 
     <main>
+        <!-- Hero -->
         <section class="hero">
-            <div class="hero-content">
-                <h1>Éveillez vos papilles avec nos recettes exclusives !</h1>
-                <p>Plongez dans l'univers de la cuisine maison avec des recettes adaptées à tous les goûts et niveaux.</p>
-                <div class="hero-buttons">
-                    <a href="pages/recettes.html" class="btn btn-primary">Découvrir les recettes</a>
-                    <a href="pages/signup.html" class="btn btn-secondary">Créer un compte</a>
+            <div class="hero-content reveal">
+                <p class="eyebrow">Cuisine de rue • Saveurs d’Afrique</p>
+                <h1>Le goût du feu, du grain et de la mémoire.</h1>
+                <p>Une expérience gourmande au parfum du bois, des épices et des traditions partagées, servie avec une élégance discrète.</p>
+                <div class="hero-actions">
+                    <a href="#menu" class="button button-dark">Voir le menu</a>
+                    <a href="#menu" class="button button-light">Découvrir les plats</a>
+                </div>
+            </div>
+            <aside class="hero-aside reveal">
+                <p class="eyebrow">Édition de saison</p>
+                <h2>Brochettes, soups fumantes et grillades charnues.</h2>
+            </aside>
+        </section>
+
+        <!-- Menu -->
+        <section id="menu" class="section">
+            <div class="section-intro reveal">
+                <p class="eyebrow">Menu</p>
+                <h2>Une carte pensée comme un parcours.</h2>
+                <p>Chaque plat est préparé pour raconter un lieu, une saison et un rythme de vie.</p>
+            </div>
+
+            <div class="menu-categories">
+                <div class="category-block reveal">
+                    <h3>Entrées</h3>
+                    <article class="dish-card">
+                        <div class="dish-head">
+                            <h4>Soupe de haricot noir</h4>
+                            <span class="dish-price">8 000 GNF</span>
+                        </div>
+                        <p class="dish-desc">Bouillon profond, graines torréfiées et herbes fraîches.</p>
+                        <p class="dish-detail">Un premier geste réconfortant, à la fois rustique et raffiné.</p>
+                        <div class="dish-actions">
+                            <button type="button" class="add-to-cart" data-name="Soupe de haricot noir" data-price="8000">Ajouter au panier</button>
+                        </div>
+                    </article>
+                    <article class="dish-card">
+                        <div class="dish-head">
+                            <h4>Salade de saison</h4>
+                            <span class="dish-price">9 000 GNF</span>
+                        </div>
+                        <p class="dish-desc">Feuilles rôties, agrumes, noix et sauce de miel épicé.</p>
+                        <p class="dish-detail">Équilibre, fraîcheur, et une vraie présence de terre.</p>
+                        <div class="dish-actions">
+                            <button type="button" class="add-to-cart" data-name="Salade de saison" data-price="9000">Ajouter au panier</button>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="category-block reveal">
+                    <h3>Plats</h3>
+                    <article class="dish-card">
+                        <div class="dish-head">
+                            <h4>Brochettes de bœuf</h4>
+                            <span class="dish-price">16 000 GNF</span>
+                        </div>
+                        <p class="dish-desc">Marinées au gingembre, servies avec du couscous grillé.</p>
+                        <p class="dish-detail">Un plat de partage, pensé pour la table et le feu.</p>
+                        <div class="dish-actions">
+                            <button type="button" class="add-to-cart" data-name="Brochettes de bœuf" data-price="16000">Ajouter au panier</button>
+                        </div>
+                    </article>
+                    <article class="dish-card">
+                        <div class="dish-head">
+                            <h4>Filet de poisson fumé</h4>
+                            <span class="dish-price">18 000 GNF</span>
+                        </div>
+                        <p class="dish-desc">Épices douces, purée de pois cassés et huile d’herbes.</p>
+                        <p class="dish-detail">Le genre de plat qui ralentit le temps.</p>
+                        <div class="dish-actions">
+                            <button type="button" class="add-to-cart" data-name="Filet de poisson fumé" data-price="18000">Ajouter au panier</button>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="category-block reveal">
+                    <h3>Desserts</h3>
+                    <article class="dish-card">
+                        <div class="dish-head">
+                            <h4>Pavlova à la mangue</h4>
+                            <span class="dish-price">10 000 GNF</span>
+                        </div>
+                        <p class="dish-desc">Crème vanillée, fruits qui éclatent et caramel croustillant.</p>
+                        <p class="dish-detail">Légère, lumineuse, et pourtant très marquée.</p>
+                        <div class="dish-actions">
+                            <button type="button" class="add-to-cart" data-name="Pavlova à la mangue" data-price="10000">Ajouter au panier</button>
+                        </div>
+                    </article>
                 </div>
             </div>
         </section>
 
-        <section class="featured-recipes">
-            <h2>Les coups de cœur du moment</h2>
-            <div class="recipes-grid">
-                <article class="recipe-card">
-                    <div class="recipe-image">
-                        <img src="https://placehold.co/400x300/orange/white?text=Poulet+rôti" alt="Poulet rôti aux herbes">
-                    </div>
-                    <div class="recipe-content">
-                        <h3>Poulet rôti aux herbes</h3>
-                        <p>Parfait pour les soirées en famille.</p>
-                    </div>
-                </article>
-                <article class="recipe-card">
-                    <div class="recipe-image">
-                        <img src="https://placehold.co/400x300/0055ff/white?text=Gâteau" alt="Gâteau au chocolat">
-                    </div>
-                    <div class="recipe-content">
-                        <h3>Gâteau au chocolat</h3>
-                        <p>Une touche de gourmandise à chaque bouchée.</p>
-                    </div>
-                </article>
-                <article class="recipe-card">
-                    <div class="recipe-image">
-                        <img src="https://placehold.co/400x300/00cc00/white?text=Salade" alt="Salade fraîcheur">
-                    </div>
-                    <div class="recipe-content">
-                        <h3>Salade fraîcheur</h3>
-                        <p>Légère et vitaminée pour l'été.</p>
-                    </div>
-                </article>
+        <!-- Galerie -->
+        <section id="galerie" class="section">
+            <div class="section-intro reveal">
+                <p class="eyebrow">Galerie</p>
+                <h2>Le plaisir se voit autant qu’il se goûte.</h2>
+                <p>Des textures, des matières, une lumière chaude — une atmosphère construite avec intention.</p>
             </div>
-            <a href="pages/recettes.html" class="btn btn-outline">Voir toutes les recettes</a>
-        </section>
 
-        <section class="features">
-            <div class="feature">
-                <h3>Recettes variées</h3>
-                <p>Des entrées aux desserts, trouvez l'inspiration pour chaque occasion.</p>
-            </div>
-            <div class="feature">
-                <h3>Astuces pratiques</h3>
-                <p>Conseils de chefs pour sublimer vos plats quotidiens.</p>
-            </div>
-            <div class="feature">
-                <h3>Pour tous niveaux</h3>
-                <p>Des recettes simples aux plus élaborées.</p>
+            <div class="gallery-grid">
+                <figure class="gallery-item large reveal">
+                    <img src="https://placehold.co/1200x900/C8832A/F5F0E8?text=Ambiance" alt="Ambiance du restaurant">
+                    <figcaption>Ambiance de soirée</figcaption>
+                </figure>
+                <figure class="gallery-item reveal">
+                    <img src="https://placehold.co/700x700/8B4513/F5F0E8?text=Assiette" alt="Assiette préparée">
+                    <figcaption>Assiette du chef</figcaption>
+                </figure>
+                <figure class="gallery-item tall reveal">
+                    <img src="https://placehold.co/700x1000/2D5016/F5F0E8?text=Cuisine" alt="Cuisine en action">
+                    <figcaption>Service en cuisine</figcaption>
+                </figure>
+                <figure class="gallery-item reveal">
+                    <img src="https://placehold.co/700x700/1A1A1A/F5F0E8?text=Service" alt="Service en salle">
+                    <figcaption>Maison de saison</figcaption>
+                </figure>
             </div>
         </section>
 
-        <section class="newsletter">
-            <h2>Rejoignez notre communauté !</h2>
-            <p>Recevez des recettes exclusives, des astuces et bien plus encore.</p>
-            <form class="newsletter-form">
-                <input type="email" placeholder="Entrez votre email">
-                <button type="button">S'inscrire</button>
-            </form>
-        </section>
     </main>
 
+    <div class="cart-overlay" id="cart-overlay"></div>
+
+    <aside class="cart-drawer" id="cart-drawer" aria-label="Panier de commande" aria-hidden="true">
+        <div class="cart-drawer__header">
+            <h3>Votre panier</h3>
+            <button type="button" class="drawer-close" id="drawer-close" aria-label="Fermer le panier">×</button>
+        </div>
+        <div class="cart-drawer__body" id="cart-drawer-body">
+            <p class="empty-state">Ajoutez un plat pour composer votre commande.</p>
+        </div>
+        <div class="cart-drawer__footer">
+            <div class="cart-total">
+                <span>Total</span>
+                <strong id="cart-total-price">0 GNF</strong>
+            </div>
+            <button type="button" class="button button-dark full" id="cart-validate">Valider ma commande</button>
+        </div>
+    </aside>
+
+    <!-- Footer -->
     <footer class="site-footer">
-        <p>© 2024 CrazyCook. Tous droits réservés.</p>
+        <p>CrazyCook • 12 Avenue de l'Indépendance • Conakry</p>
         <div class="socials">
-            <a href="#">Facebook</a>
             <a href="#">Instagram</a>
-            <a href="#">YouTube</a>
+            <a href="#">Facebook</a>
+            <a href="#">TikTok</a>
         </div>
     </footer>
+
+    <script src="assets/js/script.js"></script>
 </body>
 </html>
