@@ -49,13 +49,77 @@
                 <p>Une expérience gourmande au parfum du bois, des épices et des traditions partagées, servie avec une élégance discrète.</p>
                 <div class="hero-actions">
                     <a href="#menu" class="button button-dark">Voir le menu</a>
-                    <a href="#menu" class="button button-light">Découvrir les plats</a>
+                    <a href="#histoire" class="button button-light">Découvrir les plats</a>
                 </div>
             </div>
             <aside class="hero-aside reveal">
                 <p class="eyebrow">Édition de saison</p>
                 <h2>Brochettes, soups fumantes et grillades charnues.</h2>
             </aside>
+        </section>
+
+        <!-- Notre Histoire -->
+        <section id="histoire" class="section section-histoire">
+            <div class="histoire-container">
+                <div class="histoire-content reveal">
+                    <p class="eyebrow">Notre histoire</p>
+                    <h2>Une cuisine de feu, d'épices et de transmission.</h2>
+                    <p class="histoire-lead">CrazyCook est né à Conakry de l’envie de célébrer la richesse des rituels culinaires d’Afrique de l'Ouest, sous un jour brut et contemporain.</p>
+                    <p>Pour nous, la cuisine africaine n'est pas figée dans le passé : elle vit, elle crépite, elle s'enrichit de chaque rencontre. Nos marinades longues, nos grillades au charbon de bois de saison et nos bouillons profonds racontent un retour à l'essentiel, à la pureté des goûts terrestres et à la convivialité authentique des grandes tablées.</p>
+
+                    <div class="histoire-stats">
+                        <div class="stat-item">
+                            <span class="stat-value">Depuis 2024</span>
+                            <span class="stat-label">Conakry</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">Fait Maison</span>
+                            <span class="stat-label">Cuisine authentique</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="histoire-image reveal">
+                    <figure class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=800&h=1000&q=80" alt="Le chef de CrazyCook en pleine préparation culinaire au feu de bois">
+                        <figcaption>L'art du feu de bois</figcaption>
+                    </figure>
+                </div>
+            </div>
+        </section>
+
+        <!-- Avis / Témoignages -->
+        <section id="avis" class="section section-avis">
+            <div class="section-intro reveal">
+                <p class="eyebrow">Ce qu'on en dit</p>
+                <h2>Témoignages de nos convives.</h2>
+                <p>La plus belle des récompenses reste la mémoire de ceux qui s'attablent chez nous.</p>
+            </div>
+
+            <div class="avis-grid">
+                <article class="avis-card reveal">
+                    <div class="avis-stars" aria-label="Note de 5 étoiles">★★★★★</div>
+                    <blockquote class="avis-quote">
+                        « Une claque gustative absolue. Les brochettes de bœuf ont un goût de feu d'une authenticité rare. L'ambiance brute et feutrée nous fait voyager dès le premier instant. »
+                    </blockquote>
+                    <cite class="avis-author">— Mamadou S.</cite>
+                </article>
+
+                <article class="avis-card reveal">
+                    <div class="avis-stars" aria-label="Note de 5 étoiles">★★★★★</div>
+                    <blockquote class="avis-quote">
+                        « Enfin un lieu à Conakry qui allie modernité esthétique et respect absolu des rituels de cuisson. La soupe de haricot noir est d’un réconfort infini. »
+                    </blockquote>
+                    <cite class="avis-author">— Fatoumata D.</cite>
+                </article>
+
+                <article class="avis-card reveal">
+                    <div class="avis-stars" aria-label="Note de 5 étoiles">★★★★★</div>
+                    <blockquote class="avis-quote">
+                        « Le service est d'une élégance rare, discret et attentif. Chaque plat est présenté comme une œuvre d’art rustique. Un incontournable absolu de notre ville. »
+                    </blockquote>
+                    <cite class="avis-author">— Alexandre M.</cite>
+                </article>
+            </div>
         </section>
 
         <!-- Menu -->
@@ -165,6 +229,19 @@
         </section>
 
     </main>
+
+    <!-- Sticky Mobile CTA Bar -->
+    <div class="sticky-mobile-cta" id="sticky-mobile-cta">
+        <a href="#menu" class="button button-dark sticky-cta-button">Voir le menu</a>
+        <button type="button" class="cart-icon-button" id="mobile-cart-toggle" aria-label="Ouvrir le panier" aria-expanded="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 4h2l2.4 9.2a1 1 0 0 0 1 .8h8.4a1 1 0 0 0 1-.8L17 6H7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="10" cy="19" r="1.5" fill="currentColor"/>
+                <circle cx="17" cy="19" r="1.5" fill="currentColor"/>
+            </svg>
+            <span class="cart-badge" id="mobile-cart-count">0</span>
+        </button>
+    </div>
 
     <div class="cart-overlay" id="cart-overlay"></div>
 

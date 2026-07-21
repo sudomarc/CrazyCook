@@ -253,6 +253,122 @@ ul {
     margin-top: 0.25rem;
 }
 
+/* Section Histoire styling */
+.histoire-container {
+    display: grid;
+    gap: 2.5rem;
+    align-items: center;
+}
+
+.histoire-content {
+    display: grid;
+    gap: 1.25rem;
+}
+
+.histoire-content h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.05;
+    color: var(--burnt-earth);
+}
+
+.histoire-lead {
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: var(--dark);
+    font-weight: 500;
+}
+
+.histoire-content p:not(.histoire-lead):not(.eyebrow) {
+    color: #4e4638;
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+.histoire-stats {
+    display: flex;
+    gap: 2rem;
+    margin-top: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(26, 26, 26, 0.08);
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.stat-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--ochre);
+}
+
+.stat-label {
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    font-weight: 600;
+    color: #6a604e;
+}
+
+.histoire-image {
+    position: relative;
+}
+
+.histoire-image .gallery-item {
+    min-height: 380px;
+}
+
+/* Section Avis styling */
+.avis-grid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.avis-card {
+    background: white;
+    border: 1px solid rgba(26, 26, 26, 0.06);
+    border-radius: 24px;
+    padding: 2rem 1.8rem;
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    transition: transform 0.35s var(--ease-premium), box-shadow 0.35s ease;
+}
+
+.avis-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow);
+}
+
+.avis-stars {
+    color: var(--ochre);
+    font-size: 0.95rem;
+    letter-spacing: 0.15em;
+}
+
+.avis-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    font-style: italic;
+    color: var(--dark);
+}
+
+.avis-author {
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #6a604e;
+    align-self: flex-start;
+}
+
 /* Sections */
 .section {
     max-width: 1180px;
@@ -262,6 +378,14 @@ ul {
 
 /* Identité propre à chaque section : léger changement de fond pour rythmer le scroll,
    à la manière des sites primés qui distinguent chaque "chapitre" du parcours */
+.section-histoire {
+    background: linear-gradient(180deg, rgba(139, 69, 19, 0.05), transparent 60%);
+}
+
+.section-avis {
+    background: linear-gradient(180deg, rgba(200, 131, 42, 0.05), transparent 60%);
+}
+
 #menu {
     background: linear-gradient(180deg, rgba(200, 131, 42, 0.05), transparent 60%);
 }
@@ -729,7 +853,50 @@ ul {
     transform: none;
 }
 
+/* Sticky Mobile CTA Bar CSS */
+.sticky-mobile-cta {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(245, 240, 232, 0.95);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(26, 26, 26, 0.1);
+    padding: 0.85rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    z-index: 25;
+    box-shadow: 0 -8px 24px rgba(26, 26, 26, 0.08);
+    transform: translateY(100%);
+    transition: transform 0.4s var(--ease-premium);
+}
+
+.sticky-mobile-cta.is-visible {
+    transform: translateY(0);
+}
+
+.sticky-mobile-cta .sticky-cta-button {
+    flex: 1;
+    font-size: 0.95rem;
+    padding: 0.85rem 1rem;
+}
+
+.sticky-mobile-cta .cart-icon-button {
+    color: var(--dark);
+}
+
+/* Hide on desktop/tablet */
+@media (min-width: 700px) {
+    .sticky-mobile-cta {
+        display: none !important;
+    }
+}
+
 /* Cascade légère quand plusieurs cards apparaissent ensemble dans une même grille */
+.avis-grid .avis-card:nth-child(2) { transition-delay: 0.08s; }
+.avis-grid .avis-card:nth-child(3) { transition-delay: 0.16s; }
 .menu-categories .category-block:nth-child(2) { transition-delay: 0.08s; }
 .menu-categories .category-block:nth-child(3) { transition-delay: 0.16s; }
 .gallery-grid .gallery-item:nth-child(2) { transition-delay: 0.08s; }
@@ -760,6 +927,15 @@ ul {
         padding: 7rem 2rem 2.5rem;
     }
 
+    .histoire-container {
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 3rem;
+    }
+
+    .avis-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     .menu-categories {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -781,6 +957,10 @@ ul {
 @media (min-width: 980px) {
     .section {
         padding: 5.5rem 1.25rem;
+    }
+
+    .avis-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
     .menu-categories {
