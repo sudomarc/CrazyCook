@@ -1342,29 +1342,29 @@ ul {
 
 /* Bouton du toggle thème */
 .theme-toggle {
-    border: 1px solid rgba(139, 69, 19, 0.24);
-    background: linear-gradient(135deg, #fff7e8 0%, #f3d1a1 100%);
-    color: #6b2f0b;
-    padding: 0.45rem 0.6rem;
+    border: 2px solid #8b4513;
+    background: #ffdf8f;
+    color: #5b2608;
+    padding: 0.5rem 0.7rem;
     border-radius: 999px;
     cursor: pointer;
-    box-shadow: 0 8px 20px rgba(139, 69, 19, 0.2);
+    box-shadow: 0 0 0 3px rgba(255, 223, 143, 0.45), 0 8px 18px rgba(0, 0, 0, 0.18);
     transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
 
 .theme-toggle:hover,
 .theme-toggle:focus-visible {
     transform: translateY(-1px);
-    background: linear-gradient(135deg, #fff0cd 0%, #e8b66a 100%);
-    box-shadow: 0 10px 24px rgba(139, 69, 19, 0.28);
+    background: #ffd35f;
+    box-shadow: 0 0 0 4px rgba(255, 211, 95, 0.5), 0 10px 22px rgba(0, 0, 0, 0.22);
     outline: none;
 }
 
 [data-theme="dark"] .theme-toggle {
-    border-color: rgba(248, 241, 229, 0.28);
-    background: rgba(248, 241, 229, 0.16);
-    color: #F8F1E5;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.24);
+    border-color: #f6d8a1;
+    background: #7a4a14;
+    color: #fff7e8;
+    box-shadow: 0 0 0 3px rgba(246, 216, 161, 0.24), 0 8px 20px rgba(0, 0, 0, 0.24);
 }
 
 /* Fix: bouton invisible une fois le header solidifié au scroll (même logique que .logo/.cart-icon-button) */
