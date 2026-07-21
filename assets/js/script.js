@@ -19,6 +19,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileCartToggle = document.getElementById('mobile-cart-toggle');
     const mobileCartCountBadge = document.getElementById('mobile-cart-count');
     const stickyMobileCta = document.getElementById('sticky-mobile-cta');
+    const themeToggle = document.getElementById('theme-toggle');
+    const reorderBanner = document.getElementById('reorder-banner');
+    const reorderSummary = document.getElementById('reorder-summary');
+    const reorderButton = document.getElementById('reorder-button');
+    const reorderDismiss = document.getElementById('reorder-dismiss');
 
     // Gestion de l'état simple (Panier & Étape de commande)
     let cart = [];
@@ -65,6 +70,66 @@ document.addEventListener('DOMContentLoaded', () => {
             void mobileCartCountBadge.offsetWidth;
             mobileCartCountBadge.classList.add('bump');
         }
+    };
+
+    /* ---------- THEMES: gestion du thème sombre (persist + respect prefers-color-scheme) ---------- */
+    const THEME_KEY = 'crazycook:theme';
+    const applyTheme = (theme) => {
+        if (theme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            themeToggle?.setAttribute('aria-pressed', 'true');
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+            themeToggle?.setAttribute('aria-pressed', 'false');
+        }
+        try { localStorage.setItem(THEME_KEY, theme); } catch (e) { /* ignore */ }
+    };
+
+    // Initial theme au chargement
+    (function initTheme() {
+        try {
+            const saved = localStorage.getItem(THEME_KEY);
+            if (saved) { applyTheme(saved); return; }
+        } catch (e) {}
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        applyTheme(prefersDark ? 'dark' : 'light');
+    }());
+
+    themeToggle?.addEventListener('click', () => {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        applyTheme(isDark ? 'light' : 'dark');
+    });
+
+    /* ---------- Image skeleton helper (appelé depuis l'attribut onload des images) ---------- */
+    window.imageLoaded = function(imgEl) {
+        try {
+            imgEl.classList.add('loaded');
+            const skeleton = imgEl.previousElementSibling;
+            if (skeleton && skeleton.classList.contains('img-skeleton')) {
+                skeleton.style.transition = 'opacity 360ms ease';
+                skeleton.style.opacity = '0';
+                setTimeout(() => skeleton.remove(), 420);
+            }
+        } catch (e) { /* ne bloque pas l'application */ }
+    };
+
+    /* ---------- Micro-feedback +1 lors de l'ajout au panier ---------- */
+    const showAddFeedback = (button) => {
+        if (!(button instanceof HTMLElement)) return;
+        const rect = button.getBoundingClientRect();
+        const el = document.createElement('span');
+        el.className = 'add-feedback';
+        el.textContent = '+1';
+        // Positionnement fixe pour éviter overflow/positioning complexe
+        el.style.left = `${rect.left + rect.width / 2}px`;
+        el.style.top = `${rect.top - 6}px`;
+        el.style.transform = 'translate(-50%, 0)';
+        el.style.position = 'fixed';
+        document.body.appendChild(el);
+        // Vibrate si supporté
+        try { if (navigator.vibrate) navigator.vibrate(15); } catch (e) {}
+        // Retirer après animation
+        setTimeout(() => { el.remove(); }, 700);
     };
 
     // Rendu dynamique du tiroir panier selon l'étape actuelle
@@ -255,6 +320,57 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    /* ---------- Stockage & bannière "Recommander ma dernière commande" ---------- */
+    const LAST_ORDER_KEY = 'crazycook:lastOrder';
+    const saveLastOrder = () => {
+        try {
+            const payload = {
+                items: cart.map(i => ({ name: i.name, price: i.price, quantity: i.quantity })),
+                savedAt: Date.now()
+            };
+            localStorage.setItem(LAST_ORDER_KEY, JSON.stringify(payload));
+        } catch (e) { /* ignore */ }
+    };
+
+    const readLastOrder = () => {
+        try {
+            const raw = localStorage.getItem(LAST_ORDER_KEY);
+            if (!raw) return null;
+            return JSON.parse(raw);
+        } catch (e) { return null; }
+    };
+
+    const showReorderIfNeeded = () => {
+        if (!reorderBanner) return;
+        // Ne pas réafficher si déjà fermé en session
+        if (sessionStorage.getItem('crazycook:reorderDismissed')) return;
+        const last = readLastOrder();
+        if (!last || !last.items || !last.items.length) return;
+        reorderBanner.hidden = false;
+        // Résumé succinct
+        reorderSummary.textContent = last.items.map(i => `${i.name} ×${i.quantity}`).join(' · ');
+    };
+
+    // Recomposer le panier depuis la dernière commande
+    reorderButton?.addEventListener('click', () => {
+        const last = readLastOrder();
+        if (!last) return;
+        cart = last.items.map(i => ({ name: i.name, price: i.price, quantity: i.quantity }));
+        bumpBadge();
+        renderCart();
+        // masquer la bannière pour cette session
+        if (reorderBanner) reorderBanner.hidden = true;
+        sessionStorage.setItem('crazycook:reorderDismissed', '1');
+    });
+
+    reorderDismiss?.addEventListener('click', () => {
+        if (reorderBanner) reorderBanner.hidden = true;
+        sessionStorage.setItem('crazycook:reorderDismissed', '1');
+    });
+
+    // Affiche la bannière si on a une commande précédente
+    showReorderIfNeeded();
+
     // Ouvrir le tiroir panier
     const openCart = () => {
         if (!cartDrawer) return;
@@ -383,6 +499,8 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
                 transactionRef = `OM-${Math.floor(100000 + Math.random() * 900000)}`;
                 currentStep = 'confirmation';
                 renderCart();
+                // Sauvegarde de la dernière commande puis envoi
+                try { saveLastOrder(); } catch (e) {}
                 sendWhatsAppOrder();
             }, 1800);
         }
@@ -419,7 +537,9 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
 
     // Attribution des écouteurs sur les boutons "Ajouter au panier"
     document.querySelectorAll('.add-to-cart').forEach((button) => {
-        button.addEventListener('click', () => {
+        button.addEventListener('click', (ev) => {
+            // micro-feedback visuel + vibration
+            showAddFeedback(button);
             addToCart(button.dataset.name, Number(button.dataset.price));
         });
     });
@@ -491,6 +611,7 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
                 // Paiement à la livraison : pas de simulation nécessaire, on confirme directement
                 currentStep = 'confirmation';
                 renderCart();
+                try { saveLastOrder(); } catch (e) {}
                 sendWhatsAppOrder();
             }
             return;

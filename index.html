@@ -26,6 +26,15 @@
                     <li><a href="#galerie">Galerie</a></li>
                     <li><a href="#contact">Contact</a></li>
                     <li>
+                        <!-- Toggle thème sombre/clair -->
+                        <button id="theme-toggle" class="theme-toggle" aria-pressed="false" title="Basculer le thème sombre">
+                            <!-- Sun / Moon inline SVG — simple, pas de librairie -->
+                            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                                <path id="theme-icon" d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4M12 6a6 6 0 100 12 6 6 0 000-12z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
+                            </svg>
+                        </button>
+                    </li>
+                    <li>
                         <button type="button" class="cart-icon-button" id="header-cart-toggle" aria-label="Ouvrir le panier" aria-expanded="false">
                             <svg viewBox="0 0 24 24" aria-hidden="true">
                                 <path d="M3 4h2l2.4 9.2a1 1 0 0 0 1 .8h8.4a1 1 0 0 0 1-.8L17 6H7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
@@ -80,7 +89,10 @@
                 </div>
                 <div class="histoire-image reveal">
                     <figure class="gallery-item">
-                        <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=800&h=1000&q=80" alt="Le chef de CrazyCook en pleine préparation culinaire au feu de bois">
+                        <div class="media-wrap">
+                            <span class="img-skeleton" aria-hidden="true"></span>
+                            <img class="skeleton-img" onload="imageLoaded(this)" src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=800&h=1000&q=80" alt="Le chef de CrazyCook en pleine préparation culinaire au feu de bois">
+                        </div>
                         <figcaption>L'art du feu de bois</figcaption>
                     </figure>
                 </div>
@@ -126,9 +138,27 @@
         <section id="menu" class="section">
             <div class="section-intro reveal">
                 <p class="eyebrow">Menu</p>
-                <h2>Une carte pensée comme un parcours.</h2>
+                    <div class="menu-intro-row">
+                        <h2>Une carte pensée comme un parcours.</h2>
+                        <!-- Badge d'avis / social proof (placeholder) -->
+                        <div class="rating-badge" aria-hidden="true">4.8 ★ · 210 avis</div>
+                    </div>
                 <p>Chaque plat est préparé pour raconter un lieu, une saison et un rythme de vie.</p>
             </div>
+
+                <!-- Bannière de recommandation de la dernière commande (injectée si donnée disponible) -->
+                <div id="reorder-banner" class="reorder-banner" role="region" aria-live="polite" hidden>
+                    <div class="reorder-content">
+                        <div class="reorder-text">
+                            <strong>Recommander votre dernière commande</strong>
+                            <small id="reorder-summary"></small>
+                        </div>
+                        <div class="reorder-actions">
+                            <button id="reorder-button" class="button button-dark">Recommander</button>
+                            <button id="reorder-dismiss" class="button button-light" aria-label="Fermer">✕</button>
+                        </div>
+                    </div>
+                </div>
 
             <div class="menu-categories">
                 <div class="category-block reveal">
@@ -138,6 +168,7 @@
                             <h4>Soupe de haricot noir</h4>
                             <span class="dish-price">8 000 GNF</span>
                         </div>
+                        <span class="order-pill">Commandé 34 fois aujourd'hui</span>
                         <p class="dish-desc">Bouillon profond, graines torréfiées et herbes fraîches.</p>
                         <p class="dish-detail">Un premier geste réconfortant, à la fois rustique et raffiné.</p>
                         <div class="dish-actions">
@@ -164,6 +195,7 @@
                             <h4>Brochettes de bœuf</h4>
                             <span class="dish-price">16 000 GNF</span>
                         </div>
+                        <span class="order-pill">Commandé 58 fois aujourd'hui</span>
                         <p class="dish-desc">Marinées au gingembre, servies avec du couscous grillé.</p>
                         <p class="dish-detail">Un plat de partage, pensé pour la table et le feu.</p>
                         <div class="dish-actions">
@@ -175,6 +207,7 @@
                             <h4>Filet de poisson fumé</h4>
                             <span class="dish-price">18 000 GNF</span>
                         </div>
+                        <span class="order-pill">Commandé 27 fois aujourd'hui</span>
                         <p class="dish-desc">Épices douces, purée de pois cassés et huile d’herbes.</p>
                         <p class="dish-detail">Le genre de plat qui ralentit le temps.</p>
                         <div class="dish-actions">
@@ -210,19 +243,31 @@
 
             <div class="gallery-grid">
                 <figure class="gallery-item large reveal">
-                    <img src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1200&h=900&q=80" alt="Ambiance du restaurant">
+                    <div class="media-wrap">
+                        <span class="img-skeleton" aria-hidden="true"></span>
+                        <img class="skeleton-img" onload="imageLoaded(this)" src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1200&h=900&q=80" alt="Ambiance du restaurant">
+                    </div>
                     <figcaption>Ambiance de soirée</figcaption>
                 </figure>
                 <figure class="gallery-item reveal">
-                    <img src="https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?auto=format&fit=crop&w=700&h=700&q=80" alt="Assiette préparée">
+                    <div class="media-wrap">
+                        <span class="img-skeleton" aria-hidden="true"></span>
+                        <img class="skeleton-img" onload="imageLoaded(this)" src="https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?auto=format&fit=crop&w=700&h=700&q=80" alt="Assiette préparée">
+                    </div>
                     <figcaption>Assiette du chef</figcaption>
                 </figure>
                 <figure class="gallery-item tall reveal">
-                    <img src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fit=crop&w=700&h=1000&q=80" alt="Cuisine en action">
+                    <div class="media-wrap">
+                        <span class="img-skeleton" aria-hidden="true"></span>
+                        <img class="skeleton-img" onload="imageLoaded(this)" src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fit=crop&w=700&h=1000&q=80" alt="Cuisine en action">
+                    </div>
                     <figcaption>Service en cuisine</figcaption>
                 </figure>
                 <figure class="gallery-item reveal">
-                    <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=700&h=700&q=80" alt="Service en salle">
+                    <div class="media-wrap">
+                        <span class="img-skeleton" aria-hidden="true"></span>
+                        <img class="skeleton-img" onload="imageLoaded(this)" src="https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=700&h=700&q=80" alt="Service en salle">
+                    </div>
                     <figcaption>Maison de saison</figcaption>
                 </figure>
             </div>
