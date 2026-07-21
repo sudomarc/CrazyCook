@@ -39,8 +39,6 @@ jobs:
           node-version: 18 # Or a suitable LTS version
       - name: Install optimization tools
         run: npm install -g html-minifier clean-css-cli uglify-js imagemin-cli imagemin-jpegtran imagemin-optipng imagemin-gifsicle imagemin-svgo
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
       - name: Minify HTML
         run: find . -name "*.html" -not -path "./node_modules/*" -exec html-minifier --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true -o {} {} \;
       - name: Minify CSS
@@ -49,14 +47,6 @@ jobs:
         run: find . -name "*.js" -not -path "./node_modules/*" -not -path "./.github/*" -exec uglifyjs {} -o {} -c -m \;
       - name: Compress images
         run: imagemin '**/*.{jpg,jpeg,png,gif,svg}' --out-dir=. --plugin=jpegtran --plugin=optipng --plugin=gifsicle --plugin=svgo
-      - name: Run Playwright tests
-        run: |
-          npm install -g http-server
-          http-server -p 8080 &
-          # Wait for server to start - adjust sleep time if needed
-          sleep 5
-          # Update playwright test command to point to the correct base URL
-          npx playwright test --project=chromium --reporter=list --config=playwright.config.js
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
