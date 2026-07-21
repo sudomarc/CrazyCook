@@ -1368,6 +1368,7 @@ ul {
 }
 
 /* Fix: bouton invisible une fois le header solidifié au scroll (même logique que .logo/.cart-icon-button) */
+/* Repush note: amélioration du contraste du bouton de thème pour mode clair et sombre */
 .site-header.scrolled .theme-toggle {
     color: var(--burnt-earth);
 }
