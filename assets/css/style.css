@@ -1278,11 +1278,15 @@ ul {
     position: relative;
     inset: 0;
     width: 100%;
-    height: 100%;
+    min-height: 100%;
+    display: block;
+    background: rgba(255,255,255,0.04);
 }
 .img-skeleton {
     position: absolute;
     inset: 0;
+    width: 100%;
+    height: 100%;
     background: linear-gradient(90deg, rgba(255,255,255,0.035) 0%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.035) 100%);
     background-size: 200% 100%;
     animation: shimmer 1.2s linear infinite;
@@ -1295,11 +1299,13 @@ ul {
 .skeleton-img {
     opacity: 0;
     transition: opacity 420ms var(--ease-premium), transform 0.9s var(--ease-premium);
-    position: relative;
+    position: absolute;
+    inset: 0;
     z-index: 1;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
 }
 .skeleton-img.loaded {
     opacity: 1;
