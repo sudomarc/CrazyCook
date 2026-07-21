@@ -100,8 +100,19 @@ document.addEventListener('DOMContentLoaded', () => {
         applyTheme(isDark ? 'light' : 'dark');
     });
 
-    /* ---------- Image skeleton helper (appelé depuis l'attribut onload des images) ---------- */
-    window.imageLoaded = function(imgEl) {
+    /* ---------- Image skeleton helper (appelé depuis l'attribut onload/onerror des images) ---------- */
+    const FALLBACK_IMAGE = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+        <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+            <rect width="1200" height="900" fill="#f7e8ca"/>
+            <rect x="60" y="60" width="1080" height="780" rx="30" fill="#fffdf8" stroke="#c8832a" stroke-width="6"/>
+            <circle cx="320" cy="360" r="120" fill="#c8832a" opacity="0.16"/>
+            <path d="M0 760 C220 690 420 670 600 720 C780 770 980 790 1200 740 L1200 900 L0 900 Z" fill="#8b4513" opacity="0.2"/>
+            <text x="600" y="420" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-size="42" fill="#8b4513">CrazyCook</text>
+            <text x="600" y="485" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="24" fill="#6b2f0b">Image indisponible</text>
+        </svg>
+    `);
+
+    const revealImage = (imgEl) => {
         try {
             imgEl.classList.add('loaded');
             const skeleton = imgEl.previousElementSibling;
@@ -112,6 +123,28 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (e) { /* ne bloque pas l'application */ }
     };
+
+    window.imageLoaded = function(imgEl) {
+        revealImage(imgEl);
+    };
+
+    window.imageFailed = function(imgEl) {
+        try {
+            if (imgEl && imgEl.dataset.fallbackApplied !== 'true') {
+                imgEl.dataset.fallbackApplied = 'true';
+                imgEl.src = FALLBACK_IMAGE;
+            }
+            revealImage(imgEl);
+        } catch (e) { /* ne bloque pas l'application */ }
+    };
+
+    document.querySelectorAll('.skeleton-img').forEach((imgEl) => {
+        setTimeout(() => {
+            if (!imgEl.classList.contains('loaded')) {
+                window.imageFailed(imgEl);
+            }
+        }, 3500);
+    });
 
     /* ---------- Micro-feedback +1 lors de l'ajout au panier ---------- */
     const showAddFeedback = (button) => {
