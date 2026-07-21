@@ -16,6 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const cartBody = document.getElementById('cart-drawer-body');
     const cartTotalPrice = document.getElementById('cart-total-price');
     const cartCountBadge = document.getElementById('header-cart-count');
+    const mobileCartToggle = document.getElementById('mobile-cart-toggle');
+    const mobileCartCountBadge = document.getElementById('mobile-cart-count');
+    const stickyMobileCta = document.getElementById('sticky-mobile-cta');
 
     // Gestion de l'état simple (Panier & Étape de commande)
     let cart = [];
@@ -27,10 +30,17 @@ document.addEventListener('DOMContentLoaded', () => {
         note: ''
     };
 
-    // Gestion du défilement pour l'effet de transparence du header
+    // Gestion du défilement pour l'effet de transparence du header et la barre de CTA mobile
     const toggleHeader = () => {
-        if (!header) return;
-        header.classList.toggle('scrolled', window.scrollY > 24);
+        if (header) {
+            header.classList.toggle('scrolled', window.scrollY > 24);
+        }
+
+        // Affichage de la barre mobile collante après avoir scrollé au-delà du hero section (min-height de 100vh)
+        if (stickyMobileCta) {
+            const heroHeight = document.querySelector('.hero')?.offsetHeight || window.innerHeight;
+            stickyMobileCta.classList.toggle('is-visible', window.scrollY > heroHeight - 100);
+        }
     };
 
     // Formatage des prix en GNF (ex: 16 000 GNF)
@@ -41,11 +51,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Déclenchement de l'animation CSS (bump/pulse) sur le badge du panier
     const bumpBadge = () => {
-        if (!cartCountBadge) return;
-        cartCountBadge.classList.remove('bump');
-        // Force un reflow pour relancer l'animation CSS
-        void cartCountBadge.offsetWidth;
-        cartCountBadge.classList.add('bump');
+        if (cartCountBadge) {
+            cartCountBadge.classList.remove('bump');
+            // Force un reflow pour relancer l'animation CSS
+            void cartCountBadge.offsetWidth;
+            cartCountBadge.classList.add('bump');
+        }
+        if (mobileCartCountBadge) {
+            mobileCartCountBadge.classList.remove('bump');
+            // Force un reflow pour relancer l'animation CSS
+            void mobileCartCountBadge.offsetWidth;
+            mobileCartCountBadge.classList.add('bump');
+        }
     };
 
     // Rendu dynamique du tiroir panier selon l'étape actuelle
@@ -56,6 +73,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const itemCount = cart.reduce((total, item) => total + item.quantity, 0);
         if (cartCountBadge) {
             cartCountBadge.textContent = itemCount;
+        }
+        if (mobileCartCountBadge) {
+            mobileCartCountBadge.textContent = itemCount;
         }
 
         // Si le panier est vide
@@ -171,6 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cartDrawer.setAttribute('aria-hidden', 'false');
         cartOverlay?.classList.add('is-visible');
         cartToggle?.setAttribute('aria-expanded', 'true');
+        mobileCartToggle?.setAttribute('aria-expanded', 'true');
     };
 
     // Fermer le tiroir panier
@@ -180,6 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cartDrawer.setAttribute('aria-hidden', 'true');
         cartOverlay?.classList.remove('is-visible');
         cartToggle?.setAttribute('aria-expanded', 'false');
+        mobileCartToggle?.setAttribute('aria-expanded', 'false');
     };
 
     // Ajouter un élément au panier
@@ -315,6 +337,16 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
 
     // Clics sur l'icône de panier du Header
     cartToggle?.addEventListener('click', () => {
+        const isOpen = cartDrawer?.classList.contains('is-open');
+        if (isOpen) {
+            closeCart();
+        } else {
+            openCart();
+        }
+    });
+
+    // Clics sur l'icône de panier de la barre collante mobile
+    mobileCartToggle?.addEventListener('click', () => {
         const isOpen = cartDrawer?.classList.contains('is-open');
         if (isOpen) {
             closeCart();
