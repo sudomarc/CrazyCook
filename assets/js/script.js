@@ -419,17 +419,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Redirection WhatsApp de la commande formulée proprement
     const sendWhatsAppOrder = () => {
-        const subtotal = getSubtotal();
-        const deliveryFee = 2000;
-        const total = subtotal + deliveryFee;
         const paymentLabel = paymentMethod === 'orange_money' ? `Orange Money (réf. ${transactionRef})` : 'Paiement à la livraison';
 
-        // Génération de la liste des plats commandés
+        // Génération de la liste des plats commandés (sans les prix)
         const itemsList = cart
-            .map(item => `• *${item.quantity}x* ${item.name} (${formatPrice(item.price)}/u) -> *${formatPrice(item.quantity * item.price)}*`)
+            .map(item => `• *${item.quantity}x* ${item.name}`)
             .join('\n');
 
-        // Formatage final premium et soigné du message
+        // Formatage final premium et soigné du message (sans les prix)
         const message = `Bonjour CrazyCook 🍳 !
 
 Voici une nouvelle commande :
@@ -437,9 +434,6 @@ Voici une nouvelle commande :
 ${itemsList}
 
 ----------------------------------------
-*Sous-total* : ${formatPrice(subtotal)}
-*Frais de livraison* : ${formatPrice(deliveryFee)}
-*Total à payer* : ${formatPrice(total)}
 *Paiement* : ${paymentLabel}
 
 ----------------------------------------
