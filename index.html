@@ -24,7 +24,7 @@
                     <li><a href="index.html" class="active">Accueil</a></li>
                     <li><a href="#menu">Menu</a></li>
                     <li><a href="#galerie">Galerie</a></li>
-                    <li><a href="pages/contact.html">Contact</a></li>
+                    <li><a href="#contact">Contact</a></li>
                     <li>
                         <button type="button" class="cart-icon-button" id="header-cart-toggle" aria-label="Ouvrir le panier" aria-expanded="false">
                             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -225,6 +225,27 @@
                     <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=700&h=700&q=80" alt="Service en salle">
                     <figcaption>Maison de saison</figcaption>
                 </figure>
+            </div>
+        </section>
+
+        <section id="contact" class="section reveal">
+            <div class="section-intro">
+                <span class="eyebrow">Contact</span>
+                <h2>Une question, une envie ?</h2>
+                <p>Écrivez-nous ou passez nous voir — on répond vite.</p>
+            </div>
+            <div class="contact-shell">
+                <div class="contact-info">
+                    <p><strong>Adresse</strong><br>12 Avenue de l'Indépendance, Conakry</p>
+                    <p><strong>Horaires</strong><br>Lun–Dim · 11h–22h</p>
+                    <p><strong>Téléphone</strong><br>+224 628 069 479</p>
+                </div>
+                <form class="contact-form" onsubmit="return false;">
+                    <input type="text" name="nom" placeholder="Votre nom" required>
+                    <input type="tel" name="telephone" placeholder="Votre téléphone" required>
+                    <textarea name="message" placeholder="Votre message" rows="4" required></textarea>
+                    <button type="submit" class="button button-dark full">Envoyer</button>
+                </form>
             </div>
         </section>
 
