@@ -1047,3 +1047,88 @@ ul {
         align-items: start;
     }
 }
+
+/* Étape paiement — choix du mode */
+.payment-options {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.payment-option {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.95rem 1.1rem;
+    border-radius: 16px;
+    border: 1px solid rgba(26, 26, 26, 0.12);
+    background: white;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.25s ease, transform 0.25s var(--ease-premium), box-shadow 0.25s ease;
+}
+
+.payment-option:hover {
+    border-color: var(--ochre);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-soft);
+}
+
+.payment-option__badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--forest-green);
+    color: white;
+    font-weight: 700;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.payment-option__label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.payment-option__label small {
+    color: #6b6255;
+    font-size: 0.8rem;
+}
+
+/* Simulation Orange Money */
+.om-disclaimer {
+    font-size: 0.72rem;
+    color: #8a8072;
+    background: rgba(200, 131, 42, 0.1);
+    padding: 0.5rem 0.7rem;
+    border-radius: 10px;
+    margin-bottom: 0.9rem;
+}
+
+/* Écran de traitement (spinner) */
+.om-processing {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2.5rem 1rem;
+    text-align: center;
+    color: #4e4638;
+}
+
+.om-spinner {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 3px solid rgba(200, 131, 42, 0.2);
+    border-top-color: var(--ochre);
+    animation: om-spin 0.8s linear infinite;
+}
+
+@keyframes om-spin {
+    to { transform: rotate(360deg); }
+}

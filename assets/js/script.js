@@ -22,7 +22,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Gestion de l'état simple (Panier & Étape de commande)
     let cart = [];
-    let currentStep = 'cart'; // 'cart' | 'delivery' | 'confirmation'
+    let currentStep = 'cart'; // 'cart' | 'delivery' | 'payment' | 'processing' | 'confirmation'
+    let paymentMethod = null; // 'orange_money' | 'cod'
+    let transactionRef = null; // Référence simulée générée après paiement Orange Money
     let deliveryInfo = {
         name: '',
         phone: '',
@@ -153,22 +155,91 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
             if (cartTotalPrice) cartTotalPrice.textContent = formatPrice(getSubtotal());
-            if (cartValidateButton) cartValidateButton.textContent = 'Commander via WhatsApp';
+            if (cartValidateButton) cartValidateButton.textContent = 'Choisir le paiement';
             return;
         }
 
-        // ÉTAPE 3 : Confirmation de commande
+        // ÉTAPE 3 : Choix du mode de paiement
+        if (currentStep === 'payment') {
+            cartBody.innerHTML = `
+                <div class="payment-step">
+                    <h4 style="margin-bottom: 1rem; font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--burnt-earth);">Mode de paiement</h4>
+                    <div class="payment-options">
+                        <button type="button" class="payment-option" data-payment="orange_money">
+                            <span class="payment-option__badge" style="background:#FF6600;">OM</span>
+                            <span class="payment-option__label">
+                                <strong>Orange Money</strong>
+                                <small>Paiement mobile instantané</small>
+                            </span>
+                        </button>
+                        <button type="button" class="payment-option" data-payment="cod">
+                            <span class="payment-option__badge">💵</span>
+                            <span class="payment-option__label">
+                                <strong>Paiement à la livraison</strong>
+                                <small>Espèces à la réception</small>
+                            </span>
+                        </button>
+                    </div>
+                    <button type="button" class="button button-light" id="back-to-delivery" style="margin-top: 1rem; width: 100%; padding: 0.75rem;">Retour</button>
+                </div>
+            `;
+            if (cartTotalPrice) cartTotalPrice.textContent = formatPrice(getSubtotal());
+            if (cartValidateButton) cartValidateButton.style.display = 'none';
+            return;
+        }
+
+        // ÉTAPE 3bis : Simulation du paiement Orange Money
+        if (currentStep === 'orange_money_form') {
+            cartBody.innerHTML = `
+                <div class="om-simulation">
+                    <p class="om-disclaimer"><!-- SIMULATION — pas de vrai paiement, prototype de démonstration --> Ceci est une simulation à des fins de démonstration.</p>
+                    <h4 style="font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--burnt-earth);">Paiement Orange Money</h4>
+                    <p style="font-size: 0.9rem; margin: 0.5rem 0 1rem;">Montant à payer : <strong>${formatPrice(getSubtotal() + 2000)}</strong></p>
+                    <form class="cart-form" id="om-form">
+                        <label>
+                            Numéro Orange Money
+                            <input type="tel" name="omPhone" value="${deliveryInfo.phone}" placeholder="Ex: 628 06 94 79" required>
+                        </label>
+                    </form>
+                    <button type="button" class="button button-light" id="back-to-payment" style="margin-top: 0.75rem; width: 100%; padding: 0.75rem;">Retour</button>
+                </div>
+            `;
+            if (cartValidateButton) {
+                cartValidateButton.textContent = 'Confirmer le paiement';
+                cartValidateButton.style.display = 'block';
+            }
+            return;
+        }
+
+        // ÉTAPE 3ter : Chargement (simulation de traitement du paiement)
+        if (currentStep === 'processing') {
+            cartBody.innerHTML = `
+                <div class="om-processing">
+                    <div class="om-spinner" aria-hidden="true"></div>
+                    <p>Traitement du paiement en cours...</p>
+                </div>
+            `;
+            if (cartValidateButton) cartValidateButton.style.display = 'none';
+            return;
+        }
+
+        // ÉTAPE 4 : Confirmation de commande
         if (currentStep === 'confirmation') {
             const deliveryFee = 2000;
             const totalWithDelivery = getSubtotal() + deliveryFee;
+            const paymentLabel = paymentMethod === 'orange_money' ? 'Orange Money' : 'Paiement à la livraison';
 
             cartBody.innerHTML = `
                 <div class="cart-confirmation">
-                    <h4 style="font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--forest-green); margin-bottom: 0.5rem;">Commande envoyée !</h4>
-                    <p style="font-size: 0.9rem; margin-bottom: 1rem;">Votre commande a été générée et vous allez être redirigé vers WhatsApp pour finaliser l'envoi.</p>
+                    <h4 style="font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--forest-green); margin-bottom: 0.5rem;">
+                        ${paymentMethod === 'orange_money' ? 'Paiement confirmé ✅' : 'Commande envoyée !'}
+                    </h4>
+                    ${paymentMethod === 'orange_money' ? `<p style="font-size: 0.85rem; color: #4e4638;">Référence : <strong>${transactionRef}</strong></p>` : ''}
+                    <p style="font-size: 0.9rem; margin: 0.5rem 0 1rem;">Votre commande a été générée et vous allez être redirigé vers WhatsApp pour finaliser l'envoi.</p>
                     <p><strong>Client :</strong> ${deliveryInfo.name}</p>
                     <p><strong>Téléphone :</strong> ${deliveryInfo.phone}</p>
                     <p><strong>Adresse :</strong> ${deliveryInfo.address}</p>
+                    <p><strong>Paiement :</strong> ${paymentLabel}</p>
                     <div class="cart-summary" style="margin-top: 1rem;">
                         <div class="cart-summary__row"><span>Sous-total</span><strong>${formatPrice(getSubtotal())}</strong></div>
                         <div class="cart-summary__row"><span>Livraison</span><strong>${formatPrice(deliveryFee)}</strong></div>
@@ -235,6 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const subtotal = getSubtotal();
         const deliveryFee = 2000;
         const total = subtotal + deliveryFee;
+        const paymentLabel = paymentMethod === 'orange_money' ? `Orange Money (réf. ${transactionRef})` : 'Paiement à la livraison';
 
         // Génération de la liste des plats commandés
         const itemsList = cart
@@ -252,6 +324,7 @@ ${itemsList}
 *Sous-total* : ${formatPrice(subtotal)}
 *Frais de livraison* : ${formatPrice(deliveryFee)}
 *Total à payer* : ${formatPrice(total)}
+*Paiement* : ${paymentLabel}
 
 ----------------------------------------
 *Informations de livraison* :
@@ -269,10 +342,6 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
 
         // Redirige ou ouvre la discussion WhatsApp dans une nouvelle fenêtre
         window.open(whatsAppUrl, '_blank');
-
-        // Passage à l'état de confirmation
-        currentStep = 'confirmation';
-        renderCart();
     };
 
     // Gérer l'étape suivante dans le processus de commande
@@ -297,7 +366,25 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
             const data = new FormData(form);
             deliveryInfo = Object.fromEntries(data.entries());
 
-            sendWhatsAppOrder();
+            currentStep = 'payment';
+            renderCart();
+            return;
+        }
+
+        if (currentStep === 'orange_money_form') {
+            const form = document.getElementById('om-form');
+            if (!form || !form.reportValidity()) return;
+
+            // SIMULATION — pas de vrai paiement, prototype de démonstration
+            currentStep = 'processing';
+            renderCart();
+
+            setTimeout(() => {
+                transactionRef = `OM-${Math.floor(100000 + Math.random() * 900000)}`;
+                currentStep = 'confirmation';
+                renderCart();
+                sendWhatsAppOrder();
+            }, 1800);
         }
     };
 
@@ -305,6 +392,8 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
     const restartOrder = () => {
         cart = [];
         currentStep = 'cart';
+        paymentMethod = null;
+        transactionRef = null;
         deliveryInfo = { name: '', phone: '', address: '', note: '' };
         renderCart();
         closeCart();
@@ -379,6 +468,34 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
             return;
         }
 
+        if (target.id === 'back-to-delivery') {
+            currentStep = 'delivery';
+            renderCart();
+            return;
+        }
+
+        if (target.id === 'back-to-payment') {
+            currentStep = 'payment';
+            renderCart();
+            return;
+        }
+
+        if (target.closest('[data-payment]')) {
+            const choice = target.closest('[data-payment]').dataset.payment;
+            paymentMethod = choice;
+
+            if (choice === 'orange_money') {
+                currentStep = 'orange_money_form';
+                renderCart();
+            } else {
+                // Paiement à la livraison : pas de simulation nécessaire, on confirme directement
+                currentStep = 'confirmation';
+                renderCart();
+                sendWhatsAppOrder();
+            }
+            return;
+        }
+
         if (target.id === 'restart-order') {
             restartOrder();
         }
@@ -386,7 +503,7 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
 
     // Gestion de la soumission du formulaire de livraison
     cartBody?.addEventListener('submit', (event) => {
-        if (event.target instanceof HTMLFormElement && event.target.id === 'delivery-form') {
+        if (event.target instanceof HTMLFormElement && (event.target.id === 'delivery-form' || event.target.id === 'om-form')) {
             event.preventDefault();
             validateOrder();
         }
