@@ -677,6 +677,34 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
         validateOrder();
     });
 
+    // Gestion de l'accordéon FAQ
+    const faqTriggers = document.querySelectorAll('.faq-trigger');
+    faqTriggers.forEach((trigger) => {
+        trigger.addEventListener('click', () => {
+            const isExpanded = trigger.getAttribute('aria-expanded') === 'true';
+            const answerId = trigger.getAttribute('aria-controls');
+            const answerEl = document.getElementById(answerId);
+
+            // Fermer les autres accordéons (optionnel, pour un effet de focus soigné)
+            faqTriggers.forEach((otherTrigger) => {
+                if (otherTrigger !== trigger) {
+                    otherTrigger.setAttribute('aria-expanded', 'false');
+                    const otherAnswerId = otherTrigger.getAttribute('aria-controls');
+                    const otherAnswerEl = document.getElementById(otherAnswerId);
+                    if (otherAnswerEl) {
+                        otherAnswerEl.setAttribute('aria-hidden', 'true');
+                    }
+                }
+            });
+
+            // Basculer l'état actuel
+            trigger.setAttribute('aria-expanded', !isExpanded ? 'true' : 'false');
+            if (answerEl) {
+                answerEl.setAttribute('aria-hidden', isExpanded ? 'true' : 'false');
+            }
+        });
+    });
+
     // Premier rendu du panier au chargement
     renderCart();
 });
