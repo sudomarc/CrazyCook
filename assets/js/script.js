@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileCartCountBadge = document.getElementById('mobile-cart-count');
     const stickyMobileCta = document.getElementById('sticky-mobile-cta');
     const themeToggle = document.getElementById('theme-toggle');
+    const footerCartToggle = document.getElementById('footer-cart-toggle');
     const reorderBanner = document.getElementById('reorder-banner');
     const reorderSummary = document.getElementById('reorder-summary');
     const reorderButton = document.getElementById('reorder-button');
@@ -583,6 +584,17 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
 
     // Clics sur l'icône de panier de la barre collante mobile
     mobileCartToggle?.addEventListener('click', () => {
+        const isOpen = cartDrawer?.classList.contains('is-open');
+        if (isOpen) {
+            closeCart();
+        } else {
+            openCart();
+        }
+    });
+
+    // Clics sur le lien panier du footer
+    footerCartToggle?.addEventListener('click', (e) => {
+        e.preventDefault();
         const isOpen = cartDrawer?.classList.contains('is-open');
         if (isOpen) {
             closeCart();
