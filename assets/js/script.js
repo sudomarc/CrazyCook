@@ -102,14 +102,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /* ---------- Image skeleton helper (appelé depuis l'attribut onload/onerror des images) ---------- */
+    // Image de remplacement minimaliste et sans texte utilisant la palette chaude --cream (#F5F0E8) et --ochre (#C8832A)
     const FALLBACK_IMAGE = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
         <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
-            <rect width="1200" height="900" fill="#f7e8ca"/>
-            <rect x="60" y="60" width="1080" height="780" rx="30" fill="#fffdf8" stroke="#c8832a" stroke-width="6"/>
-            <circle cx="320" cy="360" r="120" fill="#c8832a" opacity="0.16"/>
-            <path d="M0 760 C220 690 420 670 600 720 C780 770 980 790 1200 740 L1200 900 L0 900 Z" fill="#8b4513" opacity="0.2"/>
-            <text x="600" y="420" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-size="42" fill="#8b4513">CrazyCook</text>
-            <text x="600" y="485" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="24" fill="#6b2f0b">Image indisponible</text>
+            <rect width="1200" height="900" fill="#F5F0E8"/>
+            <rect x="40" y="40" width="1120" height="820" rx="16" fill="none" stroke="#C8832A" stroke-width="3" stroke-dasharray="10 10" opacity="0.25"/>
+            <circle cx="600" cy="450" r="80" fill="#C8832A" opacity="0.12"/>
+            <path d="M580 450 H620 M600 430 V470" stroke="#C8832A" stroke-width="3" stroke-linecap="round" opacity="0.3"/>
         </svg>
     `);
 
