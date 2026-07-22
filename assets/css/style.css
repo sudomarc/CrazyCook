@@ -1360,6 +1360,25 @@ ul {
     color: #AFA28D;
 }
 
+/* Fix: textes gris codés en dur (pas de variable) — invisibles/peu lisibles en mode sombre.
+   On les repasse en blanc cassé plutôt que gris pour garder un bon contraste. */
+[data-theme="dark"] .histoire-content p:not(.histoire-lead):not(.eyebrow),
+[data-theme="dark"] .section-intro p:last-child,
+[data-theme="dark"] .dish-desc,
+[data-theme="dark"] .contact-info p,
+[data-theme="dark"] .om-processing {
+    color: rgba(245, 240, 232, 0.82);
+}
+
+[data-theme="dark"] .payment-option__label small {
+    color: rgba(245, 240, 232, 0.65);
+}
+
+[data-theme="dark"] .om-disclaimer {
+    color: rgba(245, 240, 232, 0.7);
+    background: rgba(255, 255, 255, 0.06);
+}
+
 /* Badge d'avis (social proof) à côté du titre du menu */
 .menu-intro-row {
     display: flex;
