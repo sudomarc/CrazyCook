@@ -9,7 +9,7 @@
 
 CrazyCook Restaurant Template est une base de site web conçue pour les restaurants. Partant du projet original CrazyCook (site de recettes), cette branche le transforme en un template complet et adaptable pour tout établissement de restauration.
 
-Le template inclut un système de commande en ligne intégré, une galerie, un menu interactif et une interface mobile-first.
+Le template inclut un système de commande en ligne intégré, une galerie, un menu interactif et une interface mobile-first, sous la forme d'un site à page unique (Single Page Website) moderne.
 
 ---
 
@@ -28,9 +28,7 @@ Le template inclut un système de commande en ligne intégré, une galerie, un m
 
 ```
 CrazyCook/
-├── index.html              # Page d'accueil
-├── pages/
-│   └── contact.html        # Page de contact
+├── index.html              # Page unique du site (Accueil, Menu, Galerie, Commande, Contact)
 ├── assets/
 │   ├── css/
 │   │   └── style.css       # Styles globaux
