@@ -115,6 +115,37 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }, 3500);
                 obs.unobserve(imgEl);
+    // Image de remplacement minimaliste et sans texte utilisant la palette chaude --cream (#F5F0E8) et --ochre (#C8832A)
+    const FALLBACK_IMAGE = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+        <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+            <rect width="1200" height="900" fill="#F5F0E8"/>
+            <rect x="40" y="40" width="1120" height="820" rx="16" fill="none" stroke="#C8832A" stroke-width="3" stroke-dasharray="10 10" opacity="0.25"/>
+            <circle cx="600" cy="450" r="80" fill="#C8832A" opacity="0.12"/>
+            <path d="M580 450 H620 M600 430 V470" stroke="#C8832A" stroke-width="3" stroke-linecap="round" opacity="0.3"/>
+        </svg>
+    `);
+
+    const revealImage = (imgEl) => {
+        try {
+            imgEl.classList.add('loaded');
+            const skeleton = imgEl.previousElementSibling;
+            if (skeleton && skeleton.classList.contains('img-skeleton')) {
+                skeleton.style.transition = 'opacity 360ms ease';
+                skeleton.style.opacity = '0';
+                setTimeout(() => skeleton.remove(), 420);
+            }
+        } catch (e) { /* ne bloque pas l'application */ }
+    };
+
+    window.imageLoaded = function(imgEl) {
+        revealImage(imgEl);
+    };
+
+    window.imageFailed = function(imgEl) {
+        try {
+            if (imgEl && imgEl.dataset.fallbackApplied !== 'true') {
+                imgEl.dataset.fallbackApplied = 'true';
+                imgEl.src = FALLBACK_IMAGE;
             }
         });
     }, { rootMargin: '200px 0px' });
@@ -652,6 +683,34 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
             return;
         }
         validateOrder();
+    });
+
+    // Gestion de l'accordéon FAQ
+    const faqTriggers = document.querySelectorAll('.faq-trigger');
+    faqTriggers.forEach((trigger) => {
+        trigger.addEventListener('click', () => {
+            const isExpanded = trigger.getAttribute('aria-expanded') === 'true';
+            const answerId = trigger.getAttribute('aria-controls');
+            const answerEl = document.getElementById(answerId);
+
+            // Fermer les autres accordéons (optionnel, pour un effet de focus soigné)
+            faqTriggers.forEach((otherTrigger) => {
+                if (otherTrigger !== trigger) {
+                    otherTrigger.setAttribute('aria-expanded', 'false');
+                    const otherAnswerId = otherTrigger.getAttribute('aria-controls');
+                    const otherAnswerEl = document.getElementById(otherAnswerId);
+                    if (otherAnswerEl) {
+                        otherAnswerEl.setAttribute('aria-hidden', 'true');
+                    }
+                }
+            });
+
+            // Basculer l'état actuel
+            trigger.setAttribute('aria-expanded', !isExpanded ? 'true' : 'false');
+            if (answerEl) {
+                answerEl.setAttribute('aria-hidden', isExpanded ? 'true' : 'false');
+            }
+        });
     });
 
     // Premier rendu du panier au chargement
