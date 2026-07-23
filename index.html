@@ -10,6 +10,50 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
+    <script>
+        // Définition immédiate des handlers d'images pour éviter toute condition de course (race condition)
+        // si les images se chargent avant le chargement complet de script.js
+        (function() {
+            const FALLBACK_IMAGE = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+                    <rect width="1200" height="900" fill="#F5F0E8"/>
+                    <rect x="40" y="40" width="1120" height="820" rx="16" fill="none" stroke="#C8832A" stroke-width="3" stroke-dasharray="10 10" opacity="0.25"/>
+                    <circle cx="600" cy="450" r="80" fill="#C8832A" opacity="0.12"/>
+                    <path d="M580 450 H620 M600 430 V470" stroke="#C8832A" stroke-width="3" stroke-linecap="round" opacity="0.3"/>
+                </svg>
+            `);
+
+            const revealImage = function(imgEl) {
+                try {
+                    imgEl.classList.add('loaded');
+                    const skeleton = imgEl.previousElementSibling;
+                    if (skeleton && skeleton.classList.contains('img-skeleton')) {
+                        skeleton.style.transition = 'opacity 360ms ease';
+                        skeleton.style.opacity = '0';
+                        setTimeout(function() {
+                            if (skeleton.parentNode) {
+                                skeleton.remove();
+                            }
+                        }, 420);
+                    }
+                } catch (e) { /* ne bloque pas l'application */ }
+            };
+
+            window.imageLoaded = function(imgEl) {
+                revealImage(imgEl);
+            };
+
+            window.imageFailed = function(imgEl) {
+                try {
+                    if (imgEl && imgEl.dataset.fallbackApplied !== 'true') {
+                        imgEl.dataset.fallbackApplied = 'true';
+                        imgEl.src = FALLBACK_IMAGE;
+                    }
+                    revealImage(imgEl);
+                } catch (e) { /* ne bloque pas l'application */ }
+            };
+        })();
+    </script>
 </head>
 <body>
     <!-- Header / Navigation -->
@@ -91,7 +135,7 @@
                     <figure class="gallery-item">
                         <div class="media-wrap">
                             <span class="img-skeleton" aria-hidden="true"></span>
-                            <img class="skeleton-img" onload="imageLoaded(this)" onerror="imageFailed(this)" src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=800&h=1000&q=60" loading="lazy" alt="Le chef de CrazyCook en pleine préparation culinaire au feu de bois">
+                            <img class="skeleton-img" onload="imageLoaded(this)" onerror="imageFailed(this)" src="assets/img/chef-preparation.jpg" loading="lazy" alt="Le chef de CrazyCook en pleine préparation culinaire au feu de bois">
                         </div>
                         <figcaption>L'art du feu de bois</figcaption>
                     </figure>
@@ -245,28 +289,28 @@
                 <figure class="gallery-item large reveal">
                     <div class="media-wrap">
                         <span class="img-skeleton" aria-hidden="true"></span>
-                        <img class="skeleton-img" onload="imageLoaded(this)" onerror="imageFailed(this)" src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1200&h=900&q=60" loading="lazy" alt="Ambiance du restaurant">
+                        <img class="skeleton-img" onload="imageLoaded(this)" onerror="imageFailed(this)" src="assets/img/gallery-ambiance.jpg" loading="lazy" alt="Ambiance du restaurant">
                     </div>
                     <figcaption>Ambiance de soirée</figcaption>
                 </figure>
                 <figure class="gallery-item reveal">
                     <div class="media-wrap">
                         <span class="img-skeleton" aria-hidden="true"></span>
-                        <img class="skeleton-img" onload="imageLoaded(this)" onerror="imageFailed(this)" src="https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?auto=format&fit=crop&w=700&h=700&q=60" loading="lazy" alt="Assiette préparée">
+                        <img class="skeleton-img" onload="imageLoaded(this)" onerror="imageFailed(this)" src="assets/img/gallery-plate.jpg" loading="lazy" alt="Assiette préparée">
                     </div>
                     <figcaption>Assiette du chef</figcaption>
                 </figure>
                 <figure class="gallery-item tall reveal">
                     <div class="media-wrap">
                         <span class="img-skeleton" aria-hidden="true"></span>
-                        <img class="skeleton-img" onload="imageLoaded(this)" onerror="imageFailed(this)" src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fit=crop&w=700&h=1000&q=60" loading="lazy" alt="Cuisine en action">
+                        <img class="skeleton-img" onload="imageLoaded(this)" onerror="imageFailed(this)" src="assets/img/gallery-kitchen.jpg" loading="lazy" alt="Cuisine en action">
                     </div>
                     <figcaption>Service en cuisine</figcaption>
                 </figure>
                 <figure class="gallery-item reveal">
                     <div class="media-wrap">
                         <span class="img-skeleton" aria-hidden="true"></span>
-                        <img class="skeleton-img" onload="imageLoaded(this)" onerror="imageFailed(this)" src="https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=700&h=700&q=60" loading="lazy" alt="Service en salle">
+                        <img class="skeleton-img" onload="imageLoaded(this)" onerror="imageFailed(this)" src="assets/img/gallery-service.jpg" loading="lazy" alt="Service en salle">
                     </div>
                     <figcaption>Maison de saison</figcaption>
                 </figure>

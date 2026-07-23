@@ -102,49 +102,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /* ---------- Image skeleton helper (appelé depuis l'attribut onload/onerror des images) ---------- */
-    const FALLBACK_IMAGE = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-        <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
-            <rect width="1200" height="900" fill="#f7e8ca"/>
-            <rect x="60" y="60" width="1080" height="780" rx="30" fill="#fffdf8" stroke="#c8832a" stroke-width="6"/>
-            <circle cx="320" cy="360" r="120" fill="#c8832a" opacity="0.16"/>
-            <path d="M0 760 C220 690 420 670 600 720 C780 770 980 790 1200 740 L1200 900 L0 900 Z" fill="#8b4513" opacity="0.2"/>
-            <text x="600" y="420" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-size="42" fill="#8b4513">CrazyCook</text>
-            <text x="600" y="485" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="24" fill="#6b2f0b">Image indisponible</text>
-        </svg>
-    `);
-
-    const revealImage = (imgEl) => {
-        try {
-            imgEl.classList.add('loaded');
-            const skeleton = imgEl.previousElementSibling;
-            if (skeleton && skeleton.classList.contains('img-skeleton')) {
-                skeleton.style.transition = 'opacity 360ms ease';
-                skeleton.style.opacity = '0';
-                setTimeout(() => skeleton.remove(), 420);
+    // Note : imageLoaded et imageFailed sont définis de manière globale et en ligne dans index.html
+    // pour éviter toute condition de course (race condition) avec le chargement des images.
+    // Utilisation d'un IntersectionObserver pour ne lancer le timeout de sécurité que lorsque l'image commence à s'approcher de la zone visible (lazy loading).
+    const imageFallbackObserver = new IntersectionObserver((entries, obs) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                const imgEl = entry.target;
+                setTimeout(() => {
+                    if (!imgEl.classList.contains('loaded') && typeof window.imageFailed === 'function') {
+                        window.imageFailed(imgEl);
+                    }
+                }, 3500);
+                obs.unobserve(imgEl);
             }
-        } catch (e) { /* ne bloque pas l'application */ }
-    };
-
-    window.imageLoaded = function(imgEl) {
-        revealImage(imgEl);
-    };
-
-    window.imageFailed = function(imgEl) {
-        try {
-            if (imgEl && imgEl.dataset.fallbackApplied !== 'true') {
-                imgEl.dataset.fallbackApplied = 'true';
-                imgEl.src = FALLBACK_IMAGE;
-            }
-            revealImage(imgEl);
-        } catch (e) { /* ne bloque pas l'application */ }
-    };
+        });
+    }, { rootMargin: '200px 0px' });
 
     document.querySelectorAll('.skeleton-img').forEach((imgEl) => {
-        setTimeout(() => {
-            if (!imgEl.classList.contains('loaded')) {
-                window.imageFailed(imgEl);
-            }
-        }, 3500);
+        imageFallbackObserver.observe(imgEl);
     });
 
     /* ---------- Micro-feedback +1 lors de l'ajout au panier ---------- */
