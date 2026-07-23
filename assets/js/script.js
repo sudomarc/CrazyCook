@@ -102,6 +102,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /* ---------- Image skeleton helper (appelé depuis l'attribut onload/onerror des images) ---------- */
+    // Note : imageLoaded et imageFailed sont définis de manière globale et en ligne dans index.html
+    // pour éviter toute condition de course (race condition) avec le chargement des images.
+    // Utilisation d'un IntersectionObserver pour ne lancer le timeout de sécurité que lorsque l'image commence à s'approcher de la zone visible (lazy loading).
+    const imageFallbackObserver = new IntersectionObserver((entries, obs) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                const imgEl = entry.target;
+                setTimeout(() => {
+                    if (!imgEl.classList.contains('loaded') && typeof window.imageFailed === 'function') {
+                        window.imageFailed(imgEl);
+                    }
+                }, 3500);
+                obs.unobserve(imgEl);
     // Image de remplacement minimaliste et sans texte utilisant la palette chaude --cream (#F5F0E8) et --ochre (#C8832A)
     const FALLBACK_IMAGE = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
         <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
@@ -134,16 +147,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 imgEl.dataset.fallbackApplied = 'true';
                 imgEl.src = FALLBACK_IMAGE;
             }
-            revealImage(imgEl);
-        } catch (e) { /* ne bloque pas l'application */ }
-    };
+        });
+    }, { rootMargin: '200px 0px' });
 
     document.querySelectorAll('.skeleton-img').forEach((imgEl) => {
-        setTimeout(() => {
-            if (!imgEl.classList.contains('loaded')) {
-                window.imageFailed(imgEl);
-            }
-        }, 3500);
+        imageFallbackObserver.observe(imgEl);
     });
 
     /* ---------- Micro-feedback +1 lors de l'ajout au panier ---------- */
