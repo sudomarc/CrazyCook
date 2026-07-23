@@ -1,0 +1,719 @@
+   1 |   0 | /**
+   2 |   0 |  * CrazyCook — Système de commande interactif & Panier
+   3 |   0 |  * Développeur : Jules (Senior Front-End)
+   4 |   0 |  * Localisation : Conakry, Guinée (Prix en GNF, Téléphone +224)
+   5 |   0 |  */
+   6 |   0 |
+   7 |   1 | document.addEventListener('DOMContentLoaded', () => {
+   8 |   1 |     // Éléments du DOM
+   9 |   1 |     const header = document.querySelector('.site-header');
+  10 |   1 |     const revealItems = document.querySelectorAll('.reveal');
+  11 |   1 |     const cartToggle = document.getElementById('header-cart-toggle');
+  12 |   1 |     const cartDrawer = document.getElementById('cart-drawer');
+  13 |   1 |     const cartOverlay = document.getElementById('cart-overlay');
+  14 |   1 |     const drawerClose = document.getElementById('drawer-close');
+  15 |   1 |     const cartValidateButton = document.getElementById('cart-validate');
+  16 |   1 |     const cartBody = document.getElementById('cart-drawer-body');
+  17 |   1 |     const cartTotalPrice = document.getElementById('cart-total-price');
+  18 |   1 |     const cartCountBadge = document.getElementById('header-cart-count');
+  19 |   1 |     const mobileCartToggle = document.getElementById('mobile-cart-toggle');
+  20 |   1 |     const mobileCartCountBadge = document.getElementById('mobile-cart-count');
+  21 |   1 |     const stickyMobileCta = document.getElementById('sticky-mobile-cta');
+  22 |   1 |     const themeToggle = document.getElementById('theme-toggle');
+  23 |   1 |     const footerCartToggle = document.getElementById('footer-cart-toggle');
+  24 |   1 |     const reorderBanner = document.getElementById('reorder-banner');
+  25 |   1 |     const reorderSummary = document.getElementById('reorder-summary');
+  26 |   1 |     const reorderButton = document.getElementById('reorder-button');
+  27 |   1 |     const reorderDismiss = document.getElementById('reorder-dismiss');
+  28 |   1 |
+  29 |   1 |     // Gestion de l'état simple (Panier & Étape de commande)
+  30 |   1 |     let cart = [];
+  31 |   1 |     let currentStep = 'cart'; // 'cart' | 'delivery' | 'payment' | 'processing' | 'confirmation'
+  32 |   1 |     let paymentMethod = null; // 'orange_money' | 'cod'
+  33 |   1 |     let transactionRef = null; // Référence simulée générée après paiement Orange Money
+  34 |   2 |     let deliveryInfo = {
+  35 |   2 |         name: '',
+  36 |   2 |         phone: '',
+  37 |   2 |         address: '',
+  38 |   2 |         note: ''
+  39 |   1 |     };
+  40 |   1 |
+  41 |   1 |     // Gestion du défilement pour l'effet de transparence du header et la barre de CTA mobile
+  42 |   2 |     const toggleHeader = () => {
+  43 |   3 |         if (header) {
+  44 |   3 |             header.classList.toggle('scrolled', window.scrollY > 24);
+  45 |   2 |         }
+  46 |   2 |
+  47 |   2 |         // Affichage de la barre mobile collante après avoir scrollé au-delà du hero section (min-height de 100vh)
+  48 |   3 |         if (stickyMobileCta) {
+  49 |   3 |             const heroHeight = document.querySelector('.hero')?.offsetHeight || window.innerHeight;
+  50 |   3 |             stickyMobileCta.classList.toggle('is-visible', window.scrollY > heroHeight - 100);
+  51 |   2 |         }
+  52 |   1 |     };
+  53 |   1 |
+  54 |   1 |     // Formatage des prix en GNF (ex: 16 000 GNF)
+  55 |   1 |     const formatPrice = (value) => `${value.toLocaleString('fr-FR')} GNF`;
+  56 |   1 |
+  57 |   1 |     // Calcul du sous-total du panier
+  58 |   1 |     const getSubtotal = () => cart.reduce((total, item) => total + item.quantity * item.price, 0);
+  59 |   1 |
+  60 |   1 |     // Déclenchement de l'animation CSS (bump/pulse) sur le badge du panier
+  61 |   2 |     const bumpBadge = () => {
+  62 |   3 |         if (cartCountBadge) {
+  63 |   3 |             cartCountBadge.classList.remove('bump');
+  64 |   3 |             // Force un reflow pour relancer l'animation CSS
+  65 |   3 |             void cartCountBadge.offsetWidth;
+  66 |   3 |             cartCountBadge.classList.add('bump');
+  67 |   2 |         }
+  68 |   3 |         if (mobileCartCountBadge) {
+  69 |   3 |             mobileCartCountBadge.classList.remove('bump');
+  70 |   3 |             // Force un reflow pour relancer l'animation CSS
+  71 |   3 |             void mobileCartCountBadge.offsetWidth;
+  72 |   3 |             mobileCartCountBadge.classList.add('bump');
+  73 |   2 |         }
+  74 |   1 |     };
+  75 |   1 |
+  76 |   1 |     /* ---------- THEMES: gestion du thème sombre (persist + respect prefers-color-scheme) ---------- */
+  77 |   1 |     const THEME_KEY = 'crazycook:theme';
+  78 |   2 |     const applyTheme = (theme) => {
+  79 |   3 |         if (theme === 'dark') {
+  80 |   3 |             document.documentElement.setAttribute('data-theme', 'dark');
+  81 |   3 |             themeToggle?.setAttribute('aria-pressed', 'true');
+  82 |   3 |         } else {
+  83 |   3 |             document.documentElement.removeAttribute('data-theme');
+  84 |   3 |             themeToggle?.setAttribute('aria-pressed', 'false');
+  85 |   2 |         }
+  86 |   2 |         try { localStorage.setItem(THEME_KEY, theme); } catch (e) { /* ignore */ }
+  87 |   1 |     };
+  88 |   1 |
+  89 |   1 |     // Initial theme au chargement
+  90 |   2 |     (function initTheme() {
+  91 |   3 |         try {
+  92 |   3 |             const saved = localStorage.getItem(THEME_KEY);
+  93 |   3 |             if (saved) { applyTheme(saved); return; }
+  94 |   2 |         } catch (e) {}
+  95 |   2 |         const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  96 |   2 |         applyTheme(prefersDark ? 'dark' : 'light');
+  97 |   1 |     }());
+  98 |   1 |
+  99 |   2 |     themeToggle?.addEventListener('click', () => {
+ 100 |   2 |         const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+ 101 |   2 |         applyTheme(isDark ? 'light' : 'dark');
+ 102 |   1 |     });
+ 103 |   1 |
+ 104 |   1 |     /* ---------- Image skeleton helper (appelé depuis l'attribut onload/onerror des images) ---------- */
+ 105 |   1 |     // Note : imageLoaded et imageFailed sont définis de manière globale et en ligne dans index.html
+ 106 |   1 |     // pour éviter toute condition de course (race condition) avec le chargement des images.
+ 107 |   1 |     // Utilisation d'un IntersectionObserver pour ne lancer le timeout de sécurité que lorsque l'image commence à s'approcher de la zone visible (lazy loading).
+ 108 |   2 |     const imageFallbackObserver = new IntersectionObserver((entries, obs) => {
+ 109 |   3 |         entries.forEach((entry) => {
+ 110 |   4 |             if (entry.isIntersecting) {
+ 111 |   4 |                 const imgEl = entry.target;
+ 112 |   5 |                 setTimeout(() => {
+ 113 |   6 |                     if (!imgEl.classList.contains('loaded') && typeof window.imageFailed === 'function') {
+ 114 |   6 |                         window.imageFailed(imgEl);
+ 115 |   5 |                     }
+ 116 |   4 |                 }, 3500);
+ 117 |   4 |                 obs.unobserve(imgEl);
+ 118 |   4 |     // Image de remplacement minimaliste et sans texte utilisant la palette chaude --cream (#F5F0E8) et --ochre (#C8832A)
+ 119 |   4 |     const FALLBACK_IMAGE = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+ 120 |   4 |         <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+ 121 |   4 |             <rect width="1200" height="900" fill="#F5F0E8"/>
+ 122 |   4 |             <rect x="40" y="40" width="1120" height="820" rx="16" fill="none" stroke="#C8832A" stroke-width="3" stroke-dasharray="10 10" opacity="0.25"/>
+ 123 |   4 |             <circle cx="600" cy="450" r="80" fill="#C8832A" opacity="0.12"/>
+ 124 |   4 |             <path d="M580 450 H620 M600 430 V470" stroke="#C8832A" stroke-width="3" stroke-linecap="round" opacity="0.3"/>
+ 125 |   4 |         </svg>
+ 126 |   4 |     `);
+ 127 |   4 |
+ 128 |   5 |     const revealImage = (imgEl) => {
+ 129 |   6 |         try {
+ 130 |   6 |             imgEl.classList.add('loaded');
+ 131 |   6 |             const skeleton = imgEl.previousElementSibling;
+ 132 |   7 |             if (skeleton && skeleton.classList.contains('img-skeleton')) {
+ 133 |   7 |                 skeleton.style.transition = 'opacity 360ms ease';
+ 134 |   7 |                 skeleton.style.opacity = '0';
+ 135 |   7 |                 setTimeout(() => skeleton.remove(), 420);
+ 136 |   6 |             }
+ 137 |   5 |         } catch (e) { /* ne bloque pas l'application */ }
+ 138 |   4 |     };
+ 139 |   4 |
+ 140 |   5 |     window.imageLoaded = function(imgEl) {
+ 141 |   5 |         revealImage(imgEl);
+ 142 |   4 |     };
+ 143 |   4 |
+ 144 |   5 |     window.imageFailed = function(imgEl) {
+ 145 |   6 |         try {
+ 146 |   7 |             if (imgEl && imgEl.dataset.fallbackApplied !== 'true') {
+ 147 |   7 |                 imgEl.dataset.fallbackApplied = 'true';
+ 148 |   7 |                 imgEl.src = FALLBACK_IMAGE;
+ 149 |   6 |             }
+ 150 |   5 |         });
+ 151 |   4 |     }, { rootMargin: '200px 0px' });
+ 152 |   4 |
+ 153 |   5 |     document.querySelectorAll('.skeleton-img').forEach((imgEl) => {
+ 154 |   5 |         imageFallbackObserver.observe(imgEl);
+ 155 |   4 |     });
+ 156 |   4 |
+ 157 |   4 |     /* ---------- Micro-feedback +1 lors de l'ajout au panier ---------- */
+ 158 |   5 |     const showAddFeedback = (button) => {
+ 159 |   5 |         if (!(button instanceof HTMLElement)) return;
+ 160 |   5 |         const rect = button.getBoundingClientRect();
+ 161 |   5 |         const el = document.createElement('span');
+ 162 |   5 |         el.className = 'add-feedback';
+ 163 |   5 |         el.textContent = '+1';
+ 164 |   5 |         // Positionnement fixe pour éviter overflow/positioning complexe
+ 165 |   5 |         el.style.left = `${rect.left + rect.width / 2}px`;
+ 166 |   5 |         el.style.top = `${rect.top - 6}px`;
+ 167 |   5 |         el.style.transform = 'translate(-50%, 0)';
+ 168 |   5 |         el.style.position = 'fixed';
+ 169 |   5 |         document.body.appendChild(el);
+ 170 |   5 |         // Vibrate si supporté
+ 171 |   5 |         try { if (navigator.vibrate) navigator.vibrate(15); } catch (e) {}
+ 172 |   5 |         // Retirer après animation
+ 173 |   5 |         setTimeout(() => { el.remove(); }, 700);
+ 174 |   4 |     };
+ 175 |   4 |
+ 176 |   4 |     // Rendu dynamique du tiroir panier selon l'étape actuelle
+ 177 |   5 |     const renderCart = () => {
+ 178 |   5 |         if (!cartBody) return;
+ 179 |   5 |
+ 180 |   5 |         // Mise à jour du badge dans le header
+ 181 |   5 |         const itemCount = cart.reduce((total, item) => total + item.quantity, 0);
+ 182 |   6 |         if (cartCountBadge) {
+ 183 |   6 |             cartCountBadge.textContent = itemCount;
+ 184 |   5 |         }
+ 185 |   6 |         if (mobileCartCountBadge) {
+ 186 |   6 |             mobileCartCountBadge.textContent = itemCount;
+ 187 |   5 |         }
+ 188 |   5 |
+ 189 |   5 |         // Si le panier est vide
+ 190 |   6 |         if (cart.length === 0) {
+ 191 |   6 |             cartBody.innerHTML = '<p class="empty-state">Ajoutez un plat pour composer votre commande.</p>';
+ 192 |   6 |             if (cartTotalPrice) cartTotalPrice.textContent = '0 GNF';
+ 193 |   7 |             if (cartValidateButton) {
+ 194 |   7 |                 cartValidateButton.textContent = 'Valider ma commande';
+ 195 |   7 |                 cartValidateButton.style.display = 'none'; // Cacher le bouton si vide
+ 196 |   6 |             }
+ 197 |   6 |             return;
+ 198 |   5 |         }
+ 199 |   5 |
+ 200 |   5 |         // Afficher le bouton de validation s'il y a des articles
+ 201 |   6 |         if (cartValidateButton) {
+ 202 |   6 |             cartValidateButton.style.display = 'block';
+ 203 |   5 |         }
+ 204 |   5 |
+ 205 |   5 |         // ÉTAPE 1 : Affichage du panier classique
+ 206 |   6 |         if (currentStep === 'cart') {
+ 207 |   6 |             cartBody.innerHTML = `
+ 208 |   6 |                 <div class="cart-items">
+ 209 |   7 |                     ${cart.map((item) => `
+ 210 |   7 |                         <article class="cart-item-card">
+ 211 |   7 |                             <div class="cart-item-card__top">
+ 212 |   7 |                                 <div>
+ 213 |   7 |                                     <strong>${item.name}</strong>
+ 214 |   7 |                                     <p>${formatPrice(item.price)} / unité</p>
+ 215 |   7 |                                 </div>
+ 216 |   7 |                                 <button type="button" class="cart-remove" data-remove="${item.name}">Supprimer</button>
+ 217 |   7 |                             </div>
+ 218 |   7 |                             <div class="cart-item-card__meta">
+ 219 |   7 |                                 <div class="cart-stepper">
+ 220 |   7 |                                     <button type="button" data-change="-" data-name="${item.name}">−</button>
+ 221 |   7 |                                     <span>${item.quantity}</span>
+ 222 |   7 |                                     <button type="button" data-change="+" data-name="${item.name}">+</button>
+ 223 |   7 |                                 </div>
+ 224 |   7 |                                 <strong>${formatPrice(item.quantity * item.price)}</strong>
+ 225 |   7 |                             </div>
+ 226 |   7 |                         </article>
+ 227 |   6 |                     `).join('')}
+ 228 |   6 |                 </div>
+ 229 |   6 |             `;
+ 230 |   6 |             if (cartTotalPrice) cartTotalPrice.textContent = formatPrice(getSubtotal());
+ 231 |   6 |             if (cartValidateButton) cartValidateButton.textContent = 'Valider ma commande';
+ 232 |   6 |             return;
+ 233 |   5 |         }
+ 234 |   5 |
+ 235 |   5 |         // ÉTAPE 2 : Saisie des informations de livraison
+ 236 |   6 |         if (currentStep === 'delivery') {
+ 237 |   6 |             cartBody.innerHTML = `
+ 238 |   6 |                 <div class="cart-form-container">
+ 239 |   6 |                     <h4 style="margin-bottom: 1rem; font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--burnt-earth);">Informations de livraison</h4>
+ 240 |   6 |                     <form class="cart-form" id="delivery-form">
+ 241 |   6 |                         <label>
+ 242 |   6 |                             Nom complet
+ 243 |   6 |                             <input type="text" name="name" value="${deliveryInfo.name}" placeholder="Ex: Mamadou Diallo" required>
+ 244 |   6 |                         </label>
+ 245 |   6 |                         <label>
+ 246 |   6 |                             Numéro de téléphone
+ 247 |   6 |                             <input type="tel" name="phone" value="${deliveryInfo.phone}" placeholder="Ex: +224 628 06 94 79" required>
+ 248 |   6 |                         </label>
+ 249 |   6 |                         <label>
+ 250 |   6 |                             Adresse de livraison (ou lien Google Maps)
+ 251 |   6 |                             <input type="text" name="address" value="${deliveryInfo.address}" placeholder="Ex: Kaloum, Conakry" required>
+ 252 |   6 |                         </label>
+ 253 |   6 |                         <label>
+ 254 |   6 |                             Note spéciale pour le chef
+ 255 |   6 |                             <textarea name="note" placeholder="Ex: Épices douces, sans oignons...">${deliveryInfo.note}</textarea>
+ 256 |   6 |                         </label>
+ 257 |   6 |                         <div class="cart-actions" style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+ 258 |   6 |                             <button type="button" class="button button-light" id="back-to-cart" style="flex: 1; padding: 0.75rem;">Retour</button>
+ 259 |   6 |                         </div>
+ 260 |   6 |                     </form>
+ 261 |   6 |                 </div>
+ 262 |   6 |             `;
+ 263 |   6 |             if (cartTotalPrice) cartTotalPrice.textContent = formatPrice(getSubtotal());
+ 264 |   6 |             if (cartValidateButton) cartValidateButton.textContent = 'Choisir le paiement';
+ 265 |   6 |             return;
+ 266 |   5 |         }
+ 267 |   5 |
+ 268 |   5 |         // ÉTAPE 3 : Choix du mode de paiement
+ 269 |   6 |         if (currentStep === 'payment') {
+ 270 |   6 |             cartBody.innerHTML = `
+ 271 |   6 |                 <div class="payment-step">
+ 272 |   6 |                     <h4 style="margin-bottom: 1rem; font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--burnt-earth);">Mode de paiement</h4>
+ 273 |   6 |                     <div class="payment-options">
+ 274 |   6 |                         <button type="button" class="payment-option" data-payment="orange_money">
+ 275 |   6 |                             <span class="payment-option__badge" style="background:#FF6600;">OM</span>
+ 276 |   6 |                             <span class="payment-option__label">
+ 277 |   6 |                                 <strong>Orange Money</strong>
+ 278 |   6 |                                 <small>Paiement mobile instantané</small>
+ 279 |   6 |                             </span>
+ 280 |   6 |                         </button>
+ 281 |   6 |                         <button type="button" class="payment-option" data-payment="cod">
+ 282 |   6 |                             <span class="payment-option__badge">💵</span>
+ 283 |   6 |                             <span class="payment-option__label">
+ 284 |   6 |                                 <strong>Paiement à la livraison</strong>
+ 285 |   6 |                                 <small>Espèces à la réception</small>
+ 286 |   6 |                             </span>
+ 287 |   6 |                         </button>
+ 288 |   6 |                     </div>
+ 289 |   6 |                     <button type="button" class="button button-light" id="back-to-delivery" style="margin-top: 1rem; width: 100%; padding: 0.75rem;">Retour</button>
+ 290 |   6 |                 </div>
+ 291 |   6 |             `;
+ 292 |   6 |             if (cartTotalPrice) cartTotalPrice.textContent = formatPrice(getSubtotal());
+ 293 |   6 |             if (cartValidateButton) cartValidateButton.style.display = 'none';
+ 294 |   6 |             return;
+ 295 |   5 |         }
+ 296 |   5 |
+ 297 |   5 |         // ÉTAPE 3bis : Simulation du paiement Orange Money
+ 298 |   6 |         if (currentStep === 'orange_money_form') {
+ 299 |   6 |             cartBody.innerHTML = `
+ 300 |   6 |                 <div class="om-simulation">
+ 301 |   6 |                     <p class="om-disclaimer"><!-- SIMULATION — pas de vrai paiement, prototype de démonstration --> Ceci est une simulation à des fins de démonstration.</p>
+ 302 |   6 |                     <h4 style="font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--burnt-earth);">Paiement Orange Money</h4>
+ 303 |   6 |                     <p style="font-size: 0.9rem; margin: 0.5rem 0 1rem;">Montant à payer : <strong>${formatPrice(getSubtotal() + 2000)}</strong></p>
+ 304 |   6 |                     <form class="cart-form" id="om-form">
+ 305 |   6 |                         <label>
+ 306 |   6 |                             Numéro Orange Money
+ 307 |   6 |                             <input type="tel" name="omPhone" value="${deliveryInfo.phone}" placeholder="Ex: 628 06 94 79" required>
+ 308 |   6 |                         </label>
+ 309 |   6 |                     </form>
+ 310 |   6 |                     <button type="button" class="button button-light" id="back-to-payment" style="margin-top: 0.75rem; width: 100%; padding: 0.75rem;">Retour</button>
+ 311 |   6 |                 </div>
+ 312 |   6 |             `;
+ 313 |   7 |             if (cartValidateButton) {
+ 314 |   7 |                 cartValidateButton.textContent = 'Confirmer le paiement';
+ 315 |   7 |                 cartValidateButton.style.display = 'block';
+ 316 |   6 |             }
+ 317 |   6 |             return;
+ 318 |   5 |         }
+ 319 |   5 |
+ 320 |   5 |         // ÉTAPE 3ter : Chargement (simulation de traitement du paiement)
+ 321 |   6 |         if (currentStep === 'processing') {
+ 322 |   6 |             cartBody.innerHTML = `
+ 323 |   6 |                 <div class="om-processing">
+ 324 |   6 |                     <div class="om-spinner" aria-hidden="true"></div>
+ 325 |   6 |                     <p>Traitement du paiement en cours...</p>
+ 326 |   6 |                 </div>
+ 327 |   6 |             `;
+ 328 |   6 |             if (cartValidateButton) cartValidateButton.style.display = 'none';
+ 329 |   6 |             return;
+ 330 |   5 |         }
+ 331 |   5 |
+ 332 |   5 |         // ÉTAPE 4 : Confirmation de commande
+ 333 |   6 |         if (currentStep === 'confirmation') {
+ 334 |   6 |             const deliveryFee = 2000;
+ 335 |   6 |             const totalWithDelivery = getSubtotal() + deliveryFee;
+ 336 |   6 |             const paymentLabel = paymentMethod === 'orange_money' ? 'Orange Money' : 'Paiement à la livraison';
+ 337 |   6 |
+ 338 |   6 |             cartBody.innerHTML = `
+ 339 |   6 |                 <div class="cart-confirmation">
+ 340 |   6 |                     <h4 style="font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--forest-green); margin-bottom: 0.5rem;">
+ 341 |   6 |                         ${paymentMethod === 'orange_money' ? 'Paiement confirmé ✅' : 'Commande envoyée !'}
+ 342 |   6 |                     </h4>
+ 343 |   6 |                     ${paymentMethod === 'orange_money' ? `<p style="font-size: 0.85rem; color: #4e4638;">Référence : <strong>${transactionRef}</strong></p>` : ''}
+ 344 |   6 |                     <p style="font-size: 0.9rem; margin: 0.5rem 0 1rem;">Votre commande a été générée et vous allez être redirigé vers WhatsApp pour finaliser l'envoi.</p>
+ 345 |   6 |                     <p><strong>Client :</strong> ${deliveryInfo.name}</p>
+ 346 |   6 |                     <p><strong>Téléphone :</strong> ${deliveryInfo.phone}</p>
+ 347 |   6 |                     <p><strong>Adresse :</strong> ${deliveryInfo.address}</p>
+ 348 |   6 |                     <p><strong>Paiement :</strong> ${paymentLabel}</p>
+ 349 |   6 |                     <div class="cart-summary" style="margin-top: 1rem;">
+ 350 |   6 |                         <div class="cart-summary__row"><span>Sous-total</span><strong>${formatPrice(getSubtotal())}</strong></div>
+ 351 |   6 |                         <div class="cart-summary__row"><span>Livraison</span><strong>${formatPrice(deliveryFee)}</strong></div>
+ 352 |   6 |                         <div class="cart-summary__row"><span>Total</span><strong>${formatPrice(totalWithDelivery)}</strong></div>
+ 353 |   6 |                     </div>
+ 354 |   6 |                     <button type="button" class="button button-dark full" id="restart-order" style="margin-top: 1rem;">Nouvelle commande</button>
+ 355 |   6 |                 </div>
+ 356 |   6 |             `;
+ 357 |   6 |             if (cartTotalPrice) cartTotalPrice.textContent = formatPrice(totalWithDelivery);
+ 358 |   7 |             if (cartValidateButton) {
+ 359 |   7 |                 cartValidateButton.style.display = 'none'; // Cacher le bouton principal car on a le bouton 'restart-order'
+ 360 |   6 |             }
+ 361 |   5 |         }
+ 362 |   4 |     };
+ 363 |   4 |
+ 364 |   4 |     /* ---------- Stockage & bannière "Recommander ma dernière commande" ---------- */
+ 365 |   4 |     const LAST_ORDER_KEY = 'crazycook:lastOrder';
+ 366 |   5 |     const saveLastOrder = () => {
+ 367 |   6 |         try {
+ 368 |   7 |             const payload = {
+ 369 |   7 |                 items: cart.map(i => ({ name: i.name, price: i.price, quantity: i.quantity })),
+ 370 |   7 |                 savedAt: Date.now()
+ 371 |   6 |             };
+ 372 |   6 |             localStorage.setItem(LAST_ORDER_KEY, JSON.stringify(payload));
+ 373 |   5 |         } catch (e) { /* ignore */ }
+ 374 |   4 |     };
+ 375 |   4 |
+ 376 |   5 |     const readLastOrder = () => {
+ 377 |   6 |         try {
+ 378 |   6 |             const raw = localStorage.getItem(LAST_ORDER_KEY);
+ 379 |   6 |             if (!raw) return null;
+ 380 |   6 |             return JSON.parse(raw);
+ 381 |   5 |         } catch (e) { return null; }
+ 382 |   4 |     };
+ 383 |   4 |
+ 384 |   5 |     const showReorderIfNeeded = () => {
+ 385 |   5 |         if (!reorderBanner) return;
+ 386 |   5 |         // Ne pas réafficher si déjà fermé en session
+ 387 |   5 |         if (sessionStorage.getItem('crazycook:reorderDismissed')) return;
+ 388 |   5 |         const last = readLastOrder();
+ 389 |   5 |         if (!last || !last.items || !last.items.length) return;
+ 390 |   5 |         reorderBanner.hidden = false;
+ 391 |   5 |         // Résumé succinct
+ 392 |   5 |         reorderSummary.textContent = last.items.map(i => `${i.name} ×${i.quantity}`).join(' · ');
+ 393 |   4 |     };
+ 394 |   4 |
+ 395 |   4 |     // Recomposer le panier depuis la dernière commande
+ 396 |   5 |     reorderButton?.addEventListener('click', () => {
+ 397 |   5 |         const last = readLastOrder();
+ 398 |   5 |         if (!last) return;
+ 399 |   5 |         cart = last.items.map(i => ({ name: i.name, price: i.price, quantity: i.quantity }));
+ 400 |   5 |         bumpBadge();
+ 401 |   5 |         renderCart();
+ 402 |   5 |         // masquer la bannière pour cette session
+ 403 |   5 |         if (reorderBanner) reorderBanner.hidden = true;
+ 404 |   5 |         sessionStorage.setItem('crazycook:reorderDismissed', '1');
+ 405 |   4 |     });
+ 406 |   4 |
+ 407 |   5 |     reorderDismiss?.addEventListener('click', () => {
+ 408 |   5 |         if (reorderBanner) reorderBanner.hidden = true;
+ 409 |   5 |         sessionStorage.setItem('crazycook:reorderDismissed', '1');
+ 410 |   4 |     });
+ 411 |   4 |
+ 412 |   4 |     // Affiche la bannière si on a une commande précédente
+ 413 |   4 |     showReorderIfNeeded();
+ 414 |   4 |
+ 415 |   4 |     // Ouvrir le tiroir panier
+ 416 |   5 |     const openCart = () => {
+ 417 |   5 |         if (!cartDrawer) return;
+ 418 |   5 |         cartDrawer.classList.add('is-open');
+ 419 |   5 |         cartDrawer.setAttribute('aria-hidden', 'false');
+ 420 |   5 |         cartOverlay?.classList.add('is-visible');
+ 421 |   5 |         cartToggle?.setAttribute('aria-expanded', 'true');
+ 422 |   5 |         mobileCartToggle?.setAttribute('aria-expanded', 'true');
+ 423 |   4 |     };
+ 424 |   4 |
+ 425 |   4 |     // Fermer le tiroir panier
+ 426 |   5 |     const closeCart = () => {
+ 427 |   5 |         if (!cartDrawer) return;
+ 428 |   5 |         cartDrawer.classList.remove('is-open');
+ 429 |   5 |         cartDrawer.setAttribute('aria-hidden', 'true');
+ 430 |   5 |         cartOverlay?.classList.remove('is-visible');
+ 431 |   5 |         cartToggle?.setAttribute('aria-expanded', 'false');
+ 432 |   5 |         mobileCartToggle?.setAttribute('aria-expanded', 'false');
+ 433 |   4 |     };
+ 434 |   4 |
+ 435 |   4 |     // Ajouter un élément au panier
+ 436 |   5 |     const addToCart = (name, price) => {
+ 437 |   5 |         const existingItem = cart.find((item) => item.name === name);
+ 438 |   6 |         if (existingItem) {
+ 439 |   6 |             existingItem.quantity += 1;
+ 440 |   6 |         } else {
+ 441 |   6 |             cart.push({ name, price, quantity: 1 });
+ 442 |   5 |         }
+ 443 |   5 |         bumpBadge();
+ 444 |   5 |         renderCart();
+ 445 |   4 |     };
+ 446 |   4 |
+ 447 |   4 |     // Mettre à jour les quantités d'un plat
+ 448 |   5 |     const updateQuantity = (name, delta) => {
+ 449 |   5 |         cart = cart
+ 450 |   5 |             .map((item) => item.name === name ? { ...item, quantity: item.quantity + delta } : item)
+ 451 |   5 |             .filter((item) => item.quantity > 0);
+ 452 |   5 |         renderCart();
+ 453 |   4 |     };
+ 454 |   4 |
+ 455 |   4 |     // Supprimer un plat du panier
+ 456 |   5 |     const removeItem = (name) => {
+ 457 |   5 |         cart = cart.filter((item) => item.name !== name);
+ 458 |   5 |         renderCart();
+ 459 |   4 |     };
+ 460 |   4 |
+ 461 |   4 |     // Redirection WhatsApp de la commande formulée proprement
+ 462 |   5 |     const sendWhatsAppOrder = () => {
+ 463 |   5 |         const paymentLabel = paymentMethod === 'orange_money' ? `Orange Money (réf. ${transactionRef})` : 'Paiement à la livraison';
+ 464 |   5 |
+ 465 |   5 |         // Génération de la liste des plats commandés (sans les prix)
+ 466 |   5 |         const itemsList = cart
+ 467 |   5 |             .map(item => `• *${item.quantity}x* ${item.name}`)
+ 468 |   5 |             .join('\n');
+ 469 |   5 |
+ 470 |   5 |         // Formatage final premium et soigné du message (sans les prix)
+ 471 |   5 |         const message = `Bonjour CrazyCook 🍳 !
+ 472 |   5 |
+ 473 |   5 | Voici une nouvelle commande :
+ 474 |   5 |
+ 475 |   5 | ${itemsList}
+ 476 |   5 |
+ 477 |   5 | ----------------------------------------
+ 478 |   5 | *Paiement* : ${paymentLabel}
+ 479 |   5 |
+ 480 |   5 | ----------------------------------------
+ 481 |   5 | *Informations de livraison* :
+ 482 |   5 | • *Nom* : ${deliveryInfo.name}
+ 483 |   5 | • *Téléphone* : ${deliveryInfo.phone}
+ 484 |   5 | • *Adresse* : ${deliveryInfo.address}
+ 485 |   5 | ${deliveryInfo.note ? `• *Note pour le chef* : ${deliveryInfo.note}` : ''}
+ 486 |   5 |
+ 487 |   5 | Merci et à très bientôt chez CrazyCook ! ✨`;
+ 488 |   5 |
+ 489 |   5 |         // Encodage complet de l'URL WhatsApp
+ 490 |   5 |         const encodedMessage = encodeURIComponent(message);
+ 491 |   5 |         const phoneNumber = '224628069479'; // Restaurant localisé à Conakry, Guinée (+224)
+ 492 |   5 |         const whatsAppUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+ 493 |   5 |
+ 494 |   5 |         // Redirige ou ouvre la discussion WhatsApp dans une nouvelle fenêtre
+ 495 |   5 |         window.open(whatsAppUrl, '_blank');
+ 496 |   4 |     };
+ 497 |   4 |
+ 498 |   4 |     // Gérer l'étape suivante dans le processus de commande
+ 499 |   5 |     const validateOrder = () => {
+ 500 |   5 |         if (!cart.length) return;
+ 501 |   5 |
+ 502 |   6 |         if (currentStep === 'cart') {
+ 503 |   6 |             currentStep = 'delivery';
+ 504 |   6 |             renderCart();
+ 505 |   6 |             return;
+ 506 |   5 |         }
+ 507 |   5 |
+ 508 |   6 |         if (currentStep === 'delivery') {
+ 509 |   6 |             const form = document.getElementById('delivery-form');
+ 510 |   6 |             if (!form) return;
+ 511 |   6 |
+ 512 |   6 |             // Déclencher et vérifier la validation HTML5 native
+ 513 |   7 |             if (!form.reportValidity()) {
+ 514 |   7 |                 return;
+ 515 |   6 |             }
+ 516 |   6 |
+ 517 |   6 |             const data = new FormData(form);
+ 518 |   6 |             deliveryInfo = Object.fromEntries(data.entries());
+ 519 |   6 |
+ 520 |   6 |             currentStep = 'payment';
+ 521 |   6 |             renderCart();
+ 522 |   6 |             return;
+ 523 |   5 |         }
+ 524 |   5 |
+ 525 |   6 |         if (currentStep === 'orange_money_form') {
+ 526 |   6 |             const form = document.getElementById('om-form');
+ 527 |   6 |             if (!form || !form.reportValidity()) return;
+ 528 |   6 |
+ 529 |   6 |             // SIMULATION — pas de vrai paiement, prototype de démonstration
+ 530 |   6 |             currentStep = 'processing';
+ 531 |   6 |             renderCart();
+ 532 |   6 |
+ 533 |   7 |             setTimeout(() => {
+ 534 |   7 |                 transactionRef = `OM-${Math.floor(100000 + Math.random() * 900000)}`;
+ 535 |   7 |                 currentStep = 'confirmation';
+ 536 |   7 |                 renderCart();
+ 537 |   7 |                 // Sauvegarde de la dernière commande puis envoi
+ 538 |   7 |                 try { saveLastOrder(); } catch (e) {}
+ 539 |   7 |                 sendWhatsAppOrder();
+ 540 |   6 |             }, 1800);
+ 541 |   5 |         }
+ 542 |   4 |     };
+ 543 |   4 |
+ 544 |   4 |     // Réinitialisation complète du panier pour une nouvelle commande
+ 545 |   5 |     const restartOrder = () => {
+ 546 |   5 |         cart = [];
+ 547 |   5 |         currentStep = 'cart';
+ 548 |   5 |         paymentMethod = null;
+ 549 |   5 |         transactionRef = null;
+ 550 |   5 |         deliveryInfo = { name: '', phone: '', address: '', note: '' };
+ 551 |   5 |         renderCart();
+ 552 |   5 |         closeCart();
+ 553 |   4 |     };
+ 554 |   4 |
+ 555 |   4 |     // Initialisation
+ 556 |   4 |     toggleHeader();
+ 557 |   4 |     window.addEventListener('scroll', toggleHeader, { passive: true });
+ 558 |   4 |
+ 559 |   4 |     // Intersection Observer pour les révélations d'éléments lors du scroll
+ 560 |   5 |     const observer = new IntersectionObserver((entries) => {
+ 561 |   6 |         entries.forEach((entry) => {
+ 562 |   7 |             if (entry.isIntersecting) {
+ 563 |   7 |                 entry.target.classList.add('is-visible');
+ 564 |   7 |                 observer.unobserve(entry.target);
+ 565 |   6 |             }
+ 566 |   5 |         });
+ 567 |   5 |     }, {
+ 568 |   5 |         threshold: 0.15
+ 569 |   4 |     });
+ 570 |   4 |
+ 571 |   4 |     revealItems.forEach((item) => observer.observe(item));
+ 572 |   4 |
+ 573 |   4 |     // Attribution des écouteurs sur les boutons "Ajouter au panier"
+ 574 |   5 |     document.querySelectorAll('.add-to-cart').forEach((button) => {
+ 575 |   6 |         button.addEventListener('click', (ev) => {
+ 576 |   6 |             // micro-feedback visuel + vibration
+ 577 |   6 |             showAddFeedback(button);
+ 578 |   6 |             addToCart(button.dataset.name, Number(button.dataset.price));
+ 579 |   5 |         });
+ 580 |   4 |     });
+ 581 |   4 |
+ 582 |   4 |     // Clics sur l'icône de panier du Header
+ 583 |   5 |     cartToggle?.addEventListener('click', () => {
+ 584 |   5 |         const isOpen = cartDrawer?.classList.contains('is-open');
+ 585 |   6 |         if (isOpen) {
+ 586 |   6 |             closeCart();
+ 587 |   6 |         } else {
+ 588 |   6 |             openCart();
+ 589 |   5 |         }
+ 590 |   4 |     });
+ 591 |   4 |
+ 592 |   4 |     // Clics sur l'icône de panier de la barre collante mobile
+ 593 |   5 |     mobileCartToggle?.addEventListener('click', () => {
+ 594 |   5 |         const isOpen = cartDrawer?.classList.contains('is-open');
+ 595 |   6 |         if (isOpen) {
+ 596 |   6 |             closeCart();
+ 597 |   6 |         } else {
+ 598 |   6 |             openCart();
+ 599 |   5 |         }
+ 600 |   4 |     });
+ 601 |   4 |
+ 602 |   4 |     // Clics sur le lien panier du footer
+ 603 |   5 |     footerCartToggle?.addEventListener('click', (e) => {
+ 604 |   5 |         e.preventDefault();
+ 605 |   5 |         const isOpen = cartDrawer?.classList.contains('is-open');
+ 606 |   6 |         if (isOpen) {
+ 607 |   6 |             closeCart();
+ 608 |   6 |         } else {
+ 609 |   6 |             openCart();
+ 610 |   5 |         }
+ 611 |   4 |     });
+ 612 |   4 |
+ 613 |   4 |     drawerClose?.addEventListener('click', closeCart);
+ 614 |   4 |     cartOverlay?.addEventListener('click', closeCart);
+ 615 |   4 |
+ 616 |   4 |     // Écoute des événements à l'intérieur du corps du panier (Boutons + / - / Supprimer / Retour)
+ 617 |   5 |     cartBody?.addEventListener('click', (event) => {
+ 618 |   5 |         const target = event.target;
+ 619 |   5 |         if (!(target instanceof HTMLElement)) return;
+ 620 |   5 |
+ 621 |   6 |         if (target.matches('[data-remove]')) {
+ 622 |   6 |             removeItem(target.dataset.remove);
+ 623 |   6 |             return;
+ 624 |   5 |         }
+ 625 |   5 |
+ 626 |   6 |         if (target.matches('[data-change]')) {
+ 627 |   6 |             updateQuantity(target.dataset.name, target.dataset.change === '+' ? 1 : -1);
+ 628 |   6 |             return;
+ 629 |   5 |         }
+ 630 |   5 |
+ 631 |   6 |         if (target.id === 'back-to-cart') {
+ 632 |   6 |             currentStep = 'cart';
+ 633 |   6 |             renderCart();
+ 634 |   6 |             return;
+ 635 |   5 |         }
+ 636 |   5 |
+ 637 |   6 |         if (target.id === 'back-to-delivery') {
+ 638 |   6 |             currentStep = 'delivery';
+ 639 |   6 |             renderCart();
+ 640 |   6 |             return;
+ 641 |   5 |         }
+ 642 |   5 |
+ 643 |   6 |         if (target.id === 'back-to-payment') {
+ 644 |   6 |             currentStep = 'payment';
+ 645 |   6 |             renderCart();
+ 646 |   6 |             return;
+ 647 |   5 |         }
+ 648 |   5 |
+ 649 |   6 |         if (target.closest('[data-payment]')) {
+ 650 |   6 |             const choice = target.closest('[data-payment]').dataset.payment;
+ 651 |   6 |             paymentMethod = choice;
+ 652 |   6 |
+ 653 |   7 |             if (choice === 'orange_money') {
+ 654 |   7 |                 currentStep = 'orange_money_form';
+ 655 |   7 |                 renderCart();
+ 656 |   7 |             } else {
+ 657 |   7 |                 // Paiement à la livraison : pas de simulation nécessaire, on confirme directement
+ 658 |   7 |                 currentStep = 'confirmation';
+ 659 |   7 |                 renderCart();
+ 660 |   7 |                 try { saveLastOrder(); } catch (e) {}
+ 661 |   7 |                 sendWhatsAppOrder();
+ 662 |   6 |             }
+ 663 |   6 |             return;
+ 664 |   5 |         }
+ 665 |   5 |
+ 666 |   6 |         if (target.id === 'restart-order') {
+ 667 |   6 |             restartOrder();
+ 668 |   5 |         }
+ 669 |   4 |     });
+ 670 |   4 |
+ 671 |   4 |     // Gestion de la soumission du formulaire de livraison
+ 672 |   5 |     cartBody?.addEventListener('submit', (event) => {
+ 673 |   6 |         if (event.target instanceof HTMLFormElement && (event.target.id === 'delivery-form' || event.target.id === 'om-form')) {
+ 674 |   6 |             event.preventDefault();
+ 675 |   6 |             validateOrder();
+ 676 |   5 |         }
+ 677 |   4 |     });
+ 678 |   4 |
+ 679 |   4 |     // Écouteur sur le bouton de pied de page du tiroir
+ 680 |   5 |     cartValidateButton?.addEventListener('click', () => {
+ 681 |   6 |         if (currentStep === 'confirmation') {
+ 682 |   6 |             restartOrder();
+ 683 |   6 |             return;
+ 684 |   5 |         }
+ 685 |   5 |         validateOrder();
+ 686 |   4 |     });
+ 687 |   4 |
+ 688 |   4 |     // Gestion de l'accordéon FAQ
+ 689 |   4 |     const faqTriggers = document.querySelectorAll('.faq-trigger');
+ 690 |   5 |     faqTriggers.forEach((trigger) => {
+ 691 |   6 |         trigger.addEventListener('click', () => {
+ 692 |   6 |             const isExpanded = trigger.getAttribute('aria-expanded') === 'true';
+ 693 |   6 |             const answerId = trigger.getAttribute('aria-controls');
+ 694 |   6 |             const answerEl = document.getElementById(answerId);
+ 695 |   6 |
+ 696 |   6 |             // Fermer les autres accordéons (optionnel, pour un effet de focus soigné)
+ 697 |   7 |             faqTriggers.forEach((otherTrigger) => {
+ 698 |   8 |                 if (otherTrigger !== trigger) {
+ 699 |   8 |                     otherTrigger.setAttribute('aria-expanded', 'false');
+ 700 |   8 |                     const otherAnswerId = otherTrigger.getAttribute('aria-controls');
+ 701 |   8 |                     const otherAnswerEl = document.getElementById(otherAnswerId);
+ 702 |   9 |                     if (otherAnswerEl) {
+ 703 |   9 |                         otherAnswerEl.setAttribute('aria-hidden', 'true');
+ 704 |   8 |                     }
+ 705 |   7 |                 }
+ 706 |   6 |             });
+ 707 |   6 |
+ 708 |   6 |             // Basculer l'état actuel
+ 709 |   6 |             trigger.setAttribute('aria-expanded', !isExpanded ? 'true' : 'false');
+ 710 |   7 |             if (answerEl) {
+ 711 |   7 |                 answerEl.setAttribute('aria-hidden', isExpanded ? 'true' : 'false');
+ 712 |   6 |             }
+ 713 |   5 |         });
+ 714 |   4 |     });
+ 715 |   4 |
+ 716 |   4 |     // Premier rendu du panier au chargement
+ 717 |   4 |     renderCart();
+ 718 |   3 | });
+ 719 |   3 |
