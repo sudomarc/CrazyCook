@@ -684,4 +684,74 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
 
     // Premier rendu du panier au chargement
     renderCart();
+
+    // Gestion de la soumission du formulaire de contact avec un micro-feedback et un état de chargement
+    const setupContactForm = () => {
+        const contactForm = document.getElementById('restaurant-contact-form');
+        const contactSubmit = document.getElementById('contact-submit');
+        const contactWrapper = document.querySelector('.contact-form-wrapper');
+
+        if (contactForm && contactSubmit && contactWrapper) {
+            contactForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                // S'assurer que le formulaire est valide selon HTML5
+                if (!contactForm.reportValidity()) return;
+
+                // Extraire le nom de l'utilisateur pour personnaliser le message de succès
+                const formData = new FormData(contactForm);
+                const userName = formData.get('nom') || '';
+
+                // Mettre le formulaire en état de chargement
+                contactSubmit.textContent = 'Envoi en cours...';
+                contactSubmit.disabled = true;
+
+                // Désactiver tous les champs de saisie
+                const inputs = contactForm.querySelectorAll('input, textarea');
+                inputs.forEach(input => input.disabled = true);
+
+                // Simuler l'envoi asynchrone du formulaire (1.2 seconde)
+                setTimeout(() => {
+                    // Afficher un message de succès personnalisé et élégant
+                    contactWrapper.style.transition = 'opacity 0.3s ease';
+                    contactWrapper.style.opacity = '0';
+
+                    setTimeout(() => {
+                        contactWrapper.innerHTML = `
+                            <div class="contact-success-panel">
+                                <h4>Merci ${userName} ! ✨</h4>
+                                <p>Votre message a bien été reçu. L'équipe de CrazyCook vous répondra dans les plus brefs délais.</p>
+                                <button type="button" class="button button-dark" id="contact-reset">Écrire à nouveau</button>
+                            </div>
+                        `;
+                        contactWrapper.style.opacity = '1';
+
+                        // Ajouter un écouteur sur le bouton de réinitialisation
+                        const resetButton = document.getElementById('contact-reset');
+                        if (resetButton) {
+                            resetButton.addEventListener('click', () => {
+                                contactWrapper.style.opacity = '0';
+                                setTimeout(() => {
+                                    // Restaurer le formulaire original
+                                    contactWrapper.innerHTML = `
+                                        <form class="contact-form" id="restaurant-contact-form" onsubmit="return false;">
+                                            <input type="text" name="nom" placeholder="Votre nom" aria-label="Votre nom complet" required>
+                                            <input type="tel" name="telephone" placeholder="Votre téléphone" aria-label="Votre numéro de téléphone" required>
+                                            <textarea name="message" placeholder="Votre message" aria-label="Votre message ou question" rows="4" required></textarea>
+                                            <button type="submit" class="button button-dark full" id="contact-submit">Envoyer</button>
+                                        </form>
+                                    `;
+                                    contactWrapper.style.opacity = '1';
+                                    // Setup contact form events recursively without dispatching DOMContentLoaded
+                                    setupContactForm();
+                                }, 300);
+                            });
+                        }
+                    }, 300);
+                }, 1200);
+            });
+        }
+    };
+
+    setupContactForm();
 });
