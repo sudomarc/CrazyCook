@@ -1299,10 +1299,11 @@ ul {
 [data-theme="dark"] .contact-form input,
 [data-theme="dark"] .contact-form textarea,
 [data-theme="dark"] .cart-form input,
-[data-theme="dark"] .cart-form textarea {
-    background: #221C18;
-    color: var(--dark);
-    border-color: rgba(255, 255, 255, 0.14);
+[data-theme="dark"] .cart-form textarea,
+[data-theme="dark"] .contact-success-panel {
+    background: #221C18 !important;
+    color: var(--dark) !important;
+    border-color: rgba(255, 255, 255, 0.14) !important;
 }
 
 [data-theme="dark"] .site-footer {
@@ -1536,6 +1537,36 @@ ul {
 /* FAQ Section */
 #faq {
     background: linear-gradient(180deg, rgba(200, 131, 42, 0.03), transparent 60%);
+}
+
+/* Panel de succès pour le formulaire de contact */
+.contact-success-panel {
+    background: white;
+    border: 1px solid rgba(26,26,26,0.06);
+    border-radius: 24px;
+    padding: 2rem 1.8rem;
+    box-shadow: var(--shadow-soft);
+    text-align: center;
+    animation: addFeedback 0.6s var(--ease-premium);
+}
+
+.contact-success-panel h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    color: var(--forest-green);
+    margin-bottom: 0.75rem;
+}
+
+.contact-success-panel p {
+    font-size: 0.95rem;
+    color: #4e4638;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.contact-success-panel .button {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
 }
 
 .faq-container {
