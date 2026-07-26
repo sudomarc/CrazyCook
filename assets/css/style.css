@@ -1534,6 +1534,27 @@ ul {
     background: rgba(139, 69, 19, 0.08);
 }
 
+/* Accessible focus visible rings for better keyboard navigation visibility */
+:focus-visible {
+    outline: 2px solid var(--ochre) !important;
+    outline-offset: 4px !important;
+    border-radius: 4px;
+}
+
+.button:focus-visible,
+.add-to-cart:focus-visible,
+.cart-icon-button:focus-visible,
+.drawer-close:focus-visible,
+.faq-trigger:focus-visible,
+.theme-toggle:focus-visible {
+    outline: 3px solid var(--ochre) !important;
+    outline-offset: 2px !important;
+}
+
+[data-theme="dark"] :focus-visible {
+    outline-color: var(--ochre) !important;
+}
+
 /* FAQ Section */
 #faq {
     background: linear-gradient(180deg, rgba(200, 131, 42, 0.03), transparent 60%);

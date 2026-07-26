@@ -1,3 +1,7 @@
 ## 2025-07-24 - [Micro-UX Contact Form Feedback and Accessibility Enhancements]
 **Learning:** Hardcoding inline styles in JS overrides them forcefully and requires unmaintainable CSS overrides (like `!important`). Always encapsulate component states and styling purely inside stylesheets. Avoid using browser-wide event triggers like `DOMContentLoaded` to reset form layouts dynamically as this creates duplicate event listener bindings, resulting in severe multi-firing regressions and memory leaks. Instead, encapsulate bindings recursively or handle visibility/reset dynamically.
 **Action:** Declare all states (like `.contact-success-panel`) inside stylesheets and avoid inline styles in JavaScript. Ensure reset states recursively call setup functions rather than dispatching global window-level events.
+
+## 2026-07-26 - [Cart Drawer Focus Management and Accessible Outlines]
+**Learning:** Dialogs and drawers require robust focus-management in order to be screen-reader and keyboard accessible. Always track the previously focused active element (`lastActiveElement`), programmatically set focus on a prominent closing/interactive element when opened, and seamlessly restore focus on close. Custom high-contrast `:focus-visible` rules prevent keyboard navigation tracking loss across dark and light themes.
+**Action:** Use programmatic focus redirection and restore loops in all overlay transitions, and declare universal `:focus-visible` styling in stylesheets.

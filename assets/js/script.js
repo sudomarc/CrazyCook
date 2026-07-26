@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Gestion de l'état simple (Panier & Étape de commande)
     let cart = [];
     let currentStep = 'cart'; // 'cart' | 'delivery' | 'payment' | 'processing' | 'confirmation'
+    let lastActiveElement = null;
     let paymentMethod = null; // 'orange_money' | 'cod'
     let transactionRef = null; // Référence simulée générée après paiement Orange Money
     let deliveryInfo = {
@@ -384,11 +385,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // Ouvrir le tiroir panier
     const openCart = () => {
         if (!cartDrawer) return;
+        lastActiveElement = document.activeElement;
         cartDrawer.classList.add('is-open');
         cartDrawer.setAttribute('aria-hidden', 'false');
         cartOverlay?.classList.add('is-visible');
         cartToggle?.setAttribute('aria-expanded', 'true');
         mobileCartToggle?.setAttribute('aria-expanded', 'true');
+
+        // Mettre le focus sur le bouton de fermeture pour l'accessibilité au clavier
+        setTimeout(() => {
+            drawerClose?.focus();
+        }, 50);
     };
 
     // Fermer le tiroir panier
@@ -399,7 +406,19 @@ document.addEventListener('DOMContentLoaded', () => {
         cartOverlay?.classList.remove('is-visible');
         cartToggle?.setAttribute('aria-expanded', 'false');
         mobileCartToggle?.setAttribute('aria-expanded', 'false');
+
+        // Restaurer le focus sur l'élément qui l'avait avant l'ouverture
+        if (lastActiveElement && typeof lastActiveElement.focus === 'function') {
+            lastActiveElement.focus();
+        }
     };
+
+    // Fermeture du panier avec la touche Échap
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && cartDrawer?.classList.contains('is-open')) {
+            closeCart();
+        }
+    });
 
     // Ajouter un élément au panier
     const addToCart = (name, price) => {
