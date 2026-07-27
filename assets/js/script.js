@@ -182,13 +182,13 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <strong>${item.name}</strong>
                                     <p>${formatPrice(item.price)} / unité</p>
                                 </div>
-                                <button type="button" class="cart-remove" data-remove="${item.name}">Supprimer</button>
+                                <button type="button" class="cart-remove" data-remove="${item.name}" aria-label="Supprimer ${item.name} du panier">Supprimer</button>
                             </div>
                             <div class="cart-item-card__meta">
                                 <div class="cart-stepper">
-                                    <button type="button" data-change="-" data-name="${item.name}">−</button>
+                                    <button type="button" data-change="-" data-name="${item.name}" aria-label="Diminuer la quantité de ${item.name} de 1">−</button>
                                     <span>${item.quantity}</span>
-                                    <button type="button" data-change="+" data-name="${item.name}">+</button>
+                                    <button type="button" data-change="+" data-name="${item.name}" aria-label="Augmenter la quantité de ${item.name} de 1">+</button>
                                 </div>
                                 <strong>${formatPrice(item.quantity * item.price)}</strong>
                             </div>
