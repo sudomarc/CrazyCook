@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
         address: '',
         note: ''
     };
+    let previouslyFocusedElement = null; // Élément qui avait le focus avant l'ouverture du panier
 
     // Gestion du défilement pour l'effet de transparence du header et la barre de CTA mobile
     const toggleHeader = () => {
@@ -384,11 +385,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // Ouvrir le tiroir panier
     const openCart = () => {
         if (!cartDrawer) return;
+        // Sauvegarder l'élément actif pour pouvoir lui restituer le focus à la fermeture
+        previouslyFocusedElement = document.activeElement;
+
         cartDrawer.classList.add('is-open');
         cartDrawer.setAttribute('aria-hidden', 'false');
         cartOverlay?.classList.add('is-visible');
         cartToggle?.setAttribute('aria-expanded', 'true');
         mobileCartToggle?.setAttribute('aria-expanded', 'true');
+
+        // Mettre le focus sur le bouton de fermeture pour une navigation au clavier fluide
+        setTimeout(() => {
+            if (drawerClose) {
+                drawerClose.focus();
+            }
+        }, 50);
     };
 
     // Fermer le tiroir panier
@@ -399,6 +410,11 @@ document.addEventListener('DOMContentLoaded', () => {
         cartOverlay?.classList.remove('is-visible');
         cartToggle?.setAttribute('aria-expanded', 'false');
         mobileCartToggle?.setAttribute('aria-expanded', 'false');
+
+        // Restituer le focus à l'élément précédemment actif
+        if (previouslyFocusedElement && typeof previouslyFocusedElement.focus === 'function') {
+            previouslyFocusedElement.focus();
+        }
     };
 
     // Ajouter un élément au panier
@@ -581,6 +597,16 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
 
     drawerClose?.addEventListener('click', closeCart);
     cartOverlay?.addEventListener('click', closeCart);
+
+    // Gérer la fermeture du panier avec la touche Échap / Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' || e.key === 'Esc') {
+            const isOpen = cartDrawer?.classList.contains('is-open');
+            if (isOpen) {
+                closeCart();
+            }
+        }
+    });
 
     // Écoute des événements à l'intérieur du corps du panier (Boutons + / - / Supprimer / Retour)
     cartBody?.addEventListener('click', (event) => {
