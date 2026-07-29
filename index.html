@@ -56,6 +56,9 @@
     </script>
 </head>
 <body>
+    <!-- Éviter la navigation répétitive pour les lecteurs d'écran et la navigation clavier -->
+    <a href="#main-content" class="skip-link">Passer au contenu principal</a>
+
     <!-- Header / Navigation -->
     <header class="site-header">
         <div class="header-container">
@@ -93,7 +96,7 @@
         </div>
     </header>
 
-    <main>
+    <main id="main-content" tabindex="-1">
         <!-- Hero -->
         <section class="hero">
             <div class="hero-content reveal">
