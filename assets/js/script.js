@@ -209,15 +209,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h4 style="margin-bottom: 1rem; font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--burnt-earth);">Informations de livraison</h4>
                     <form class="cart-form" id="delivery-form">
                         <label>
-                            Nom complet
+                            <span>Nom complet <span style="color: var(--ochre);">*</span></span>
                             <input type="text" name="name" value="${deliveryInfo.name}" placeholder="Ex: Mamadou Diallo" required>
                         </label>
                         <label>
-                            Numéro de téléphone
+                            <span>Numéro de téléphone <span style="color: var(--ochre);">*</span></span>
                             <input type="tel" name="phone" value="${deliveryInfo.phone}" placeholder="Ex: +224 628 06 94 79" required>
                         </label>
                         <label>
-                            Adresse de livraison (ou lien Google Maps)
+                            <span>Adresse de livraison (ou lien Google Maps) <span style="color: var(--ochre);">*</span></span>
                             <input type="text" name="address" value="${deliveryInfo.address}" placeholder="Ex: Kaloum, Conakry" required>
                         </label>
                         <label>
@@ -273,7 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p style="font-size: 0.9rem; margin: 0.5rem 0 1rem;">Montant à payer : <strong>${formatPrice(getSubtotal() + 2000)}</strong></p>
                     <form class="cart-form" id="om-form">
                         <label>
-                            Numéro Orange Money
+                            <span>Numéro Orange Money <span style="color: var(--ochre);">*</span></span>
                             <input type="tel" name="omPhone" value="${deliveryInfo.phone}" placeholder="Ex: 628 06 94 79" required>
                         </label>
                     </form>
@@ -761,9 +761,18 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
                                     // Restaurer le formulaire original
                                     contactWrapper.innerHTML = `
                                         <form class="contact-form" id="restaurant-contact-form" onsubmit="return false;">
-                                            <input type="text" name="nom" placeholder="Votre nom" aria-label="Votre nom complet" required>
-                                            <input type="tel" name="telephone" placeholder="Votre téléphone" aria-label="Votre numéro de téléphone" required>
-                                            <textarea name="message" placeholder="Votre message" aria-label="Votre message ou question" rows="4" required></textarea>
+                                            <label>
+                                                <span>Votre nom <span style="color: var(--ochre);">*</span></span>
+                                                <input type="text" name="nom" placeholder="Votre nom complet" required>
+                                            </label>
+                                            <label>
+                                                <span>Votre téléphone <span style="color: var(--ochre);">*</span></span>
+                                                <input type="tel" name="telephone" placeholder="Votre numéro de téléphone" required>
+                                            </label>
+                                            <label>
+                                                <span>Votre message <span style="color: var(--ochre);">*</span></span>
+                                                <textarea name="message" placeholder="Votre message ou question" rows="4" required></textarea>
+                                            </label>
                                             <button type="submit" class="button button-dark full" id="contact-submit">Envoyer</button>
                                         </form>
                                     `;
