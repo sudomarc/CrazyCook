@@ -658,12 +658,30 @@ ul {
     font-size: 1.4rem;
     cursor: pointer;
     color: var(--dark);
-    transition: transform 0.25s ease, opacity 0.25s ease;
+    transition: transform 0.25s ease, opacity 0.25s ease, box-shadow 0.25s ease, border-radius 0.25s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
 }
 
 .drawer-close:hover {
     transform: rotate(90deg);
     opacity: 0.6;
+}
+
+.drawer-close:focus-visible {
+    outline: none;
+    transform: rotate(90deg);
+    background: rgba(139, 69, 19, 0.08);
+    box-shadow: 0 0 0 2px var(--ochre);
+}
+
+[data-theme="dark"] .drawer-close:focus-visible {
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 2px var(--ochre);
 }
 
 .cart-drawer__body {
