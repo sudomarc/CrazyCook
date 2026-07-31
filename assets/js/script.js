@@ -158,7 +158,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Si le panier est vide
         if (cart.length === 0) {
-            cartBody.innerHTML = '<p class="empty-state">Ajoutez un plat pour composer votre commande.</p>';
+            cartBody.innerHTML = `
+                <div class="empty-state-container">
+                    <p class="empty-state-text">Ajoutez un plat pour composer votre commande.</p>
+                    <button type="button" class="button button-dark" id="empty-cart-cta">Découvrir le menu</button>
+                </div>
+            `;
             if (cartTotalPrice) cartTotalPrice.textContent = '0 GNF';
             if (cartValidateButton) {
                 cartValidateButton.textContent = 'Valider ma commande';
@@ -598,12 +603,34 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
     drawerClose?.addEventListener('click', closeCart);
     cartOverlay?.addEventListener('click', closeCart);
 
-    // Gérer la fermeture du panier avec la touche Échap / Escape
+    // Gérer la fermeture du panier avec la touche Échap / Escape & focus trap pour l'accessibilité au clavier
     document.addEventListener('keydown', (e) => {
+        const isOpen = cartDrawer?.classList.contains('is-open');
+        if (!isOpen) return;
+
         if (e.key === 'Escape' || e.key === 'Esc') {
-            const isOpen = cartDrawer?.classList.contains('is-open');
-            if (isOpen) {
-                closeCart();
+            closeCart();
+            return;
+        }
+
+        if (e.key === 'Tab') {
+            // Liste de tous les éléments focalisables à l'intérieur du tiroir panier
+            const focusableElements = cartDrawer.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            if (focusableElements.length === 0) return;
+
+            const firstElement = focusableElements[0];
+            const lastElement = focusableElements[focusableElements.length - 1];
+
+            if (e.shiftKey) { // Shift + Tab
+                if (document.activeElement === firstElement) {
+                    lastElement.focus();
+                    e.preventDefault();
+                }
+            } else { // Tab simple
+                if (document.activeElement === lastElement) {
+                    firstElement.focus();
+                    e.preventDefault();
+                }
             }
         }
     });
@@ -660,6 +687,15 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
 
         if (target.id === 'restart-order') {
             restartOrder();
+            return;
+        }
+
+        if (target.id === 'empty-cart-cta') {
+            closeCart();
+            const menuSection = document.getElementById('menu');
+            if (menuSection) {
+                menuSection.scrollIntoView({ behavior: 'smooth' });
+            }
         }
     });
 
