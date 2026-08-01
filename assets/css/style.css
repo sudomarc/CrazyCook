@@ -1724,3 +1724,88 @@ ul {
 [data-theme="dark"] .faq-content p {
     color: #D8CDB8;
 }
+
+/* Progress Stepper for Cart Drawer */
+.cart-steps {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid rgba(26, 26, 26, 0.08);
+    margin-bottom: 1.2rem;
+}
+
+.cart-step {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #8a8072;
+    transition: color 0.3s ease;
+}
+
+.cart-step.active {
+    color: var(--burnt-earth);
+}
+
+.cart-step .step-num {
+    display: inline-grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(26, 26, 26, 0.06);
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #8a8072;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.cart-step.active .step-num {
+    background: var(--burnt-earth);
+    color: var(--cream);
+}
+
+.cart-step-line {
+    flex: 1;
+    height: 1px;
+    background: rgba(26, 26, 26, 0.08);
+    margin: 0 0.5rem;
+}
+
+[data-theme="dark"] .cart-steps {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .cart-step {
+    color: #AFA28D;
+}
+
+[data-theme="dark"] .cart-step.active {
+    color: #F7C97A;
+}
+
+[data-theme="dark"] .cart-step .step-num {
+    background: rgba(255, 255, 255, 0.08);
+    color: #AFA28D;
+}
+
+[data-theme="dark"] .cart-step.active .step-num {
+    background: #F7C97A;
+    color: #171311;
+}
+
+[data-theme="dark"] .cart-step-line {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.required-asterisk {
+    color: var(--burnt-earth);
+    font-weight: bold;
+    margin-left: 2px;
+}
+
+[data-theme="dark"] .required-asterisk {
+    color: var(--ochre);
+}

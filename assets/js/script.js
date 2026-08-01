@@ -177,9 +177,31 @@ document.addEventListener('DOMContentLoaded', () => {
             cartValidateButton.style.display = 'block';
         }
 
+        // Génération du fil d'Ariane des étapes de la commande (Progress Stepper)
+        const isPaymentStage = ['payment', 'orange_money_form', 'processing', 'confirmation'].includes(currentStep);
+        const stepsHtml = `
+            <div class="cart-steps" role="navigation" aria-label="Étapes de la commande">
+                <div class="cart-step ${currentStep === 'cart' ? 'active' : ''}" ${currentStep === 'cart' ? 'aria-current="step"' : ''}>
+                    <span class="step-num">1</span>
+                    <span class="step-text">Panier</span>
+                </div>
+                <div class="cart-step-line"></div>
+                <div class="cart-step ${currentStep === 'delivery' ? 'active' : ''}" ${currentStep === 'delivery' ? 'aria-current="step"' : ''}>
+                    <span class="step-num">2</span>
+                    <span class="step-text">Livraison</span>
+                </div>
+                <div class="cart-step-line"></div>
+                <div class="cart-step ${isPaymentStage ? 'active' : ''}" ${isPaymentStage ? 'aria-current="step"' : ''}>
+                    <span class="step-num">3</span>
+                    <span class="step-text">Paiement</span>
+                </div>
+            </div>
+        `;
+
         // ÉTAPE 1 : Affichage du panier classique
         if (currentStep === 'cart') {
             cartBody.innerHTML = `
+                ${stepsHtml}
                 <div class="cart-items">
                     ${cart.map((item) => `
                         <article class="cart-item-card">
@@ -210,23 +232,24 @@ document.addEventListener('DOMContentLoaded', () => {
         // ÉTAPE 2 : Saisie des informations de livraison
         if (currentStep === 'delivery') {
             cartBody.innerHTML = `
+                ${stepsHtml}
                 <div class="cart-form-container">
                     <h4 style="margin-bottom: 1rem; font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--burnt-earth);">Informations de livraison</h4>
                     <form class="cart-form" id="delivery-form">
                         <label>
-                            Nom complet
+                            <span>Nom complet <span class="required-asterisk" aria-hidden="true">*</span></span>
                             <input type="text" name="name" value="${deliveryInfo.name}" placeholder="Ex: Mamadou Diallo" required>
                         </label>
                         <label>
-                            Numéro de téléphone
+                            <span>Numéro de téléphone <span class="required-asterisk" aria-hidden="true">*</span></span>
                             <input type="tel" name="phone" value="${deliveryInfo.phone}" placeholder="Ex: +224 628 06 94 79" required>
                         </label>
                         <label>
-                            Adresse de livraison (ou lien Google Maps)
+                            <span>Adresse de livraison (ou lien Google Maps) <span class="required-asterisk" aria-hidden="true">*</span></span>
                             <input type="text" name="address" value="${deliveryInfo.address}" placeholder="Ex: Kaloum, Conakry" required>
                         </label>
                         <label>
-                            Note spéciale pour le chef
+                            <span>Note spéciale pour le chef</span>
                             <textarea name="note" placeholder="Ex: Épices douces, sans oignons...">${deliveryInfo.note}</textarea>
                         </label>
                         <div class="cart-actions" style="margin-top: 1rem; display: flex; gap: 0.5rem;">
@@ -243,6 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // ÉTAPE 3 : Choix du mode de paiement
         if (currentStep === 'payment') {
             cartBody.innerHTML = `
+                ${stepsHtml}
                 <div class="payment-step">
                     <h4 style="margin-bottom: 1rem; font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--burnt-earth);">Mode de paiement</h4>
                     <div class="payment-options">
@@ -272,13 +296,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // ÉTAPE 3bis : Simulation du paiement Orange Money
         if (currentStep === 'orange_money_form') {
             cartBody.innerHTML = `
+                ${stepsHtml}
                 <div class="om-simulation">
                     <p class="om-disclaimer"><!-- SIMULATION — pas de vrai paiement, prototype de démonstration --> Ceci est une simulation à des fins de démonstration.</p>
                     <h4 style="font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--burnt-earth);">Paiement Orange Money</h4>
                     <p style="font-size: 0.9rem; margin: 0.5rem 0 1rem;">Montant à payer : <strong>${formatPrice(getSubtotal() + 2000)}</strong></p>
                     <form class="cart-form" id="om-form">
                         <label>
-                            Numéro Orange Money
+                            <span>Numéro Orange Money <span class="required-asterisk" aria-hidden="true">*</span></span>
                             <input type="tel" name="omPhone" value="${deliveryInfo.phone}" placeholder="Ex: 628 06 94 79" required>
                         </label>
                     </form>
@@ -295,6 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // ÉTAPE 3ter : Chargement (simulation de traitement du paiement)
         if (currentStep === 'processing') {
             cartBody.innerHTML = `
+                ${stepsHtml}
                 <div class="om-processing">
                     <div class="om-spinner" aria-hidden="true"></div>
                     <p>Traitement du paiement en cours...</p>
@@ -311,6 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const paymentLabel = paymentMethod === 'orange_money' ? 'Orange Money' : 'Paiement à la livraison';
 
             cartBody.innerHTML = `
+                ${stepsHtml}
                 <div class="cart-confirmation">
                     <h4 style="font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--forest-green); margin-bottom: 0.5rem;">
                         ${paymentMethod === 'orange_money' ? 'Paiement confirmé ✅' : 'Commande envoyée !'}
