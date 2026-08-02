@@ -797,9 +797,18 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
                                     // Restaurer le formulaire original
                                     contactWrapper.innerHTML = `
                                         <form class="contact-form" id="restaurant-contact-form" onsubmit="return false;">
-                                            <input type="text" name="nom" placeholder="Votre nom" aria-label="Votre nom complet" required>
-                                            <input type="tel" name="telephone" placeholder="Votre téléphone" aria-label="Votre numéro de téléphone" required>
-                                            <textarea name="message" placeholder="Votre message" aria-label="Votre message ou question" rows="4" required></textarea>
+                                            <label for="contact-nom">
+                                                <span>Nom complet <span class="required-asterisk" aria-hidden="true">*</span></span>
+                                                <input type="text" id="contact-nom" name="nom" placeholder="Ex: Mamadou Diallo" required>
+                                            </label>
+                                            <label for="contact-telephone">
+                                                <span>Téléphone <span class="required-asterisk" aria-hidden="true">*</span></span>
+                                                <input type="tel" id="contact-telephone" name="telephone" placeholder="Ex: +224 628 06 94 79" required>
+                                            </label>
+                                            <label for="contact-message">
+                                                <span>Votre message <span class="required-asterisk" aria-hidden="true">*</span></span>
+                                                <textarea id="contact-message" name="message" placeholder="Votre message ou question..." rows="4" required></textarea>
+                                            </label>
                                             <button type="submit" class="button button-dark full" id="contact-submit">Envoyer</button>
                                         </form>
                                     `;

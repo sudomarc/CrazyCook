@@ -1193,11 +1193,25 @@ ul {
 
 .contact-form {
     display: grid;
-    gap: 0.9rem;
+    gap: 1rem;
+}
+
+.contact-form label {
+    display: grid;
+    gap: 0.35rem;
+    font-size: 0.92rem;
+    font-weight: 700;
+}
+
+.contact-form label span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
 }
 
 .contact-form input,
 .contact-form textarea {
+    width: 100%;
     padding: 0.85rem 1rem;
     border-radius: 14px;
     border: 1px solid rgba(26, 26, 26, 0.14);
@@ -1216,6 +1230,15 @@ ul {
 
 .contact-form textarea {
     resize: vertical;
+}
+
+.required-asterisk {
+    color: var(--burnt-earth);
+    font-weight: bold;
+}
+
+[data-theme="dark"] .required-asterisk {
+    color: var(--ochre);
 }
 
 @media (min-width: 800px) {
