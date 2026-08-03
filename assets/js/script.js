@@ -143,6 +143,20 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { el.remove(); }, 700);
     };
 
+    const getStepperHTML = () => {
+        if (cart.length === 0 || !['cart', 'delivery', 'payment', 'orange_money_form'].includes(currentStep)) return '';
+        const stepState = (step) => currentStep === step || (step === 'payment' && currentStep === 'orange_money_form') ? 'active' : '';
+        return `
+            <nav class="checkout-stepper" aria-label="Progrès de la commande">
+                <span class="checkout-step ${stepState('cart')}" ${currentStep === 'cart' ? 'aria-current="step"' : ''}>Panier</span>
+                <span class="checkout-step-arrow" aria-hidden="true">→</span>
+                <span class="checkout-step ${stepState('delivery')}" ${currentStep === 'delivery' ? 'aria-current="step"' : ''}>Livraison</span>
+                <span class="checkout-step-arrow" aria-hidden="true">→</span>
+                <span class="checkout-step ${stepState('payment')}" ${['payment', 'orange_money_form'].includes(currentStep) ? 'aria-current="step"' : ''}>Paiement</span>
+            </nav>
+        `;
+    };
+
     // Rendu dynamique du tiroir panier selon l'étape actuelle
     const renderCart = () => {
         if (!cartBody) return;
@@ -177,9 +191,11 @@ document.addEventListener('DOMContentLoaded', () => {
             cartValidateButton.style.display = 'block';
         }
 
+        let html = '';
+
         // ÉTAPE 1 : Affichage du panier classique
         if (currentStep === 'cart') {
-            cartBody.innerHTML = `
+            html = `
                 <div class="cart-items">
                     ${cart.map((item) => `
                         <article class="cart-item-card">
@@ -204,12 +220,11 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             if (cartTotalPrice) cartTotalPrice.textContent = formatPrice(getSubtotal());
             if (cartValidateButton) cartValidateButton.textContent = 'Valider ma commande';
-            return;
         }
 
         // ÉTAPE 2 : Saisie des informations de livraison
-        if (currentStep === 'delivery') {
-            cartBody.innerHTML = `
+        else if (currentStep === 'delivery') {
+            html = `
                 <div class="cart-form-container">
                     <h4 style="margin-bottom: 1rem; font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--burnt-earth);">Informations de livraison</h4>
                     <form class="cart-form" id="delivery-form">
@@ -237,12 +252,11 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             if (cartTotalPrice) cartTotalPrice.textContent = formatPrice(getSubtotal());
             if (cartValidateButton) cartValidateButton.textContent = 'Choisir le paiement';
-            return;
         }
 
         // ÉTAPE 3 : Choix du mode de paiement
-        if (currentStep === 'payment') {
-            cartBody.innerHTML = `
+        else if (currentStep === 'payment') {
+            html = `
                 <div class="payment-step">
                     <h4 style="margin-bottom: 1rem; font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--burnt-earth);">Mode de paiement</h4>
                     <div class="payment-options">
@@ -266,12 +280,11 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             if (cartTotalPrice) cartTotalPrice.textContent = formatPrice(getSubtotal());
             if (cartValidateButton) cartValidateButton.style.display = 'none';
-            return;
         }
 
         // ÉTAPE 3bis : Simulation du paiement Orange Money
-        if (currentStep === 'orange_money_form') {
-            cartBody.innerHTML = `
+        else if (currentStep === 'orange_money_form') {
+            html = `
                 <div class="om-simulation">
                     <p class="om-disclaimer"><!-- SIMULATION — pas de vrai paiement, prototype de démonstration --> Ceci est une simulation à des fins de démonstration.</p>
                     <h4 style="font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--burnt-earth);">Paiement Orange Money</h4>
@@ -289,28 +302,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 cartValidateButton.textContent = 'Confirmer le paiement';
                 cartValidateButton.style.display = 'block';
             }
-            return;
         }
 
         // ÉTAPE 3ter : Chargement (simulation de traitement du paiement)
-        if (currentStep === 'processing') {
-            cartBody.innerHTML = `
+        else if (currentStep === 'processing') {
+            html = `
                 <div class="om-processing">
                     <div class="om-spinner" aria-hidden="true"></div>
                     <p>Traitement du paiement en cours...</p>
                 </div>
             `;
             if (cartValidateButton) cartValidateButton.style.display = 'none';
-            return;
         }
 
         // ÉTAPE 4 : Confirmation de commande
-        if (currentStep === 'confirmation') {
+        else if (currentStep === 'confirmation') {
             const deliveryFee = 2000;
             const totalWithDelivery = getSubtotal() + deliveryFee;
             const paymentLabel = paymentMethod === 'orange_money' ? 'Orange Money' : 'Paiement à la livraison';
 
-            cartBody.innerHTML = `
+            html = `
                 <div class="cart-confirmation">
                     <h4 style="font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--forest-green); margin-bottom: 0.5rem;">
                         ${paymentMethod === 'orange_money' ? 'Paiement confirmé ✅' : 'Commande envoyée !'}
@@ -334,6 +345,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 cartValidateButton.style.display = 'none'; // Cacher le bouton principal car on a le bouton 'restart-order'
             }
         }
+
+        cartBody.innerHTML = getStepperHTML() + html;
     };
 
     /* ---------- Stockage & bannière "Recommander ma dernière commande" ---------- */

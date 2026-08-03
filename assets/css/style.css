@@ -610,6 +610,36 @@ ul {
     pointer-events: auto; /* Bloque l'interaction avec le reste de la page */
 }
 
+/* Checkout Stepper */
+.checkout-stepper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid rgba(26, 26, 26, 0.08);
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+.checkout-step {
+    color: #8a7c6f;
+    font-weight: 500;
+}
+.checkout-step.active {
+    color: var(--burnt-earth);
+    font-weight: 700;
+}
+.checkout-step-arrow {
+    color: rgba(26, 26, 26, 0.25);
+}
+[data-theme="dark"] .checkout-step.active {
+    color: #F7C97A;
+}
+[data-theme="dark"] .checkout-step-arrow {
+    color: rgba(255, 255, 255, 0.2);
+}
+
 .cart-drawer {
     position: fixed;
     top: 50%;
