@@ -188,13 +188,13 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <strong>${item.name}</strong>
                                     <p>${formatPrice(item.price)} / unité</p>
                                 </div>
-                                <button type="button" class="cart-remove" data-remove="${item.name}">Supprimer</button>
+                                <button type="button" class="cart-remove" data-remove="${item.name}" aria-label="Supprimer ${item.name} du panier">Supprimer</button>
                             </div>
                             <div class="cart-item-card__meta">
                                 <div class="cart-stepper">
-                                    <button type="button" data-change="-" data-name="${item.name}">−</button>
-                                    <span>${item.quantity}</span>
-                                    <button type="button" data-change="+" data-name="${item.name}">+</button>
+                                    <button type="button" data-change="-" data-name="${item.name}" aria-label="Diminuer la quantité de ${item.name}">−</button>
+                                    <span aria-live="polite" aria-label="Quantité de ${item.name} : ${item.quantity}">${item.quantity}</span>
+                                    <button type="button" data-change="+" data-name="${item.name}" aria-label="Augmenter la quantité de ${item.name}">+</button>
                                 </div>
                                 <strong>${formatPrice(item.quantity * item.price)}</strong>
                             </div>
@@ -214,19 +214,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h4 style="margin-bottom: 1rem; font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--burnt-earth);">Informations de livraison</h4>
                     <form class="cart-form" id="delivery-form">
                         <label>
-                            Nom complet
+                            <span>Nom complet <span class="required" aria-hidden="true" style="color: red;">*</span></span>
                             <input type="text" name="name" value="${deliveryInfo.name}" placeholder="Ex: Mamadou Diallo" required>
                         </label>
                         <label>
-                            Numéro de téléphone
+                            <span>Numéro de téléphone <span class="required" aria-hidden="true" style="color: red;">*</span></span>
                             <input type="tel" name="phone" value="${deliveryInfo.phone}" placeholder="Ex: +224 628 06 94 79" required>
                         </label>
                         <label>
-                            Adresse de livraison (ou lien Google Maps)
+                            <span>Adresse de livraison (ou lien Google Maps) <span class="required" aria-hidden="true" style="color: red;">*</span></span>
                             <input type="text" name="address" value="${deliveryInfo.address}" placeholder="Ex: Kaloum, Conakry" required>
                         </label>
                         <label>
-                            Note spéciale pour le chef
+                            <span>Note spéciale pour le chef</span>
                             <textarea name="note" placeholder="Ex: Épices douces, sans oignons...">${deliveryInfo.note}</textarea>
                         </label>
                         <div class="cart-actions" style="margin-top: 1rem; display: flex; gap: 0.5rem;">
@@ -278,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p style="font-size: 0.9rem; margin: 0.5rem 0 1rem;">Montant à payer : <strong>${formatPrice(getSubtotal() + 2000)}</strong></p>
                     <form class="cart-form" id="om-form">
                         <label>
-                            Numéro Orange Money
+                            <span>Numéro Orange Money <span class="required" aria-hidden="true" style="color: red;">*</span></span>
                             <input type="tel" name="omPhone" value="${deliveryInfo.phone}" placeholder="Ex: 628 06 94 79" required>
                         </label>
                     </form>
