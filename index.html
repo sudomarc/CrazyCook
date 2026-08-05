@@ -401,9 +401,18 @@
                 </div>
                 <div class="contact-form-wrapper">
                     <form class="contact-form" id="restaurant-contact-form" onsubmit="return false;">
-                        <input type="text" name="nom" placeholder="Votre nom" aria-label="Votre nom complet" required>
-                        <input type="tel" name="telephone" placeholder="Votre téléphone" aria-label="Votre numéro de téléphone" required>
-                        <textarea name="message" placeholder="Votre message" aria-label="Votre message ou question" rows="4" required></textarea>
+                        <label>
+                            <span>Nom complet <span class="required" aria-hidden="true" style="color: red;">*</span></span>
+                            <input type="text" name="nom" placeholder="Votre nom" aria-label="Votre nom complet" required>
+                        </label>
+                        <label>
+                            <span>Numéro de téléphone <span class="required" aria-hidden="true" style="color: red;">*</span></span>
+                            <input type="tel" name="telephone" placeholder="Votre téléphone" aria-label="Votre numéro de téléphone" required>
+                        </label>
+                        <label>
+                            <span>Votre message <span class="required" aria-hidden="true" style="color: red;">*</span></span>
+                            <textarea name="message" placeholder="Votre message ou question" aria-label="Votre message ou question" rows="4" required></textarea>
+                        </label>
                         <button type="submit" class="button button-dark full" id="contact-submit">Envoyer</button>
                     </form>
                 </div>
