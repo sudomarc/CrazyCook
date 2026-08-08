@@ -154,6 +154,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     themeToggle?.addEventListener('click', () => {
         const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+        // Ajouter la classe de rotation de l'icône de thème
+        themeToggle.classList.add('theme-toggle-rotated');
+        setTimeout(() => {
+            themeToggle.classList.remove('theme-toggle-rotated');
+        }, 450);
+
         applyTheme(isDark ? 'light' : 'dark');
     });
 
@@ -225,14 +232,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (cartTotalPrice) cartTotalPrice.textContent = '0 GNF';
             if (cartValidateButton) {
                 cartValidateButton.textContent = 'Valider ma commande';
-                cartValidateButton.style.display = 'none'; // Cacher le bouton si vide
+                cartValidateButton.hidden = true; // Cacher le bouton si vide sans style inline
             }
             return;
         }
 
         // Afficher le bouton de validation s'il y a des articles
         if (cartValidateButton) {
-            cartValidateButton.style.display = 'block';
+            cartValidateButton.hidden = false;
         }
 
         // ÉTAPE 1 : Affichage du panier classique
@@ -269,32 +276,35 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentStep === 'delivery') {
             cartBody.innerHTML = `
                 <div class="cart-form-container">
-                    <h4 style="margin-bottom: 1rem; font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--burnt-earth);">Informations de livraison</h4>
+                    <h4 class="cart-step-title">Informations de livraison</h4>
                     <form class="cart-form" id="delivery-form">
                         <label>
-                            <span>Nom complet <span class="required" aria-hidden="true" style="color: red;">*</span></span>
+                            <span>Nom complet <span class="required" aria-hidden="true">*</span></span>
                             <input type="text" name="name" value="${deliveryInfo.name}" placeholder="Ex: Mamadou Diallo" required>
                         </label>
                         <label>
-                            <span>Numéro de téléphone <span class="required" aria-hidden="true" style="color: red;">*</span></span>
+                            <span>Numéro de téléphone <span class="required" aria-hidden="true">*</span></span>
                             <input type="tel" name="phone" value="${deliveryInfo.phone}" placeholder="Ex: +224 628 06 94 79" required>
                         </label>
                         <label>
-                            <span>Adresse de livraison (ou lien Google Maps) <span class="required" aria-hidden="true" style="color: red;">*</span></span>
+                            <span>Adresse de livraison (ou lien Google Maps) <span class="required" aria-hidden="true">*</span></span>
                             <input type="text" name="address" value="${deliveryInfo.address}" placeholder="Ex: Kaloum, Conakry" required>
                         </label>
                         <label>
                             <span>Note spéciale pour le chef</span>
                             <textarea name="note" placeholder="Ex: Épices douces, sans oignons...">${deliveryInfo.note}</textarea>
                         </label>
-                        <div class="cart-actions" style="margin-top: 1rem; display: flex; gap: 0.5rem;">
-                            <button type="button" class="button button-light" id="back-to-cart" style="flex: 1; padding: 0.75rem;">Retour</button>
+                        <div class="cart-actions cart-actions--delivery">
+                            <button type="button" class="button button-light cart-back-btn cart-back-btn--cart" id="back-to-cart">Retour</button>
                         </div>
                     </form>
                 </div>
             `;
             if (cartTotalPrice) cartTotalPrice.textContent = formatPrice(getSubtotal());
-            if (cartValidateButton) cartValidateButton.textContent = 'Choisir le paiement';
+            if (cartValidateButton) {
+                cartValidateButton.textContent = 'Choisir le paiement';
+                cartValidateButton.hidden = false;
+            }
             return;
         }
 
@@ -302,10 +312,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentStep === 'payment') {
             cartBody.innerHTML = `
                 <div class="payment-step">
-                    <h4 style="margin-bottom: 1rem; font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--burnt-earth);">Mode de paiement</h4>
+                    <h4 class="cart-step-title">Mode de paiement</h4>
                     <div class="payment-options">
                         <button type="button" class="payment-option" data-payment="orange_money">
-                            <span class="payment-option__badge" style="background:#FF6600;">OM</span>
+                            <span class="payment-option__badge payment-option__badge--om">OM</span>
                             <span class="payment-option__label">
                                 <strong>Orange Money</strong>
                                 <small>Paiement mobile instantané</small>
@@ -319,11 +329,13 @@ document.addEventListener('DOMContentLoaded', () => {
                             </span>
                         </button>
                     </div>
-                    <button type="button" class="button button-light" id="back-to-delivery" style="margin-top: 1rem; width: 100%; padding: 0.75rem;">Retour</button>
+                    <button type="button" class="button button-light cart-back-btn cart-back-btn--delivery" id="back-to-delivery">Retour</button>
                 </div>
             `;
             if (cartTotalPrice) cartTotalPrice.textContent = formatPrice(getSubtotal());
-            if (cartValidateButton) cartValidateButton.style.display = 'none';
+            if (cartValidateButton) {
+                cartValidateButton.hidden = true;
+            }
             return;
         }
 
@@ -332,20 +344,20 @@ document.addEventListener('DOMContentLoaded', () => {
             cartBody.innerHTML = `
                 <div class="om-simulation">
                     <p class="om-disclaimer"><!-- SIMULATION — pas de vrai paiement, prototype de démonstration --> Ceci est une simulation à des fins de démonstration.</p>
-                    <h4 style="font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--burnt-earth);">Paiement Orange Money</h4>
-                    <p style="font-size: 0.9rem; margin: 0.5rem 0 1rem;">Montant à payer : <strong>${formatPrice(getSubtotal() + 2000)}</strong></p>
+                    <h4 class="cart-step-title">Paiement Orange Money</h4>
+                    <p class="cart-amount-info">Montant à payer : <strong>${formatPrice(getSubtotal() + 2000)}</strong></p>
                     <form class="cart-form" id="om-form">
                         <label>
-                            <span>Numéro Orange Money <span class="required" aria-hidden="true" style="color: red;">*</span></span>
+                            <span>Numéro Orange Money <span class="required" aria-hidden="true">*</span></span>
                             <input type="tel" name="omPhone" value="${deliveryInfo.phone}" placeholder="Ex: 628 06 94 79" required>
                         </label>
                     </form>
-                    <button type="button" class="button button-light" id="back-to-payment" style="margin-top: 0.75rem; width: 100%; padding: 0.75rem;">Retour</button>
+                    <button type="button" class="button button-light cart-back-btn cart-back-btn--payment" id="back-to-payment">Retour</button>
                 </div>
             `;
             if (cartValidateButton) {
                 cartValidateButton.textContent = 'Confirmer le paiement';
-                cartValidateButton.style.display = 'block';
+                cartValidateButton.hidden = false;
             }
             return;
         }
@@ -358,7 +370,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p>Traitement du paiement en cours...</p>
                 </div>
             `;
-            if (cartValidateButton) cartValidateButton.style.display = 'none';
+            if (cartValidateButton) {
+                cartValidateButton.hidden = true;
+            }
             return;
         }
 
@@ -370,26 +384,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
             cartBody.innerHTML = `
                 <div class="cart-confirmation">
-                    <h4 style="font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--forest-green); margin-bottom: 0.5rem;">
+                    <h4 class="cart-confirmation-title">
                         ${paymentMethod === 'orange_money' ? 'Paiement confirmé ✅' : 'Commande envoyée !'}
                     </h4>
-                    ${paymentMethod === 'orange_money' ? `<p style="font-size: 0.85rem; color: #4e4638;">Référence : <strong>${transactionRef}</strong></p>` : ''}
-                    <p style="font-size: 0.9rem; margin: 0.5rem 0 1rem;">Votre commande a été générée et vous allez être redirigé vers WhatsApp pour finaliser l'envoi.</p>
+                    ${paymentMethod === 'orange_money' ? `<p class="cart-ref-text">Référence : <strong>${transactionRef}</strong></p>` : ''}
+                    <p class="cart-congrats-text">Votre commande a été générée et vous allez être redirigé vers WhatsApp pour finaliser l'envoi.</p>
                     <p><strong>Client :</strong> ${deliveryInfo.name}</p>
                     <p><strong>Téléphone :</strong> ${deliveryInfo.phone}</p>
                     <p><strong>Adresse :</strong> ${deliveryInfo.address}</p>
                     <p><strong>Paiement :</strong> ${paymentLabel}</p>
-                    <div class="cart-summary" style="margin-top: 1rem;">
+                    <div class="cart-summary cart-summary--confirmation">
                         <div class="cart-summary__row"><span>Sous-total</span><strong>${formatPrice(getSubtotal())}</strong></div>
                         <div class="cart-summary__row"><span>Livraison</span><strong>${formatPrice(deliveryFee)}</strong></div>
                         <div class="cart-summary__row"><span>Total</span><strong>${formatPrice(totalWithDelivery)}</strong></div>
                     </div>
-                    <button type="button" class="button button-dark full" id="restart-order" style="margin-top: 1rem;">Nouvelle commande</button>
+                    <button type="button" class="button button-dark full cart-confirmation-btn" id="restart-order">Nouvelle commande</button>
                 </div>
             `;
             if (cartTotalPrice) cartTotalPrice.textContent = formatPrice(totalWithDelivery);
             if (cartValidateButton) {
-                cartValidateButton.style.display = 'none'; // Cacher le bouton principal car on a le bouton 'restart-order'
+                cartValidateButton.hidden = true; // Cacher le bouton principal car on a le bouton 'restart-order'
             }
         }
     };
@@ -457,6 +471,9 @@ document.addEventListener('DOMContentLoaded', () => {
         cartToggle?.setAttribute('aria-expanded', 'true');
         mobileCartToggle?.setAttribute('aria-expanded', 'true');
 
+        // Ajouter la classe de blocage du défilement
+        document.body.classList.add('cart-open');
+
         // Mettre le focus sur le bouton de fermeture pour une navigation au clavier fluide
         setTimeout(() => {
             if (drawerClose) {
@@ -473,6 +490,9 @@ document.addEventListener('DOMContentLoaded', () => {
         cartOverlay?.classList.remove('is-visible');
         cartToggle?.setAttribute('aria-expanded', 'false');
         mobileCartToggle?.setAttribute('aria-expanded', 'false');
+
+        // Retirer la classe de blocage du défilement
+        document.body.classList.remove('cart-open');
 
         // Restituer le focus à l'élément précédemment actif
         if (previouslyFocusedElement && typeof previouslyFocusedElement.focus === 'function') {
@@ -617,6 +637,67 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
     });
 
     revealItems.forEach((item) => observer.observe(item));
+
+    // Synchronisation dynamique des liens de navigation principale avec les sections visibles
+    const sectionIds = ['histoire', 'galerie', 'contact', 'menu', 'avis', 'faq'];
+    const sectionsToObserve = sectionIds
+        .map(id => document.getElementById(id))
+        .filter(el => el !== null);
+
+    const navLinks = document.querySelectorAll('.main-nav a[href]');
+
+    const syncNavObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                const id = entry.target.getAttribute('id');
+                navLinks.forEach((link) => {
+                    const hrefAttr = link.getAttribute('href');
+                    const isActiveLink = hrefAttr === `#${id}` || (id === 'histoire' && hrefAttr === 'index.html'); // Fallback pour accueil/histoire s'ils se chevauchent
+
+                    if (isActiveLink) {
+                        link.classList.add('active');
+                        link.setAttribute('aria-current', 'page');
+                    } else {
+                        // S'assurer qu'un autre lien est actif, ne pas enlever active de Accueil s'il n'y a pas d'autre match
+                        link.classList.remove('active');
+                        link.removeAttribute('aria-current');
+                    }
+                });
+            }
+        });
+    }, {
+        root: null,
+        rootMargin: '-40% 0px -55% 0px', // Cibler le centre de l'écran pour la synchronisation précise du menu
+        threshold: 0
+    });
+
+    sectionsToObserve.forEach((section) => syncNavObserver.observe(section));
+
+    // Gérer l'état de l'accueil spécifique
+    const heroSection = document.querySelector('.hero');
+    if (heroSection) {
+        const heroObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach((link) => {
+                        const hrefAttr = link.getAttribute('href');
+                        if (hrefAttr === 'index.html' || hrefAttr === '#') {
+                            link.classList.add('active');
+                            link.setAttribute('aria-current', 'page');
+                        } else {
+                            link.classList.remove('active');
+                            link.removeAttribute('aria-current');
+                        }
+                    });
+                }
+            });
+        }, {
+            root: null,
+            rootMargin: '-10% 0px -80% 0px',
+            threshold: 0
+        });
+        heroObserver.observe(heroSection);
+    }
 
     // Attribution des écouteurs sur les boutons "Ajouter au panier"
     document.querySelectorAll('.add-to-cart').forEach((button) => {
@@ -833,8 +914,7 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
                 // Simuler l'envoi asynchrone du formulaire (1.2 seconde)
                 setTimeout(() => {
                     // Afficher un message de succès personnalisé et élégant
-                    contactWrapper.style.transition = 'opacity 0.3s ease';
-                    contactWrapper.style.opacity = '0';
+                    contactWrapper.classList.add('fade-out');
 
                     setTimeout(() => {
                         contactWrapper.innerHTML = `
@@ -844,13 +924,13 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
                                 <button type="button" class="button button-dark" id="contact-reset">Écrire à nouveau</button>
                             </div>
                         `;
-                        contactWrapper.style.opacity = '1';
+                        contactWrapper.classList.remove('fade-out');
 
                         // Ajouter un écouteur sur le bouton de réinitialisation
                         const resetButton = document.getElementById('contact-reset');
                         if (resetButton) {
                             resetButton.addEventListener('click', () => {
-                                contactWrapper.style.opacity = '0';
+                                contactWrapper.classList.add('fade-out');
                                 setTimeout(() => {
                                     // Restaurer le formulaire original
                                     contactWrapper.innerHTML = `
@@ -870,7 +950,7 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
                                             <button type="submit" class="button button-dark full" id="contact-submit">Envoyer</button>
                                         </form>
                                     `;
-                                    contactWrapper.style.opacity = '1';
+                                    contactWrapper.classList.remove('fade-out');
                                     // Setup contact form events recursively without dispatching DOMContentLoaded
                                     setupContactForm();
                                 }, 300);
