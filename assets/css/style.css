@@ -258,6 +258,13 @@ ul {
     transition: transform 0.35s var(--ease-premium), background 0.3s ease, color 0.3s ease, box-shadow 0.35s ease;
 }
 
+/* BUGFIX : .button { display: inline-flex } bat [hidden] à spécificité égale
+   (classe > attribut), donc cartValidateButton.hidden = true restait visible.
+   On force explicitement le masquage ici. */
+.button[hidden] {
+    display: none;
+}
+
 .button-dark {
     background: var(--ochre);
     color: var(--cream);
