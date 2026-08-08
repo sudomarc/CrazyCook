@@ -97,6 +97,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // Formatage des prix en GNF (ex: 16 000 GNF)
     const formatPrice = (value) => `${value.toLocaleString('fr-FR')} GNF`;
 
+    // SÉCURITÉ : échappe le HTML avant d'injecter des données saisies par
+    // l'utilisateur (nom, téléphone, adresse, note) dans innerHTML.
+    // Sans ça, un input du type "><img src=x onerror=alert(1)> exécute du JS (XSS).
+    const escapeHtml = (str) => String(str ?? '').replace(/[&<>"']/g, (ch) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+    }[ch]));
+
     // Calcul du sous-total du panier
     const getSubtotal = () => cart.reduce((total, item) => total + item.quantity * item.price, 0);
 
@@ -280,19 +291,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     <form class="cart-form" id="delivery-form">
                         <label>
                             <span>Nom complet <span class="required" aria-hidden="true">*</span></span>
-                            <input type="text" name="name" value="${deliveryInfo.name}" placeholder="Ex: Mamadou Diallo" required>
+                            <input type="text" name="name" value="${escapeHtml(deliveryInfo.name)}" placeholder="Ex: Mamadou Diallo" required>
                         </label>
                         <label>
                             <span>Numéro de téléphone <span class="required" aria-hidden="true">*</span></span>
-                            <input type="tel" name="phone" value="${deliveryInfo.phone}" placeholder="Ex: +224 628 06 94 79" required>
+                            <input type="tel" name="phone" value="${escapeHtml(deliveryInfo.phone)}" placeholder="Ex: +224 628 06 94 79" required>
                         </label>
                         <label>
                             <span>Adresse de livraison (ou lien Google Maps) <span class="required" aria-hidden="true">*</span></span>
-                            <input type="text" name="address" value="${deliveryInfo.address}" placeholder="Ex: Kaloum, Conakry" required>
+                            <input type="text" name="address" value="${escapeHtml(deliveryInfo.address)}" placeholder="Ex: Kaloum, Conakry" required>
                         </label>
                         <label>
                             <span>Note spéciale pour le chef</span>
-                            <textarea name="note" placeholder="Ex: Épices douces, sans oignons...">${deliveryInfo.note}</textarea>
+                            <textarea name="note" placeholder="Ex: Épices douces, sans oignons...">${escapeHtml(deliveryInfo.note)}</textarea>
                         </label>
                         <div class="cart-actions cart-actions--delivery">
                             <button type="button" class="button button-light cart-back-btn cart-back-btn--cart" id="back-to-cart">Retour</button>
@@ -349,7 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <form class="cart-form" id="om-form">
                         <label>
                             <span>Numéro Orange Money <span class="required" aria-hidden="true">*</span></span>
-                            <input type="tel" name="omPhone" value="${deliveryInfo.phone}" placeholder="Ex: 628 06 94 79" required>
+                            <input type="tel" name="omPhone" value="${escapeHtml(deliveryInfo.phone)}" placeholder="Ex: 628 06 94 79" required>
                         </label>
                     </form>
                     <button type="button" class="button button-light cart-back-btn cart-back-btn--payment" id="back-to-payment">Retour</button>
@@ -389,9 +400,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     </h4>
                     ${paymentMethod === 'orange_money' ? `<p class="cart-ref-text">Référence : <strong>${transactionRef}</strong></p>` : ''}
                     <p class="cart-congrats-text">Votre commande a été générée et vous allez être redirigé vers WhatsApp pour finaliser l'envoi.</p>
-                    <p><strong>Client :</strong> ${deliveryInfo.name}</p>
-                    <p><strong>Téléphone :</strong> ${deliveryInfo.phone}</p>
-                    <p><strong>Adresse :</strong> ${deliveryInfo.address}</p>
+                    <p><strong>Client :</strong> ${escapeHtml(deliveryInfo.name)}</p>
+                    <p><strong>Téléphone :</strong> ${escapeHtml(deliveryInfo.phone)}</p>
+                    <p><strong>Adresse :</strong> ${escapeHtml(deliveryInfo.address)}</p>
                     <p><strong>Paiement :</strong> ${paymentLabel}</p>
                     <div class="cart-summary cart-summary--confirmation">
                         <div class="cart-summary__row"><span>Sous-total</span><strong>${formatPrice(getSubtotal())}</strong></div>
@@ -650,15 +661,18 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
         entries.forEach((entry) => {
             if (entry.isIntersecting) {
                 const id = entry.target.getAttribute('id');
-                navLinks.forEach((link) => {
-                    const hrefAttr = link.getAttribute('href');
-                    const isActiveLink = hrefAttr === `#${id}` || (id === 'histoire' && hrefAttr === 'index.html'); // Fallback pour accueil/histoire s'ils se chevauchent
+                const matchingLink = Array.from(navLinks).find((link) => link.getAttribute('href') === `#${id}`);
 
-                    if (isActiveLink) {
+                // BUGFIX : histoire/avis/faq n'ont pas de lien dans la nav.
+                // Sans lien correspondant, on ne touche à rien (sinon ça efface
+                // l'état actif de tous les liens, y compris "Accueil").
+                if (!matchingLink) return;
+
+                navLinks.forEach((link) => {
+                    if (link === matchingLink) {
                         link.classList.add('active');
                         link.setAttribute('aria-current', 'page');
                     } else {
-                        // S'assurer qu'un autre lien est actif, ne pas enlever active de Accueil s'il n'y a pas d'autre match
                         link.classList.remove('active');
                         link.removeAttribute('aria-current');
                     }
