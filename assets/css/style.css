@@ -1,11 +1,15 @@
 :root {
     --ochre: #C8832A;
+    --ochre-rgb: 200, 131, 42;
     --burnt-earth: #8B4513;
+    --burnt-earth-rgb: 139, 69, 19;
     --forest-green: #2D5016;
+    --forest-green-rgb: 45, 80, 22;
     --cream: #F5F0E8;
     --dark: #1A1A1A;
-    --shadow: 0 16px 36px rgba(26, 26, 26, 0.08);
-    --shadow-soft: 0 10px 24px rgba(26, 26, 26, 0.06);
+    --shadow-rgb: 26, 26, 26;
+    --shadow: 0 16px 36px rgba(var(--shadow-rgb), 0.08);
+    --shadow-soft: 0 10px 24px rgba(var(--shadow-rgb), 0.06);
     --transition: 0.3s ease;
     --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -58,6 +62,10 @@ body {
     background: var(--cream);
     color: var(--dark);
     overflow-x: hidden;
+}
+
+body.cart-open {
+    overflow: hidden;
 }
 
 a {
@@ -415,19 +423,19 @@ ul {
 /* Identité propre à chaque section : léger changement de fond pour rythmer le scroll,
    à la manière des sites primés qui distinguent chaque "chapitre" du parcours */
 .section-histoire {
-    background: linear-gradient(180deg, rgba(139, 69, 19, 0.05), transparent 60%);
+    background: linear-gradient(180deg, rgba(var(--burnt-earth-rgb), 0.05), transparent 60%);
 }
 
 .section-avis {
-    background: linear-gradient(180deg, rgba(200, 131, 42, 0.05), transparent 60%);
+    background: linear-gradient(180deg, rgba(var(--ochre-rgb), 0.05), transparent 60%);
 }
 
 #menu {
-    background: linear-gradient(180deg, rgba(200, 131, 42, 0.05), transparent 60%);
+    background: linear-gradient(180deg, rgba(var(--ochre-rgb), 0.05), transparent 60%);
 }
 
 #galerie {
-    background: linear-gradient(180deg, rgba(45, 80, 22, 0.04), transparent 60%);
+    background: linear-gradient(180deg, rgba(var(--forest-green-rgb), 0.04), transparent 60%);
 }
 
 .section-intro {
@@ -1168,7 +1176,7 @@ ul {
 
 /* Section Contact */
 #contact {
-    background: linear-gradient(180deg, rgba(139, 69, 19, 0.04), transparent 60%);
+    background: linear-gradient(180deg, rgba(var(--burnt-earth-rgb), 0.04), transparent 60%);
 }
 
 .contact-shell {
@@ -1218,7 +1226,7 @@ ul {
 .contact-form textarea:focus {
     outline: none;
     border-color: var(--ochre);
-    box-shadow: 0 0 0 3px rgba(200, 131, 42, 0.16);
+    box-shadow: 0 0 0 3px rgba(var(--ochre-rgb), 0.16);
 }
 
 .contact-form textarea {
@@ -1321,13 +1329,18 @@ ul {
 
 /* Thème sombre — overrides via attribut data-theme="dark" sur <html> ou <body> */
 [data-theme="dark"] {
+    color-scheme: dark;
     --cream: #171311;
     --dark: #F8F1E5;
-    --shadow: 0 18px 42px rgba(0,0,0,0.6);
-    --shadow-soft: 0 12px 30px rgba(0,0,0,0.45);
+    --shadow-rgb: 0, 0, 0;
+    --shadow: 0 18px 42px rgba(var(--shadow-rgb), 0.6);
+    --shadow-soft: 0 12px 30px rgba(var(--shadow-rgb), 0.45);
     --ochre: #E0A64D;
+    --ochre-rgb: 224, 166, 77;
     --burnt-earth: #C97A42;
+    --burnt-earth-rgb: 201, 122, 66;
     --forest-green: #5D8D3B;
+    --forest-green-rgb: 93, 141, 59;
 }
 
 [data-theme="dark"] body {
@@ -1576,38 +1589,69 @@ ul {
 
 /* Bouton du toggle thème */
 .theme-toggle {
-    border: 2px solid #8b4513;
-    background: #ffdf8f;
-    color: #5b2608;
-    padding: 0.5rem 0.7rem;
-    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--burnt-earth);
+    background: var(--cream);
+    color: var(--burnt-earth);
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border-radius: 50%;
     cursor: pointer;
-    box-shadow: 0 0 0 3px rgba(255, 223, 143, 0.45), 0 8px 18px rgba(0, 0, 0, 0.18);
-    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: none;
+    transition: transform 0.35s var(--ease-premium), background 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.theme-toggle:hover,
+.theme-toggle svg {
+    transition: transform 0.45s var(--ease-premium);
+}
+
+.theme-toggle:hover {
+    background: var(--burnt-earth);
+    color: var(--cream);
+    transform: translateY(-2px);
+}
+
 .theme-toggle:focus-visible {
-    transform: translateY(-1px);
-    background: #ffd35f;
-    box-shadow: 0 0 0 4px rgba(255, 211, 95, 0.5), 0 10px 22px rgba(0, 0, 0, 0.22);
     outline: none;
+    background: var(--burnt-earth);
+    color: var(--cream);
+    box-shadow: 0 0 0 2px var(--ochre);
 }
 
 [data-theme="dark"] .theme-toggle {
-    border-color: #f6d8a1;
-    background: #7a4a14;
-    color: #fff7e8;
-    box-shadow: 0 0 0 3px rgba(246, 216, 161, 0.24), 0 8px 20px rgba(0, 0, 0, 0.24);
+    border-color: var(--ochre);
+    background: var(--cream);
+    color: var(--ochre);
 }
 
-/* Fix: bouton invisible une fois le header solidifié au scroll (même logique que .logo/.cart-icon-button) */
-/* Repush note: amélioration du contraste du bouton de thème pour mode clair et sombre */
+[data-theme="dark"] .theme-toggle:hover {
+    background: var(--ochre);
+    color: var(--cream);
+}
+
+[data-theme="dark"] .theme-toggle:focus-visible {
+    background: var(--ochre);
+    color: var(--cream);
+    box-shadow: 0 0 0 2px var(--dark);
+}
+
+/* Rotation de l'icône de thème au toggle */
+.theme-toggle-rotated svg {
+    transform: rotate(360deg);
+}
+
+/* Fix: bouton invisible une fois le header solidifié au scroll */
 .site-header.scrolled .theme-toggle {
+    border-color: var(--burnt-earth);
     color: var(--burnt-earth);
 }
+
 .site-header.scrolled .theme-toggle:hover {
-    background: rgba(139, 69, 19, 0.08);
+    background: var(--burnt-earth);
+    color: var(--cream);
 }
 
 /* FAQ Section */
@@ -1823,6 +1867,12 @@ ul {
     border-radius: 4px;
 }
 
+#header-cart-toggle:focus-visible {
+    outline: 2px solid var(--ochre);
+    outline-offset: 4px;
+    border-radius: 4px;
+}
+
 .footer-socials a:focus-visible {
     outline: 2px solid var(--ochre);
     outline-offset: 4px;
@@ -1833,7 +1883,7 @@ ul {
 .cart-form textarea:focus {
     outline: none;
     border-color: var(--ochre);
-    box-shadow: 0 0 0 3px rgba(200, 131, 42, 0.16);
+    box-shadow: 0 0 0 3px rgba(var(--ochre-rgb), 0.16);
 }
 
 .add-to-cart:focus-visible,
@@ -1846,4 +1896,86 @@ ul {
     outline: 2px solid var(--ochre);
     outline-offset: 2px;
     border-radius: 4px;
+}
+
+/* Custom utility classes to replace inline styles in JS dynamic templates */
+.cart-step-title {
+    margin-bottom: 1rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    color: var(--burnt-earth);
+}
+
+.cart-confirmation-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    color: var(--forest-green);
+    margin-bottom: 0.5rem;
+}
+
+.cart-actions--delivery {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.cart-back-btn {
+    padding: 0.75rem;
+}
+
+.cart-back-btn--cart {
+    flex: 1;
+}
+
+.cart-back-btn--delivery {
+    margin-top: 1rem;
+    width: 100%;
+}
+
+.cart-back-btn--payment {
+    margin-top: 0.75rem;
+    width: 100%;
+}
+
+.payment-option__badge--om {
+    background: #FF6600 !important;
+}
+
+.cart-amount-info {
+    font-size: 0.9rem;
+    margin: 0.5rem 0 1rem;
+}
+
+.cart-ref-text {
+    font-size: 0.85rem;
+    color: #4e4638;
+}
+
+.cart-congrats-text {
+    font-size: 0.9rem;
+    margin: 0.5rem 0 1rem;
+}
+
+.cart-summary--confirmation {
+    margin-top: 1rem;
+}
+
+.cart-confirmation-btn {
+    margin-top: 1rem;
+}
+
+.contact-form-wrapper {
+    transition: opacity 0.3s ease;
+}
+
+.contact-form-wrapper.fade-out {
+    opacity: 0;
+}
+
+[data-theme="dark"] .cart-step-title {
+    color: #F7C97A;
+}
+
+[data-theme="dark"] .cart-ref-text {
+    color: #D8CDB8;
 }
