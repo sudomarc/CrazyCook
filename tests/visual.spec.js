@@ -68,11 +68,22 @@ test('end-to-end order placement flow', async ({ page }) => {
   const cartToggle = page.locator('#header-cart-toggle');
   await cartToggle.click();
 
+  // Verify Checkout Stepper is visible and step 1 "Panier" is active
+  const stepper = page.locator('#checkout-stepper');
+  await expect(stepper).toBeVisible();
+  const stepCart = page.locator('.step-item[data-step="cart"]');
+  await expect(stepCart).toHaveClass(/active/);
+
   // 5. Fill and submit the delivery form
   // Click on "Valider la commande" button to proceed to delivery step
   const validateBtn = page.locator('#cart-validate');
   await expect(validateBtn).toBeVisible();
   await validateBtn.click();
+
+  // Verify Checkout Stepper progresses: step 2 "Livraison" is active
+  const stepDelivery = page.locator('.step-item[data-step="delivery"]');
+  await expect(stepDelivery).toHaveClass(/active/);
+  await expect(stepCart).toHaveClass(/completed/);
 
   // Fill the delivery form
   // Let's print out the page content if we can't find #delivery-name
@@ -90,6 +101,11 @@ test('end-to-end order placement flow', async ({ page }) => {
   // Let's click the validate button (which acts as Choisir le paiement)
   await validateBtn.click();
   await page.waitForTimeout(500);
+
+  // Verify Checkout Stepper progresses: step 3 "Paiement" is active
+  const stepPayment = page.locator('.step-item[data-step="payment"]');
+  await expect(stepPayment).toHaveClass(/active/);
+  await expect(stepDelivery).toHaveClass(/completed/);
 
   // 6. Click on Orange Money payment method and check simulated processing/confirmation
   const omPaymentBtn = page.locator('[data-payment="orange_money"]');

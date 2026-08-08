@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentStep = 'cart'; // 'cart' | 'delivery' | 'payment' | 'processing' | 'confirmation'
     let paymentMethod = null; // 'orange_money' | 'cod'
     let transactionRef = null; // Référence simulée générée après paiement Orange Money
+    const stepperElement = document.getElementById('checkout-stepper');
     let deliveryInfo = {
         name: '',
         phone: '',
@@ -50,6 +51,47 @@ document.addEventListener('DOMContentLoaded', () => {
             const heroHeight = document.querySelector('.hero')?.offsetHeight || window.innerHeight;
             stickyMobileCta.classList.toggle('is-visible', window.scrollY > heroHeight - 100);
         }
+    };
+
+    // Mise à jour de l'état visuel du stepper de checkout
+    const updateStepper = () => {
+        if (!stepperElement) return;
+
+        // On cache le stepper si le panier est vide ou si on est en confirmation/chargement
+        if (cart.length === 0 || currentStep === 'processing' || currentStep === 'confirmation') {
+            stepperElement.hidden = true;
+            return;
+        }
+
+        stepperElement.hidden = false;
+
+        const steps = ['cart', 'delivery', 'payment'];
+        const currentIdx = steps.indexOf(currentStep === 'orange_money_form' ? 'payment' : currentStep);
+
+        const stepItems = stepperElement.querySelectorAll('.step-item');
+        const stepLines = stepperElement.querySelectorAll('.step-line');
+
+        stepItems.forEach((item, idx) => {
+            const stepName = item.dataset.step;
+            item.classList.remove('active', 'completed');
+            item.removeAttribute('aria-current');
+
+            if (idx < currentIdx) {
+                item.classList.add('completed');
+            } else if (idx === currentIdx) {
+                item.classList.add('active');
+                item.setAttribute('aria-current', 'step');
+            }
+        });
+
+        stepLines.forEach((line, idx) => {
+            line.classList.remove('active', 'completed');
+            if (idx < currentIdx) {
+                line.classList.add('completed');
+            } else if (idx === currentIdx) {
+                line.classList.add('active');
+            }
+        });
     };
 
     // Formatage des prix en GNF (ex: 16 000 GNF)
@@ -159,6 +201,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Rendu dynamique du tiroir panier selon l'étape actuelle
     const renderCart = () => {
         if (!cartBody) return;
+
+        // Synchroniser le stepper
+        updateStepper();
 
         // Mise à jour du badge dans le header
         const itemCount = cart.reduce((total, item) => total + item.quantity, 0);
