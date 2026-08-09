@@ -289,21 +289,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="cart-form-container">
                     <h4 class="cart-step-title">Informations de livraison</h4>
                     <form class="cart-form" id="delivery-form">
-                        <label>
+                        <label for="delivery-name">
                             <span>Nom complet <span class="required" aria-hidden="true">*</span></span>
-                            <input type="text" name="name" value="${escapeHtml(deliveryInfo.name)}" placeholder="Ex: Mamadou Diallo" required>
+                            <input id="delivery-name" type="text" name="name" value="${escapeHtml(deliveryInfo.name)}" placeholder="Ex: Mamadou Diallo" required>
                         </label>
-                        <label>
+                        <label for="delivery-phone">
                             <span>Numéro de téléphone <span class="required" aria-hidden="true">*</span></span>
-                            <input type="tel" name="phone" value="${escapeHtml(deliveryInfo.phone)}" placeholder="Ex: +224 628 06 94 79" required>
+                            <input id="delivery-phone" type="tel" name="phone" value="${escapeHtml(deliveryInfo.phone)}" placeholder="Ex: +224 628 06 94 79" required>
                         </label>
-                        <label>
+                        <label for="delivery-address">
                             <span>Adresse de livraison (ou lien Google Maps) <span class="required" aria-hidden="true">*</span></span>
-                            <input type="text" name="address" value="${escapeHtml(deliveryInfo.address)}" placeholder="Ex: Kaloum, Conakry" required>
+                            <input id="delivery-address" type="text" name="address" value="${escapeHtml(deliveryInfo.address)}" placeholder="Ex: Kaloum, Conakry" required>
                         </label>
-                        <label>
+                        <label for="delivery-note">
                             <span>Note spéciale pour le chef</span>
-                            <textarea name="note" placeholder="Ex: Épices douces, sans oignons...">${escapeHtml(deliveryInfo.note)}</textarea>
+                            <textarea id="delivery-note" name="note" placeholder="Ex: Épices douces, sans oignons...">${escapeHtml(deliveryInfo.note)}</textarea>
                         </label>
                         <div class="cart-actions cart-actions--delivery">
                             <button type="button" class="button button-light cart-back-btn cart-back-btn--cart" id="back-to-cart">Retour</button>
@@ -358,9 +358,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h4 class="cart-step-title">Paiement Orange Money</h4>
                     <p class="cart-amount-info">Montant à payer : <strong>${formatPrice(getSubtotal() + 2000)}</strong></p>
                     <form class="cart-form" id="om-form">
-                        <label>
+                        <label for="om-phone">
                             <span>Numéro Orange Money <span class="required" aria-hidden="true">*</span></span>
-                            <input type="tel" name="omPhone" value="${escapeHtml(deliveryInfo.phone)}" placeholder="Ex: 628 06 94 79" required>
+                            <input id="om-phone" type="tel" name="omPhone" value="${escapeHtml(deliveryInfo.phone)}" placeholder="Ex: 628 06 94 79" required>
                         </label>
                     </form>
                     <button type="button" class="button button-light cart-back-btn cart-back-btn--payment" id="back-to-payment">Retour</button>
@@ -949,17 +949,17 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
                                     // Restaurer le formulaire original
                                     contactWrapper.innerHTML = `
                                         <form class="contact-form" id="restaurant-contact-form" onsubmit="return false;">
-                                            <label>
+                                            <label for="contact-nom">
                                                 <span>Nom complet <span class="required" aria-hidden="true" style="color: red;">*</span></span>
-                                                <input type="text" name="nom" placeholder="Votre nom" aria-label="Votre nom complet" required>
+                                                <input id="contact-nom" type="text" name="nom" placeholder="Votre nom" aria-label="Votre nom complet" required>
                                             </label>
-                                            <label>
+                                            <label for="contact-telephone">
                                                 <span>Numéro de téléphone <span class="required" aria-hidden="true" style="color: red;">*</span></span>
-                                                <input type="tel" name="telephone" placeholder="Votre téléphone" aria-label="Votre numéro de téléphone" required>
+                                                <input id="contact-telephone" type="tel" name="telephone" placeholder="Votre téléphone" aria-label="Votre numéro de téléphone" required>
                                             </label>
-                                            <label>
+                                            <label for="contact-message">
                                                 <span>Votre message <span class="required" aria-hidden="true" style="color: red;">*</span></span>
-                                                <textarea name="message" placeholder="Votre message ou question" aria-label="Votre message ou question" rows="4" required></textarea>
+                                                <textarea id="contact-message" name="message" placeholder="Votre message ou question" aria-label="Votre message ou question" rows="4" required></textarea>
                                             </label>
                                             <button type="submit" class="button button-dark full" id="contact-submit">Envoyer</button>
                                         </form>
