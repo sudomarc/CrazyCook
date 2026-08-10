@@ -977,4 +977,50 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
     };
 
     setupContactForm();
+
+    // Synchronisation dynamique de la navigation active au scroll avec attributs d'accessibilité (aria-current)
+    const setupScrollSync = () => {
+        const navLinks = document.querySelectorAll('.main-nav a[href]');
+        const sections = [
+            { el: document.querySelector('.hero'), linkHref: 'index.html' },
+            { el: document.getElementById('histoire'), linkHref: 'index.html' },
+            { el: document.getElementById('avis'), linkHref: 'index.html' },
+            { el: document.getElementById('menu'), linkHref: '#menu' },
+            { el: document.getElementById('galerie'), linkHref: '#galerie' },
+            { el: document.getElementById('contact'), linkHref: '#contact' },
+            { el: document.getElementById('faq'), linkHref: '#contact' }
+        ];
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '-30% 0px -60% 0px',
+            threshold: 0
+        };
+
+        const scrollObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    const sectionMap = sections.find(s => s.el === entry.target);
+                    if (!sectionMap) return;
+
+                    navLinks.forEach((link) => {
+                        const href = link.getAttribute('href');
+                        if (href === sectionMap.linkHref) {
+                            link.classList.add('active');
+                            link.setAttribute('aria-current', 'page');
+                        } else {
+                            link.classList.remove('active');
+                            link.removeAttribute('aria-current');
+                        }
+                    });
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach((sec) => {
+            if (sec.el) scrollObserver.observe(sec.el);
+        });
+    };
+
+    setupScrollSync();
 });
