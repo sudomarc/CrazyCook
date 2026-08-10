@@ -1874,9 +1874,24 @@ ul {
     border-radius: 4px;
 }
 
-#header-cart-toggle:focus-visible {
+#header-cart-toggle:focus-visible,
+#mobile-cart-toggle:focus-visible,
+.cart-icon-button:focus-visible {
     outline: 2px solid var(--ochre);
     outline-offset: 4px;
+    border-radius: 4px;
+}
+
+.payment-option:focus-visible {
+    outline: 2px solid var(--ochre);
+    outline-offset: 3px;
+    border-radius: 16px;
+}
+
+.cart-stepper button:focus-visible,
+.cart-remove:focus-visible {
+    outline: 2px solid var(--ochre);
+    outline-offset: 2px;
     border-radius: 4px;
 }
 
