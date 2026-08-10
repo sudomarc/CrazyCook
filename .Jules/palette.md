@@ -9,3 +9,7 @@
 ## 2025-07-26 - [Interactive Progress Stepper inside Multi-Step Drawer Workflows]
 **Learning:** When guiding a user through multi-step form tasks in vanilla JS (such as a 3-step checkout inside a drawer), providing a visual progress stepper directly below the modal's title greatly enhances clarity and reduces cognitive load. Using clean status classes (`active`, `completed`) combined with HTML `aria-current="step"` ensures clear structure and accessibility for screen readers. Connecting state transitions directly to the render loop preserves UI responsiveness and visual elegance.
 **Action:** Always provide standard progress state classes and semantic screen reader attributes on stepper indicators inside modal-driven checkout flows.
+
+## 2026-08-09 - [Dynamic Dark-Mode Styling for Embedded Map Elements]
+**Learning:** Google Maps embedding by default does not respect system or application theme states, presenting a jarring bright-white layout in a dark mode context. We can solve this cleanly in pure CSS using custom filters (`invert`, `grayscale`, `hue-rotate`, `opacity`) applied on the iframe within a theme-scoped selector (`[data-theme="dark"]`). This ensures a completely integrated, dark-toned map layout without any third-party SDK dependencies or complex styling setups, maximizing visual consistency and accessibility for sensitive eyes in dark-mode.
+**Action:** Style embedded iframe elements using responsive wrappers with custom filter states corresponding to the dark mode active theme scope.
