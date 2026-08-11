@@ -959,7 +959,8 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
                                             </label>
                                             <label for="contact-message">
                                                 <span>Votre message <span class="required" aria-hidden="true" style="color: red;">*</span></span>
-                                                <textarea id="contact-message" name="message" placeholder="Votre message ou question" aria-label="Votre message ou question" rows="4" required></textarea>
+                                                <textarea id="contact-message" name="message" placeholder="Votre message ou question" aria-label="Votre message ou question" rows="4" maxlength="500" aria-describedby="contact-message-counter" required></textarea>
+                                                <span id="contact-message-counter" class="contact-counter" aria-live="polite">0 / 500 caractères</span>
                                             </label>
                                             <button type="submit" class="button button-dark full" id="contact-submit">Envoyer</button>
                                         </form>
@@ -973,6 +974,22 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
                     }, 300);
                 }, 1200);
             });
+
+            // Gestion du compteur de caractères en temps réel
+            const messageInput = document.getElementById('contact-message');
+            const counterElement = document.getElementById('contact-message-counter');
+            if (messageInput && counterElement) {
+                const updateCounter = () => {
+                    const currentLength = messageInput.value.length;
+                    counterElement.textContent = `${currentLength} / 500 caractères`;
+                    if (currentLength >= 450) {
+                        counterElement.classList.add('warning');
+                    } else {
+                        counterElement.classList.remove('warning');
+                    }
+                };
+                messageInput.addEventListener('input', updateCounter);
+            }
         }
     };
 
