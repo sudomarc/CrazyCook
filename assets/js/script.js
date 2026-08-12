@@ -907,6 +907,23 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
         const contactWrapper = document.querySelector('.contact-form-wrapper');
 
         if (contactForm && contactSubmit && contactWrapper) {
+            const contactMessage = document.getElementById('contact-message');
+            const contactCounter = document.getElementById('contact-message-counter');
+
+            if (contactMessage && contactCounter) {
+                const updateCounter = () => {
+                    const length = contactMessage.value.length;
+                    contactCounter.textContent = `${length} / 500 caractères`;
+                    if (length >= 450) {
+                        contactCounter.classList.add('warning');
+                    } else {
+                        contactCounter.classList.remove('warning');
+                    }
+                };
+                contactMessage.addEventListener('input', updateCounter);
+                updateCounter();
+            }
+
             contactForm.addEventListener('submit', (e) => {
                 e.preventDefault();
 
@@ -959,7 +976,8 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
                                             </label>
                                             <label for="contact-message">
                                                 <span>Votre message <span class="required" aria-hidden="true" style="color: red;">*</span></span>
-                                                <textarea id="contact-message" name="message" placeholder="Votre message ou question" aria-label="Votre message ou question" rows="4" required></textarea>
+                                                <textarea id="contact-message" name="message" placeholder="Votre message ou question" aria-label="Votre message ou question" rows="4" maxlength="500" aria-describedby="contact-message-counter" required></textarea>
+                                                <span id="contact-message-counter" class="contact-counter" aria-live="polite">0 / 500 caractères</span>
                                             </label>
                                             <button type="submit" class="button button-dark full" id="contact-submit">Envoyer</button>
                                         </form>

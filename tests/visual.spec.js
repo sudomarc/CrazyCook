@@ -128,3 +128,25 @@ test('end-to-end order placement flow', async ({ page }) => {
 
   console.log('E2E Order flow test completed successfully!');
 });
+
+test('contact form message character counter', async ({ page }) => {
+  await page.goto('/');
+
+  const contactMessage = page.locator('#contact-message');
+  await expect(contactMessage).toBeVisible();
+
+  const counter = page.locator('#contact-message-counter');
+  await expect(counter).toBeVisible();
+  await expect(counter).toHaveText('0 / 500 caractères');
+
+  // Fill in some text
+  await contactMessage.fill('Un message de test');
+  await expect(counter).toHaveText('18 / 500 caractères');
+  await expect(counter).not.toHaveClass(/warning/);
+
+  // Fill in a very long message (more than 450 chars) to trigger warning state
+  const longMessage = 'a'.repeat(460);
+  await contactMessage.fill(longMessage);
+  await expect(counter).toHaveText('460 / 500 caractères');
+  await expect(counter).toHaveClass(/warning/);
+});

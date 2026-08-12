@@ -1240,6 +1240,27 @@ ul {
     resize: vertical;
 }
 
+.contact-counter {
+    font-size: 0.8rem;
+    color: var(--dark);
+    opacity: 0.6;
+    text-align: right;
+    margin-top: 0.25rem;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    transition: color 0.25s ease, opacity 0.25s ease;
+}
+
+.contact-counter.warning {
+    color: #c82a2a !important;
+    opacity: 1;
+}
+
+[data-theme="dark"] .contact-counter.warning {
+    color: #ff6b6b !important;
+    opacity: 1;
+}
+
 /* Carte Google Maps */
 .contact-map {
     margin-top: 1.5rem;
