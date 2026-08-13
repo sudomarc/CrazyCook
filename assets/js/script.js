@@ -907,6 +907,33 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
         const contactWrapper = document.querySelector('.contact-form-wrapper');
 
         if (contactForm && contactSubmit && contactWrapper) {
+            // Configuration du compteur de caractères en temps réel via délégation d'événements
+            // Cela garantit que le compteur fonctionne même après la réinitialisation récursive du formulaire.
+            const handleCounterUpdate = (target) => {
+                const counterElement = document.getElementById('contact-message-counter');
+                if (counterElement) {
+                    const len = target.value.length;
+                    counterElement.textContent = `${len} / 500`;
+                    if (len >= 450) {
+                        counterElement.classList.add('warning');
+                    } else {
+                        counterElement.classList.remove('warning');
+                    }
+                }
+            };
+
+            contactForm.addEventListener('input', (e) => {
+                if (e.target && e.target.id === 'contact-message') {
+                    handleCounterUpdate(e.target);
+                }
+            });
+
+            // Initialisation initiale du compteur
+            const initialMessageInput = document.getElementById('contact-message');
+            if (initialMessageInput) {
+                handleCounterUpdate(initialMessageInput);
+            }
+
             contactForm.addEventListener('submit', (e) => {
                 e.preventDefault();
 
@@ -946,7 +973,7 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
                             resetButton.addEventListener('click', () => {
                                 contactWrapper.classList.add('fade-out');
                                 setTimeout(() => {
-                                    // Restaurer le formulaire original
+                                    // Restaurer le formulaire original avec le compteur
                                     contactWrapper.innerHTML = `
                                         <form class="contact-form" id="restaurant-contact-form" onsubmit="return false;">
                                             <label for="contact-nom">
@@ -959,7 +986,8 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
                                             </label>
                                             <label for="contact-message">
                                                 <span>Votre message <span class="required" aria-hidden="true" style="color: red;">*</span></span>
-                                                <textarea id="contact-message" name="message" placeholder="Votre message ou question" aria-label="Votre message ou question" rows="4" required></textarea>
+                                                <textarea id="contact-message" name="message" placeholder="Votre message ou question" aria-label="Votre message ou question" rows="4" maxlength="500" aria-describedby="contact-message-counter" required></textarea>
+                                                <span id="contact-message-counter" class="contact-counter" aria-live="polite">0 / 500</span>
                                             </label>
                                             <button type="submit" class="button button-dark full" id="contact-submit">Envoyer</button>
                                         </form>
