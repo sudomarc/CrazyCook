@@ -13,3 +13,7 @@
 ## 2026-08-09 - [Dynamic Dark-Mode Styling for Embedded Map Elements]
 **Learning:** Google Maps embedding by default does not respect system or application theme states, presenting a jarring bright-white layout in a dark mode context. We can solve this cleanly in pure CSS using custom filters (`invert`, `grayscale`, `hue-rotate`, `opacity`) applied on the iframe within a theme-scoped selector (`[data-theme="dark"]`). This ensures a completely integrated, dark-toned map layout without any third-party SDK dependencies or complex styling setups, maximizing visual consistency and accessibility for sensitive eyes in dark-mode.
 **Action:** Style embedded iframe elements using responsive wrappers with custom filter states corresponding to the dark mode active theme scope.
+
+## 2026-08-13 - [Real-Time Input Counters in Destructive Form Reset Environments]
+**Learning:** In vanilla JavaScript setups where parent containers are destroyed or reset using innerHTML templates, static event listeners directly bound to target input elements (like a character counter) are permanently lost. To make the counter state robust and prevent functional breakage after a form reset, register the input tracking handler via event delegation on a stable parent element, and perform a manual counter re-initialization right after rendering the fresh template.
+**Action:** Always use parent-level event delegation or lifecycle initialization functions when building interactive counter widgets inside dynamically replaced DOM structures.

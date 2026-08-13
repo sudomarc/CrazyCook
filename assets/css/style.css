@@ -1702,6 +1702,29 @@ ul {
     background: linear-gradient(180deg, rgba(200, 131, 42, 0.03), transparent 60%);
 }
 
+/* Character counter for contact form */
+.contact-counter {
+    display: block;
+    text-align: right;
+    font-size: 0.8rem;
+    color: #635649;
+    margin-top: 0.25rem;
+    font-weight: 500;
+}
+
+.contact-counter.warning {
+    color: #d9534f;
+    font-weight: 700;
+}
+
+[data-theme="dark"] .contact-counter {
+    color: #D8CDB8;
+}
+
+[data-theme="dark"] .contact-counter.warning {
+    color: #ff6b6b;
+}
+
 /* Panel de succès pour le formulaire de contact */
 .contact-success-panel {
     background: white;
