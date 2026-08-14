@@ -719,6 +719,21 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
             // micro-feedback visuel + vibration
             showAddFeedback(button);
             addToCart(button.dataset.name, Number(button.dataset.price));
+
+            // Feedback visuel temporaire sur le bouton
+            if (!button.dataset.originalText) {
+                button.dataset.originalText = button.textContent;
+            }
+            button.textContent = 'Ajouté ! ✓';
+            button.classList.add('is-added');
+
+            if (button._addedTimeout) {
+                clearTimeout(button._addedTimeout);
+            }
+            button._addedTimeout = setTimeout(() => {
+                button.textContent = button.dataset.originalText;
+                button.classList.remove('is-added');
+            }, 1200);
         });
     });
 

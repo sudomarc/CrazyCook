@@ -564,6 +564,11 @@ ul {
     transform: translateY(-2px);
 }
 
+.add-to-cart.is-added {
+    background: var(--ochre);
+    transform: scale(0.97);
+}
+
 .cart-icon-button {
     display: inline-flex;
     align-items: center;
@@ -1204,6 +1209,31 @@ ul {
     font-size: 1.1rem;
     color: var(--burnt-earth);
     margin-bottom: 0.2rem;
+}
+
+.contact-phone-link {
+    color: var(--dark);
+    font-weight: 500;
+    transition: color 0.25s ease;
+}
+
+.contact-phone-link:hover {
+    color: var(--ochre);
+    text-decoration: underline;
+}
+
+.contact-phone-link:focus-visible {
+    outline: 2px solid var(--ochre);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+[data-theme="dark"] .contact-phone-link {
+    color: #D8CDB8;
+}
+
+[data-theme="dark"] .contact-phone-link:hover {
+    color: #F7C97A;
 }
 
 .contact-form {
