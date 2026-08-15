@@ -58,6 +58,8 @@
 <body>
     <!-- Éviter la navigation répétitive pour les lecteurs d'écran et la navigation clavier -->
     <a href="#main-content" class="skip-link">Passer au contenu principal</a>
+    <!-- Zone d'annonce d'accessibilité dynamique pour la lecture d'écran -->
+    <div id="cart-live-status" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 
     <!-- Header / Navigation -->
     <header class="site-header">
@@ -194,7 +196,7 @@
             </div>
 
                 <!-- Bannière de recommandation de la dernière commande (injectée si donnée disponible) -->
-                <div id="reorder-banner" class="reorder-banner" role="region" aria-live="polite" hidden>
+                <div id="reorder-banner" class="reorder-banner" role="region" aria-label="Recommander votre dernière commande" aria-live="polite" hidden>
                     <div class="reorder-content">
                         <div class="reorder-text">
                             <strong>Recommander votre dernière commande</strong>
