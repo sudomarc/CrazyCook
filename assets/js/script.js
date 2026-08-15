@@ -25,6 +25,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const reorderSummary = document.getElementById('reorder-summary');
     const reorderButton = document.getElementById('reorder-button');
     const reorderDismiss = document.getElementById('reorder-dismiss');
+    const cartLiveStatus = document.getElementById('cart-live-status');
+
+    // Annonce vocale pour les lecteurs d'écran lors des modifications du panier
+    const announceCartAction = (message) => {
+        if (cartLiveStatus) {
+            cartLiveStatus.textContent = '';
+            setTimeout(() => {
+                cartLiveStatus.textContent = message;
+            }, 50);
+        }
+    };
 
     // Gestion de l'état simple (Panier & Étape de commande)
     let cart = [];
@@ -519,6 +530,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             cart.push({ name, price, quantity: 1 });
         }
+        announceCartAction(`${name} ajouté au panier.`);
         bumpBadge();
         renderCart();
     };
@@ -528,12 +540,19 @@ document.addEventListener('DOMContentLoaded', () => {
         cart = cart
             .map((item) => item.name === name ? { ...item, quantity: item.quantity + delta } : item)
             .filter((item) => item.quantity > 0);
+        const currentItem = cart.find(item => item.name === name);
+        if (currentItem) {
+            announceCartAction(`Quantité de ${name} : ${currentItem.quantity}`);
+        } else {
+            announceCartAction(`${name} retiré du panier.`);
+        }
         renderCart();
     };
 
     // Supprimer un plat du panier
     const removeItem = (name) => {
         cart = cart.filter((item) => item.name !== name);
+        announceCartAction(`${name} retiré du panier.`);
         renderCart();
     };
 
