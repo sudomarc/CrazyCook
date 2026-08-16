@@ -1,10 +1,3 @@
-# 🍽️ CrazyCook — Restaurant Template
-
-> **Branch `feature/restaurant-ui`** : Adaptation de CrazyCook en template pour restaurants.
-> No frameworks, no build tools — HTML, CSS, JavaScript pur.
-
----
-
 ## Description
 
 CrazyCook Restaurant Template est une base de site web conçue pour les restaurants. Partant du projet original CrazyCook (site de recettes), cette branche le transforme en un template complet et adaptable pour tout établissement de restauration.
