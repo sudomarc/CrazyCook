@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const reorderButton = document.getElementById('reorder-button');
     const reorderDismiss = document.getElementById('reorder-dismiss');
     const cartLiveStatus = document.getElementById('cart-live-status');
+    const backToTopButton = document.getElementById('back-to-top');
 
     // Annonce vocale pour les lecteurs d'écran lors des modifications du panier
     const announceCartAction = (message) => {
@@ -62,7 +63,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const heroHeight = document.querySelector('.hero')?.offsetHeight || window.innerHeight;
             stickyMobileCta.classList.toggle('is-visible', window.scrollY > heroHeight - 100);
         }
+
+        // Affichage du bouton de retour en haut
+        if (backToTopButton) {
+            backToTopButton.hidden = window.scrollY <= 400;
+        }
     };
+
+    backToTopButton?.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
 
     // Mise à jour de l'état visuel du stepper de checkout
     const updateStepper = () => {
