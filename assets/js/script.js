@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Rendu dynamique du tiroir panier selon l'étape actuelle
-    const renderCart = () => {
+    const renderCart = (focusInfo = null) => {
         if (!cartBody) return;
 
         // Synchroniser le stepper
@@ -265,6 +265,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (cartValidateButton) {
                 cartValidateButton.textContent = 'Valider ma commande';
                 cartValidateButton.hidden = true; // Cacher le bouton si vide sans style inline
+            }
+
+            if (focusInfo) {
+                const emptyCta = document.getElementById('empty-cart-cta');
+                (emptyCta || drawerClose)?.focus();
             }
             return;
         }
@@ -301,6 +306,21 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             if (cartTotalPrice) cartTotalPrice.textContent = formatPrice(getSubtotal());
             if (cartValidateButton) cartValidateButton.textContent = 'Valider ma commande';
+
+            if (focusInfo) {
+                let targetEl = null;
+                if (focusInfo.action === 'change') {
+                    targetEl = cartBody.querySelector(`button[data-name="${focusInfo.name}"][data-change="${focusInfo.type}"]`);
+                }
+                if (!targetEl) {
+                    targetEl = cartBody.querySelector(`.cart-remove[data-remove="${focusInfo.name}"]`) ||
+                               cartBody.querySelector('.cart-remove') ||
+                               cartBody.querySelector('.cart-stepper button');
+                }
+                if (targetEl) {
+                    targetEl.focus();
+                }
+            }
             return;
         }
 
@@ -556,14 +576,14 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             announceCartAction(`${name} retiré du panier.`);
         }
-        renderCart();
+        renderCart({ action: 'change', name, type: delta > 0 ? '+' : '-' });
     };
 
     // Supprimer un plat du panier
     const removeItem = (name) => {
         cart = cart.filter((item) => item.name !== name);
         announceCartAction(`${name} retiré du panier.`);
-        renderCart();
+        renderCart({ action: 'remove', name });
     };
 
     // Redirection WhatsApp de la commande formulée proprement
