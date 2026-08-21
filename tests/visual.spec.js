@@ -128,3 +128,32 @@ test('end-to-end order placement flow', async ({ page }) => {
 
   console.log('E2E Order flow test completed successfully!');
 });
+
+test('cart drawer stepper retains focus when updating item quantities', async ({ page }) => {
+  await page.goto('/');
+
+  // Add item to cart
+  const addToCartBtn = page.locator('.add-to-cart').first();
+  await addToCartBtn.click();
+
+  // Open cart drawer
+  const cartToggle = page.locator('#header-cart-toggle');
+  await cartToggle.click();
+
+  // Locate the plus (+) button
+  const plusBtn = page.locator('.cart-stepper button[data-change="+"]').first();
+  await expect(plusBtn).toBeVisible();
+
+  // Click plus button
+  await plusBtn.click();
+
+  // Verify focus remains on plus button after re-render
+  await expect(plusBtn).toBeFocused();
+
+  // Locate minus (-) button and click
+  const minusBtn = page.locator('.cart-stepper button[data-change="-"]').first();
+  await minusBtn.click();
+
+  // Verify focus remains on minus button
+  await expect(minusBtn).toBeFocused();
+});

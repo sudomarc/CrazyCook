@@ -17,3 +17,7 @@
 ## 2026-08-13 - [Real-Time Input Counters in Destructive Form Reset Environments]
 **Learning:** In vanilla JavaScript setups where parent containers are destroyed or reset using innerHTML templates, static event listeners directly bound to target input elements (like a character counter) are permanently lost. To make the counter state robust and prevent functional breakage after a form reset, register the input tracking handler via event delegation on a stable parent element, and perform a manual counter re-initialization right after rendering the fresh template.
 **Action:** Always use parent-level event delegation or lifecycle initialization functions when building interactive counter widgets inside dynamically replaced DOM structures.
+
+## 2026-08-20 - [Focus Preservation in Dynamically Re-rendered Modal Lists]
+**Learning:** In vanilla JS dynamic re-renders (such as updating cart item quantities or deleting items in a drawer), completely overwriting `innerHTML` causes active DOM focus to reset to `document.body`. This breaks keyboard navigation for screen reader and keyboard-only users. Tracking target metadata (`id`, `action`, `itemIndex`) during user interactions and applying a post-render focus restoration loop guarantees seamless keyboard navigation.
+**Action:** Always pass `focusInfo` state objects to dynamic re-render functions to re-focus the corresponding or adjacent interactive element.
