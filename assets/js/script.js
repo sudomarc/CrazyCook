@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Rendu dynamique du tiroir panier selon l'étape actuelle
-    const renderCart = () => {
+    const renderCart = (focusInfo = null) => {
         if (!cartBody) return;
 
         // Synchroniser le stepper
@@ -253,6 +253,25 @@ document.addEventListener('DOMContentLoaded', () => {
             mobileCartCountBadge.textContent = itemCount;
         }
 
+        // Restitution dynamique du focus clavier après re-rendu DOM
+        const restoreCartFocus = () => {
+            if (!focusInfo || !focusInfo.name) return;
+            let targetEl = null;
+            if (focusInfo.action === '+' || focusInfo.action === '-') {
+                targetEl = cartBody.querySelector(`button[data-change="${focusInfo.action}"][data-name="${CSS.escape(focusInfo.name)}"]`);
+            }
+            if (!targetEl) {
+                targetEl = cartBody.querySelector(`button[data-name="${CSS.escape(focusInfo.name)}"]`) ||
+                           cartBody.querySelector(`button[data-remove="${CSS.escape(focusInfo.name)}"]`);
+            }
+            if (!targetEl) {
+                targetEl = cartBody.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])') || drawerClose;
+            }
+            if (targetEl && typeof targetEl.focus === 'function') {
+                targetEl.focus();
+            }
+        };
+
         // Si le panier est vide
         if (cart.length === 0) {
             cartBody.innerHTML = `
@@ -266,6 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 cartValidateButton.textContent = 'Valider ma commande';
                 cartValidateButton.hidden = true; // Cacher le bouton si vide sans style inline
             }
+            restoreCartFocus();
             return;
         }
 
@@ -301,6 +321,7 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             if (cartTotalPrice) cartTotalPrice.textContent = formatPrice(getSubtotal());
             if (cartValidateButton) cartValidateButton.textContent = 'Valider ma commande';
+            restoreCartFocus();
             return;
         }
 
@@ -556,14 +577,14 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             announceCartAction(`${name} retiré du panier.`);
         }
-        renderCart();
+        renderCart({ name, action: delta > 0 ? '+' : '-' });
     };
 
     // Supprimer un plat du panier
     const removeItem = (name) => {
         cart = cart.filter((item) => item.name !== name);
         announceCartAction(`${name} retiré du panier.`);
-        renderCart();
+        renderCart({ name, action: 'remove' });
     };
 
     // Redirection WhatsApp de la commande formulée proprement
