@@ -357,6 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 cartValidateButton.textContent = 'Choisir le paiement';
                 cartValidateButton.hidden = false;
             }
+            document.getElementById('delivery-name')?.focus();
             return;
         }
 
@@ -388,6 +389,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (cartValidateButton) {
                 cartValidateButton.hidden = true;
             }
+            cartBody.querySelector('.payment-option')?.focus();
             return;
         }
 
@@ -411,6 +413,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 cartValidateButton.textContent = 'Confirmer le paiement';
                 cartValidateButton.hidden = false;
             }
+            document.getElementById('om-phone')?.focus();
             return;
         }
 
@@ -457,6 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (cartValidateButton) {
                 cartValidateButton.hidden = true; // Cacher le bouton principal car on a le bouton 'restart-order'
             }
+            document.getElementById('restart-order')?.focus();
         }
     };
 
