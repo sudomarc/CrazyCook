@@ -157,3 +157,28 @@ test('cart drawer stepper retains focus when updating item quantities', async ({
   // Verify focus remains on minus button
   await expect(minusBtn).toBeFocused();
 });
+
+test('cart drawer step transitions automatically focus logical first elements', async ({ page }) => {
+  await page.goto('/');
+
+  // Add item to cart and open drawer
+  await page.locator('.add-to-cart').first().click();
+  await page.locator('#header-cart-toggle').click();
+
+  // Validate to step 2 (Delivery)
+  await page.locator('#cart-validate').click();
+
+  // Focus should shift to #delivery-name
+  const nameInput = page.locator('#delivery-name');
+  await expect(nameInput).toBeFocused();
+
+  // Fill required delivery fields and validate to step 3 (Payment)
+  await nameInput.fill('Mamadou Diallo');
+  await page.locator('#delivery-phone').fill('628069479');
+  await page.locator('#delivery-address').fill('Kaloum');
+  await page.locator('#cart-validate').click();
+
+  // Focus should shift to first payment option
+  const firstPaymentOption = page.locator('.payment-option').first();
+  await expect(firstPaymentOption).toBeFocused();
+});
