@@ -587,6 +587,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cartOverlay?.classList.add('is-visible');
         cartToggle?.setAttribute('aria-expanded', 'true');
         mobileCartToggle?.setAttribute('aria-expanded', 'true');
+        updateCartToggleLabels();
 
         // Ajouter la classe de blocage du défilement
         document.body.classList.add('cart-open');
@@ -608,6 +609,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cartOverlay?.classList.remove('is-visible');
         cartToggle?.setAttribute('aria-expanded', 'false');
         mobileCartToggle?.setAttribute('aria-expanded', 'false');
+        updateCartToggleLabels();
 
         // Retirer la classe de blocage du défilement
         document.body.classList.remove('cart-open');
