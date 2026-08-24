@@ -182,3 +182,36 @@ test('cart drawer step transitions automatically focus logical first elements', 
   const firstPaymentOption = page.locator('.payment-option').first();
   await expect(firstPaymentOption).toBeFocused();
 });
+
+test('cart drawer toggle labels sync dynamically and key C opens cart drawer', async ({ page }) => {
+  await page.goto('/');
+
+  const headerCartToggle = page.locator('#header-cart-toggle');
+
+  // Verify initial empty state aria-label and title
+  await expect(headerCartToggle).toHaveAttribute('aria-label', 'Ouvrir le panier (vide) — Touche C');
+  await expect(headerCartToggle).toHaveAttribute('title', 'Ouvrir le panier (vide) [C]');
+
+  // Add item to cart
+  await page.locator('.add-to-cart').first().click();
+
+  // Verify updated aria-label and title with item count
+  await expect(headerCartToggle).toHaveAttribute('aria-label', 'Ouvrir le panier (1 article) — Touche C');
+  await expect(headerCartToggle).toHaveAttribute('title', 'Ouvrir le panier (1 article) [C]');
+
+  // Press key 'c' to open cart drawer
+  await page.keyboard.press('c');
+
+  // Cart drawer should be visible with is-open class
+  const cartDrawer = page.locator('#cart-drawer');
+  await expect(cartDrawer).toHaveClass(/is-open/);
+
+  // Label should change to close cart
+  await expect(headerCartToggle).toHaveAttribute('aria-label', 'Fermer le panier');
+  await expect(headerCartToggle).toHaveAttribute('title', 'Fermer le panier (Échap)');
+
+  // Press Escape to close
+  await page.keyboard.press('Escape');
+  await expect(cartDrawer).not.toHaveClass(/is-open/);
+  await expect(headerCartToggle).toHaveAttribute('aria-label', 'Ouvrir le panier (1 article) — Touche C');
+});

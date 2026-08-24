@@ -38,6 +38,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // Mise à jour dynamique des attributs d'accessibilité (aria-label & title) des boutons de panier
+    const updateCartToggleLabels = () => {
+        const itemCount = cart.reduce((total, item) => total + item.quantity, 0);
+        const isOpen = cartDrawer?.classList.contains('is-open');
+
+        let label = '';
+        let title = '';
+
+        if (isOpen) {
+            label = 'Fermer le panier';
+            title = 'Fermer le panier (Échap)';
+        } else {
+            const countText = itemCount === 0 ? 'vide' : `${itemCount} article${itemCount > 1 ? 's' : ''}`;
+            label = `Ouvrir le panier (${countText}) — Touche C`;
+            title = `Ouvrir le panier (${countText}) [C]`;
+        }
+
+        [cartToggle, mobileCartToggle].forEach((btn) => {
+            if (btn) {
+                btn.setAttribute('aria-label', label);
+                btn.setAttribute('title', title);
+            }
+        });
+    };
+
     // Gestion de l'état simple (Panier & Étape de commande)
     let cart = [];
     let currentStep = 'cart'; // 'cart' | 'delivery' | 'payment' | 'processing' | 'confirmation'
@@ -241,8 +266,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderCart = (focusInfo = null) => {
         if (!cartBody) return;
 
-        // Synchroniser le stepper
+        // Synchroniser le stepper et les labels des boutons du panier
         updateStepper();
+        updateCartToggleLabels();
 
         // Mise à jour du badge dans le header
         const itemCount = cart.reduce((total, item) => total + item.quantity, 0);
@@ -529,6 +555,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Ajouter la classe de blocage du défilement
         document.body.classList.add('cart-open');
+        updateCartToggleLabels();
 
         // Mettre le focus sur le bouton de fermeture pour une navigation au clavier fluide
         setTimeout(() => {
@@ -549,6 +576,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Retirer la classe de blocage du défilement
         document.body.classList.remove('cart-open');
+        updateCartToggleLabels();
 
         // Restituer le focus à l'élément précédemment actif
         if (previouslyFocusedElement && typeof previouslyFocusedElement.focus === 'function') {
@@ -825,8 +853,22 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
     cartOverlay?.addEventListener('click', closeCart);
 
     // Gérer la fermeture du panier avec la touche Échap / Escape & focus trap pour l'accessibilité au clavier
+    // Ainsi que l'ouverture rapide du panier via la touche 'C'
     document.addEventListener('keydown', (e) => {
         const isOpen = cartDrawer?.classList.contains('is-open');
+
+        if (!isOpen && (e.key === 'c' || e.key === 'C')) {
+            const activeElement = document.activeElement;
+            const tagName = activeElement?.tagName.toLowerCase();
+            const isInput = tagName === 'input' || tagName === 'textarea' || tagName === 'select' || activeElement?.isContentEditable;
+
+            if (!isInput) {
+                e.preventDefault();
+                openCart();
+                return;
+            }
+        }
+
         if (!isOpen) return;
 
         if (e.key === 'Escape' || e.key === 'Esc') {
