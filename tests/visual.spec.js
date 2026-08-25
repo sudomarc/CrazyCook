@@ -215,3 +215,29 @@ test('cart drawer toggle labels sync dynamically and key C opens cart drawer', a
   await expect(cartDrawer).not.toHaveClass(/is-open/);
   await expect(headerCartToggle).toHaveAttribute('aria-label', 'Ouvrir le panier (1 article) — Touche C');
 });
+
+test('key T toggles theme state and updates theme toggle ARIA labels', async ({ page }) => {
+  await page.goto('/');
+
+  const themeToggle = page.locator('#theme-toggle');
+
+  // Verify initial attributes for theme toggle button
+  await expect(themeToggle).toHaveAttribute('aria-label', 'Basculer le thème sombre — Touche T');
+  await expect(themeToggle).toHaveAttribute('title', 'Basculer le thème sombre [T]');
+
+  // Press key 't' to switch to dark mode
+  await page.keyboard.press('t');
+
+  // html element should have data-theme="dark"
+  const html = page.locator('html');
+  await expect(html).toHaveAttribute('data-theme', 'dark');
+
+  // Theme toggle button should now offer switching to light theme
+  await expect(themeToggle).toHaveAttribute('aria-label', 'Basculer le thème clair — Touche T');
+  await expect(themeToggle).toHaveAttribute('title', 'Basculer le thème clair [T]');
+
+  // Press key 't' again to switch back to light mode
+  await page.keyboard.press('t');
+  await expect(html).not.toHaveAttribute('data-theme', 'dark');
+  await expect(themeToggle).toHaveAttribute('aria-label', 'Basculer le thème sombre — Touche T');
+});
