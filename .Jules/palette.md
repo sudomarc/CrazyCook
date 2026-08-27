@@ -21,3 +21,7 @@
 ## 2026-08-20 - [Focus Preservation in Dynamically Re-rendered Modal Lists]
 **Learning:** In vanilla JS dynamic re-renders (such as updating cart item quantities or deleting items in a drawer), completely overwriting `innerHTML` causes active DOM focus to reset to `document.body`. This breaks keyboard navigation for screen reader and keyboard-only users. Tracking target metadata (`id`, `action`, `itemIndex`) during user interactions and applying a post-render focus restoration loop guarantees seamless keyboard navigation.
 **Action:** Always pass `focusInfo` state objects to dynamic re-render functions to re-focus the corresponding or adjacent interactive element.
+
+## 2026-08-21 - [Asynchronous Focus Shift in Multi-Step Modal Form Transitions]
+**Learning:** In vanilla JavaScript, calling `.focus()` synchronously inside a button click event listener during dynamic DOM transitions causes the browser's native click handling lifecycle to reset focus back to `document.body` or the triggering element. Wrapping focus calls in `setTimeout(..., 0)` defers focus shifting until after event loop settlement, ensuring reliable focus transfer to the logical first form input in multi-step modal dialogs.
+**Action:** Always wrap `.focus()` calls in `setTimeout(..., 0)` when transitioning between step views inside click event handlers.

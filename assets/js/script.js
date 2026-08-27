@@ -295,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (focusInfo) {
                 const emptyCta = document.getElementById('empty-cart-cta');
-                (emptyCta || drawerClose)?.focus();
+                setTimeout(() => (emptyCta || drawerClose)?.focus(), 0);
             }
             return;
         }
@@ -383,7 +383,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 cartValidateButton.textContent = 'Choisir le paiement';
                 cartValidateButton.hidden = false;
             }
-            document.getElementById('delivery-name')?.focus();
+            setTimeout(() => document.getElementById('delivery-name')?.focus(), 0);
             return;
         }
 
@@ -415,7 +415,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (cartValidateButton) {
                 cartValidateButton.hidden = true;
             }
-            cartBody.querySelector('.payment-option')?.focus();
+            setTimeout(() => cartBody.querySelector('.payment-option')?.focus(), 0);
             return;
         }
 
@@ -439,7 +439,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 cartValidateButton.textContent = 'Confirmer le paiement';
                 cartValidateButton.hidden = false;
             }
-            document.getElementById('om-phone')?.focus();
+            setTimeout(() => document.getElementById('om-phone')?.focus(), 0);
             return;
         }
 
@@ -486,7 +486,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (cartValidateButton) {
                 cartValidateButton.hidden = true; // Cacher le bouton principal car on a le bouton 'restart-order'
             }
-            document.getElementById('restart-order')?.focus();
+            setTimeout(() => document.getElementById('restart-order')?.focus(), 0);
         }
     };
 
