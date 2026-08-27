@@ -215,3 +215,25 @@ test('cart drawer toggle labels sync dynamically and key C opens cart drawer', a
   await expect(cartDrawer).not.toHaveClass(/is-open/);
   await expect(headerCartToggle).toHaveAttribute('aria-label', 'Ouvrir le panier (1 article) — Touche C');
 });
+
+test('key T toggles dark theme and updates aria-label and title attributes', async ({ page }) => {
+  await page.goto('/');
+
+  const themeToggle = page.locator('#theme-toggle');
+
+  // Check initial label hint contains keyboard shortcut
+  const initialLabel = await themeToggle.getAttribute('aria-label');
+  expect(initialLabel).toContain('— Touche T');
+
+  // Press key 't' to toggle theme
+  await page.keyboard.press('t');
+
+  // Theme attribute or pressed state should update
+  const updatedLabel = await themeToggle.getAttribute('aria-label');
+  expect(updatedLabel).toContain('— Touche T');
+
+  // Pressing 't' again toggles back
+  await page.keyboard.press('t');
+  const revertedLabel = await themeToggle.getAttribute('aria-label');
+  expect(revertedLabel).toBe(initialLabel);
+});
