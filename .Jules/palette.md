@@ -25,3 +25,7 @@
 ## 2026-08-21 - [Asynchronous Focus Shift in Multi-Step Modal Form Transitions]
 **Learning:** In vanilla JavaScript, calling `.focus()` synchronously inside a button click event listener during dynamic DOM transitions causes the browser's native click handling lifecycle to reset focus back to `document.body` or the triggering element. Wrapping focus calls in `setTimeout(..., 0)` defers focus shifting until after event loop settlement, ensuring reliable focus transfer to the logical first form input in multi-step modal dialogs.
 **Action:** Always wrap `.focus()` calls in `setTimeout(..., 0)` when transitioning between step views inside click event handlers.
+
+## 2026-08-22 - [In-Cart Quantity Badges and Dynamic ARIA Syncing on Catalog Item Cards]
+**Learning:** When users browse a menu or catalog, lack of immediate item quantity feedback on item cards causes cognitive load and forces repetitive cart drawer toggles. Dynamically injecting an in-cart quantity pill badge (`.order-pill`) next to action buttons and synchronizing screen-reader `aria-label` attributes (`Ajouter X au panier (N dans le panier)`) whenever cart state updates provides seamless visual and auditory context.
+**Action:** Connect catalog card badge rendering directly to the central cart render loop so all cart mutations (adding, updating, reordering, clearing) instantly reflect item counts on catalog cards.

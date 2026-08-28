@@ -63,6 +63,38 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    // Mise à jour dynamique des badges et attributs ARIA sur les cartes de plats du menu
+    const updateDishBadges = () => {
+        document.querySelectorAll('.add-to-cart').forEach((button) => {
+            const name = button.dataset.name;
+            if (!name) return;
+            const item = cart.find((i) => i.name === name);
+            const count = item ? item.quantity : 0;
+            const card = button.closest('.dish-card');
+            if (!card) return;
+
+            let badge = card.querySelector('.dish-cart-count');
+            if (count > 0) {
+                if (!badge) {
+                    badge = document.createElement('span');
+                    badge.className = 'order-pill dish-cart-count';
+                    badge.style.marginRight = '0.5rem';
+                    badge.style.marginTop = '0';
+                    const actions = card.querySelector('.dish-actions') || card;
+                    actions.insertBefore(badge, button);
+                }
+                badge.textContent = `${count} dans le panier`;
+                badge.hidden = false;
+                button.setAttribute('aria-label', `Ajouter ${name} au panier (${count} dans le panier)`);
+            } else {
+                if (badge) {
+                    badge.hidden = true;
+                }
+                button.setAttribute('aria-label', `Ajouter ${name} au panier`);
+            }
+        });
+    };
+
     // Gestion de l'état simple (Panier & Étape de commande)
     let cart = [];
     let currentStep = 'cart'; // 'cart' | 'delivery' | 'payment' | 'processing' | 'confirmation'
@@ -269,6 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Synchroniser le stepper et les labels des boutons du panier
         updateStepper();
         updateCartToggleLabels();
+        updateDishBadges();
 
         // Mise à jour du badge dans le header
         const itemCount = cart.reduce((total, item) => total + item.quantity, 0);
