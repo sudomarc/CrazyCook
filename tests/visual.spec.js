@@ -215,3 +215,34 @@ test('cart drawer toggle labels sync dynamically and key C opens cart drawer', a
   await expect(cartDrawer).not.toHaveClass(/is-open/);
   await expect(headerCartToggle).toHaveAttribute('aria-label', 'Ouvrir le panier (1 article) — Touche C');
 });
+
+test('dish cards update in-cart badge and aria-label dynamically', async ({ page }) => {
+  await page.goto('/');
+
+  const firstDishCard = page.locator('.dish-card').first();
+  const firstAddBtn = firstDishCard.locator('.add-to-cart');
+  const badge = firstDishCard.locator('.dish-cart-count');
+
+  // Verify badge is initially non-existent or hidden
+  await expect(badge).toBeHidden();
+
+  // Click add to cart
+  await firstAddBtn.click();
+
+  // Verify badge becomes visible with '1 dans le panier'
+  await expect(badge).toBeVisible();
+  await expect(badge).toHaveText('1 dans le panier');
+  await expect(firstAddBtn).toHaveAttribute('aria-label', /1 dans le panier/);
+
+  // Click add to cart a second time
+  await firstAddBtn.click();
+
+  // Verify count updates to '2 dans le panier'
+  await expect(badge).toHaveText('2 dans le panier');
+  await expect(firstAddBtn).toHaveAttribute('aria-label', /2 dans le panier/);
+
+  // Capture screenshot of updated dish card with in-cart badge
+  const dishCardScreenshotPath = '/home/jules/verification/verification_dish_badge.png';
+  await firstDishCard.screenshot({ path: dishCardScreenshotPath });
+  console.log('Dish card badge screenshot saved to:', dishCardScreenshotPath);
+});
