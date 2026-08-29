@@ -212,21 +212,23 @@ document.addEventListener('DOMContentLoaded', () => {
         if (theme === 'dark') {
             document.documentElement.setAttribute('data-theme', 'dark');
             themeToggle?.setAttribute('aria-pressed', 'true');
-            themeToggle?.setAttribute('aria-label', 'Basculer le thème clair');
-            themeToggle?.setAttribute('title', 'Basculer le thème clair');
+            themeToggle?.setAttribute('aria-label', 'Basculer le thème clair — Touche T');
+            themeToggle?.setAttribute('title', 'Basculer le thème clair [T]');
             if (themeIcon) {
                 themeIcon.setAttribute('d', 'M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z');
                 themeIcon.setAttribute('fill', 'currentColor');
             }
+            announceCartAction('Thème sombre activé.');
         } else {
             document.documentElement.removeAttribute('data-theme');
             themeToggle?.setAttribute('aria-pressed', 'false');
-            themeToggle?.setAttribute('aria-label', 'Basculer le thème sombre');
-            themeToggle?.setAttribute('title', 'Basculer le thème sombre');
+            themeToggle?.setAttribute('aria-label', 'Basculer le thème sombre — Touche T');
+            themeToggle?.setAttribute('title', 'Basculer le thème sombre [T]');
             if (themeIcon) {
                 themeIcon.setAttribute('d', 'M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4M12 6a6 6 0 100 12 6 6 0 000-12z');
                 themeIcon.setAttribute('fill', 'none');
             }
+            announceCartAction('Thème clair activé.');
         }
         try { localStorage.setItem(THEME_KEY, theme); } catch (e) { /* ignore */ }
     };
@@ -886,19 +888,26 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
     cartOverlay?.addEventListener('click', closeCart);
 
     // Gérer la fermeture du panier avec la touche Échap / Escape & focus trap pour l'accessibilité au clavier
-    // Ainsi que l'ouverture rapide du panier via la touche 'C'
+    // Ainsi que l'ouverture rapide du panier via la touche 'C' et le basculement de thème via 'T'
     document.addEventListener('keydown', (e) => {
         const isOpen = cartDrawer?.classList.contains('is-open');
 
-        if (!isOpen && (e.key === 'c' || e.key === 'C')) {
+        if (!isOpen) {
             const activeElement = document.activeElement;
             const tagName = activeElement?.tagName.toLowerCase();
             const isInput = tagName === 'input' || tagName === 'textarea' || tagName === 'select' || activeElement?.isContentEditable;
 
             if (!isInput) {
-                e.preventDefault();
-                openCart();
-                return;
+                if (e.key === 'c' || e.key === 'C') {
+                    e.preventDefault();
+                    openCart();
+                    return;
+                }
+                if (e.key === 't' || e.key === 'T') {
+                    e.preventDefault();
+                    themeToggle?.click();
+                    return;
+                }
             }
         }
 
