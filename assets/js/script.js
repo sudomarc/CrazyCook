@@ -207,13 +207,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /* ---------- THEMES: gestion du thème sombre (persist + respect prefers-color-scheme) ---------- */
     const THEME_KEY = 'crazycook:theme';
-    const applyTheme = (theme) => {
+    const applyTheme = (theme, announce = false) => {
         const themeIcon = document.getElementById('theme-icon');
         if (theme === 'dark') {
             document.documentElement.setAttribute('data-theme', 'dark');
             themeToggle?.setAttribute('aria-pressed', 'true');
-            themeToggle?.setAttribute('aria-label', 'Basculer le thème clair');
-            themeToggle?.setAttribute('title', 'Basculer le thème clair');
+            themeToggle?.setAttribute('aria-label', 'Basculer le thème clair — Touche T');
+            themeToggle?.setAttribute('title', 'Basculer le thème clair [T]');
             if (themeIcon) {
                 themeIcon.setAttribute('d', 'M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z');
                 themeIcon.setAttribute('fill', 'currentColor');
@@ -221,14 +221,29 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             document.documentElement.removeAttribute('data-theme');
             themeToggle?.setAttribute('aria-pressed', 'false');
-            themeToggle?.setAttribute('aria-label', 'Basculer le thème sombre');
-            themeToggle?.setAttribute('title', 'Basculer le thème sombre');
+            themeToggle?.setAttribute('aria-label', 'Basculer le thème sombre — Touche T');
+            themeToggle?.setAttribute('title', 'Basculer le thème sombre [T]');
             if (themeIcon) {
                 themeIcon.setAttribute('d', 'M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4M12 6a6 6 0 100 12 6 6 0 000-12z');
                 themeIcon.setAttribute('fill', 'none');
             }
         }
         try { localStorage.setItem(THEME_KEY, theme); } catch (e) { /* ignore */ }
+        if (announce) {
+            announceCartAction(theme === 'dark' ? 'Thème sombre activé.' : 'Thème clair activé.');
+        }
+    };
+
+    const toggleThemeWithFeedback = () => {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+        // Ajouter la classe de rotation de l'icône de thème
+        themeToggle?.classList.add('theme-toggle-rotated');
+        setTimeout(() => {
+            themeToggle?.classList.remove('theme-toggle-rotated');
+        }, 450);
+
+        applyTheme(isDark ? 'light' : 'dark', true);
     };
 
     // Initial theme au chargement
@@ -241,17 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
         applyTheme(prefersDark ? 'dark' : 'light');
     }());
 
-    themeToggle?.addEventListener('click', () => {
-        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-
-        // Ajouter la classe de rotation de l'icône de thème
-        themeToggle.classList.add('theme-toggle-rotated');
-        setTimeout(() => {
-            themeToggle.classList.remove('theme-toggle-rotated');
-        }, 450);
-
-        applyTheme(isDark ? 'light' : 'dark');
-    });
+    themeToggle?.addEventListener('click', toggleThemeWithFeedback);
 
     /* ---------- Image skeleton helper (appelé depuis l'attribut onload/onerror des images) ---------- */
     // Note : imageLoaded et imageFailed sont définis de manière globale et en ligne dans index.html
@@ -886,18 +891,24 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
     cartOverlay?.addEventListener('click', closeCart);
 
     // Gérer la fermeture du panier avec la touche Échap / Escape & focus trap pour l'accessibilité au clavier
-    // Ainsi que l'ouverture rapide du panier via la touche 'C'
+    // Ainsi que l'ouverture rapide du panier via la touche 'C' et le basculement de thème via 'T'
     document.addEventListener('keydown', (e) => {
         const isOpen = cartDrawer?.classList.contains('is-open');
 
-        if (!isOpen && (e.key === 'c' || e.key === 'C')) {
-            const activeElement = document.activeElement;
-            const tagName = activeElement?.tagName.toLowerCase();
-            const isInput = tagName === 'input' || tagName === 'textarea' || tagName === 'select' || activeElement?.isContentEditable;
+        const activeElement = document.activeElement;
+        const tagName = activeElement?.tagName.toLowerCase();
+        const isInput = tagName === 'input' || tagName === 'textarea' || tagName === 'select' || activeElement?.isContentEditable;
 
-            if (!isInput) {
+        if (!isInput) {
+            if (!isOpen && (e.key === 'c' || e.key === 'C')) {
                 e.preventDefault();
                 openCart();
+                return;
+            }
+
+            if (e.key === 't' || e.key === 'T') {
+                e.preventDefault();
+                toggleThemeWithFeedback();
                 return;
             }
         }

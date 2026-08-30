@@ -246,3 +246,34 @@ test('dish cards update in-cart badge and aria-label dynamically', async ({ page
   await firstDishCard.screenshot({ path: dishCardScreenshotPath });
   console.log('Dish card badge screenshot saved to:', dishCardScreenshotPath);
 });
+
+test('theme toggle keyboard shortcut T updates theme state and announces live status', async ({ page }) => {
+  await page.goto('/');
+
+  const themeToggle = page.locator('#theme-toggle');
+  const liveStatus = page.locator('#cart-live-status');
+
+  // Verify initial theme state (light mode)
+  await expect(themeToggle).toHaveAttribute('aria-pressed', 'false');
+  await expect(themeToggle).toHaveAttribute('aria-label', 'Basculer le thème sombre — Touche T');
+  await expect(themeToggle).toHaveAttribute('title', 'Basculer le thème sombre [T]');
+
+  // Press key 't' to switch to dark mode
+  await page.keyboard.press('t');
+
+  // Verify dark theme activated on html
+  const html = page.locator('html');
+  await expect(html).toHaveAttribute('data-theme', 'dark');
+  await expect(themeToggle).toHaveAttribute('aria-pressed', 'true');
+  await expect(themeToggle).toHaveAttribute('aria-label', 'Basculer le thème clair — Touche T');
+  await expect(themeToggle).toHaveAttribute('title', 'Basculer le thème clair [T]');
+  await expect(liveStatus).toHaveText('Thème sombre activé.');
+
+  // Press key 'T' (Shift+t) to switch back to light mode
+  await page.keyboard.press('Shift+T');
+
+  await expect(html).not.toHaveAttribute('data-theme', 'dark');
+  await expect(themeToggle).toHaveAttribute('aria-pressed', 'false');
+  await expect(themeToggle).toHaveAttribute('aria-label', 'Basculer le thème sombre — Touche T');
+  await expect(liveStatus).toHaveText('Thème clair activé.');
+});
