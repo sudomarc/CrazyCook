@@ -1,0 +1,9 @@
+{
+  "name": "CrazyCook",
+  "short_name": "CrazyCook",
+  "start_url": "/CrazyCook/",
+  "display": "standalone",
+  "background_color": "#f5f0e8",
+  "theme_color": "#1f1a17",
+  "lang": "fr"
+}

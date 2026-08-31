@@ -1,16 +1,13 @@
 {
   "name": "crazycook-website",
   "version": "1.0.0",
-  "description": "Website for CrazyCook recipes",
+  "description": "CrazyCook restaurant template",
   "scripts": {
     "dev": "http-server -p 8080 -o --cors",
+    "build": "node scripts/build-site.mjs",
     "test": "playwright test"
   },
-  "keywords": [
-    "recipe",
-    "cooking",
-    "food"
-  ],
+  "keywords": ["restaurant", "template", "html", "css", "javascript"],
   "author": "",
   "license": "MIT",
   "devDependencies": {
