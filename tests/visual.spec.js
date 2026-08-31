@@ -246,3 +246,27 @@ test('dish cards update in-cart badge and aria-label dynamically', async ({ page
   await firstDishCard.screenshot({ path: dishCardScreenshotPath });
   console.log('Dish card badge screenshot saved to:', dishCardScreenshotPath);
 });
+
+test('theme toggle updates aria-label and key T toggles dark/light theme', async ({ page }) => {
+  await page.goto('/');
+
+  const themeToggle = page.locator('#theme-toggle');
+
+  // Verify initial attributes include keyboard hint 'T'
+  await expect(themeToggle).toHaveAttribute('aria-label', /Touche T/);
+  await expect(themeToggle).toHaveAttribute('title', /\[T\]/);
+
+  // Press key 't' outside form fields to toggle to dark theme
+  await page.keyboard.press('t');
+
+  // Document root should have data-theme="dark"
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await expect(themeToggle).toHaveAttribute('aria-pressed', 'true');
+  await expect(themeToggle).toHaveAttribute('aria-label', 'Basculer le thème clair — Touche T');
+
+  // Press key 't' again to toggle back to light theme
+  await page.keyboard.press('t');
+  await expect(page.locator('html')).not.toHaveAttribute('data-theme', 'dark');
+  await expect(themeToggle).toHaveAttribute('aria-pressed', 'false');
+  await expect(themeToggle).toHaveAttribute('aria-label', 'Basculer le thème sombre — Touche T');
+});
