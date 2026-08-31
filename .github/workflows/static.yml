@@ -37,6 +37,8 @@ jobs:
           rsvg-convert -w 32 -h 32 assets/img/favicon.svg -o dist/assets/img/favicon-32.png
           rsvg-convert -w 180 -h 180 assets/img/apple-touch-icon.svg -o dist/assets/img/apple-touch-icon.png
           rsvg-convert -w 1200 -h 630 dist/assets/img/og-cover.svg -o dist/assets/img/og-cover.png
+      - name: Audit production artifact
+        run: npm test
       - name: Minify production HTML
         run: npx --yes html-minifier-terser@7.2.0 --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true -o dist/index.html dist/index.html
       - name: Minify production CSS
