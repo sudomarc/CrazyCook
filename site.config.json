@@ -1,0 +1,15 @@
+{
+  "name": "CrazyCook",
+  "url": "https://sudomarc.github.io/CrazyCook/",
+  "description": "TODO_DESCRIPTION_ICI",
+  "address": "TODO_ADRESSE_ICI",
+  "city": "TODO_VILLE_ICI",
+  "postalCode": "TODO_CODE_POSTAL_ICI",
+  "country": "TODO_PAYS_ICI",
+  "telephone": "TODO_TEL_ICI",
+  "priceRange": "TODO_GAMME_DE_PRIX_ICI",
+  "openingHours": ["TODO_HORAIRES_ICI"],
+  "instagram": "TODO_INSTAGRAM_ICI",
+  "facebook": "TODO_FACEBOOK_ICI",
+  "tiktok": "TODO_TIKTOK_ICI"
+}
