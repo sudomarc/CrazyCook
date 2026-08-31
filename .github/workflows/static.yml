@@ -1,57 +1,77 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+name: Deploy CrazyCook to GitHub Pages
 
 on:
-  # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
-  group: "pages"
+  group: pages
   cancel-in-progress: false
 
 jobs:
-  # Single deploy job since we're just deploying
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18 # Or a suitable LTS version
-      - name: Install optimization tools
-        run: npm install -g html-minifier clean-css-cli uglify-js imagemin-cli imagemin-jpegtran imagemin-optipng imagemin-gifsicle imagemin-svgo
-      - name: Minify HTML
-        run: find . -name "*.html" -not -path "./node_modules/*" -exec html-minifier --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true -o {} {} \;
-      - name: Minify CSS
-        run: find . -name "*.css" -not -path "./node_modules/*" -exec cleancss -o {} {} \;
-      - name: Minify JavaScript
-        run: find . -name "*.js" -not -path "./node_modules/*" -not -path "./.github/*" -exec uglifyjs {} -o {} -c -m \;
-      - name: Compress images
-        run: imagemin '**/*.{jpg,jpeg,png,gif,svg}' --out-dir=. --plugin=jpegtran --plugin=optipng --plugin=gifsicle --plugin=svgo
-      - name: Upload artifact
+          node-version: 20
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Build production site
+        run: npm run build
+      - name: Install SVG renderer
+        run: sudo apt-get update && sudo apt-get install -y librsvg2-bin
+      - name: Generate production icons and social image
+        run: |
+          rsvg-convert -w 16 -h 16 assets/img/favicon-16.svg -o dist/assets/img/favicon-16.png
+          rsvg-convert -w 32 -h 32 assets/img/favicon.svg -o dist/assets/img/favicon-32.png
+          rsvg-convert -w 180 -h 180 assets/img/apple-touch-icon.svg -o dist/assets/img/apple-touch-icon.png
+          rsvg-convert -w 1200 -h 630 dist/assets/img/og-cover.svg -o dist/assets/img/og-cover.png
+      - name: Minify production HTML
+        run: npx --yes html-minifier-terser@7.2.0 --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true -o dist/index.html dist/index.html
+      - name: Minify production CSS
+        run: npx --yes clean-css-cli@5.6.3 -o dist/assets/css/style.css dist/assets/css/style.css
+      - name: Minify production JavaScript
+        run: |
+          npx --yes terser@5.36.0 dist/assets/js/script.js -c -m -o dist/assets/js/script.js
+          npx --yes terser@5.36.0 dist/assets/js/image-fallback.js -c -m -o dist/assets/js/image-fallback.js
+      - name: Remove source maps
+        run: find dist -type f -name '*.map' -delete
+      - name: Verify artifact
+        run: |
+          test -f dist/index.html
+          test -f dist/404.html
+          test -f dist/robots.txt
+          test -f dist/sitemap.xml
+          test -f dist/llms.txt
+          test -f dist/site.webmanifest
+          test -f dist/assets/img/favicon-16.png
+          test -f dist/assets/img/favicon-32.png
+          test -f dist/assets/img/apple-touch-icon.png
+          test -f dist/assets/img/og-cover.png
+          ! find dist -type f -name '*.map' | grep -q .
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
-          path: '.'
-      - name: Deploy to GitHub Pages
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
