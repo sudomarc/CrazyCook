@@ -246,3 +246,34 @@ test('dish cards update in-cart badge and aria-label dynamically', async ({ page
   await firstDishCard.screenshot({ path: dishCardScreenshotPath });
   console.log('Dish card badge screenshot saved to:', dishCardScreenshotPath);
 });
+
+test('key T toggles dark/light theme, updates button attributes and announces live status', async ({ page }) => {
+  await page.goto('/');
+
+  const themeToggle = page.locator('#theme-toggle');
+  const liveStatus = page.locator('#cart-live-status');
+  const html = page.locator('html');
+
+  // Verify initial theme toggle attributes contain keyboard hint [T]
+  await expect(themeToggle).toHaveAttribute('title', /\[T\]/);
+  await expect(themeToggle).toHaveAttribute('aria-label', /Touche T/);
+
+  // Press key 't' to toggle theme
+  await page.keyboard.press('t');
+
+  // Check if html element has data-theme="dark" (or toggled from initial state)
+  const isDarkAfterPress = await html.getAttribute('data-theme');
+  expect(isDarkAfterPress === 'dark' || isDarkAfterPress === null).toBe(true);
+
+  // Check aria-pressed state on theme button
+  const ariaPressed = await themeToggle.getAttribute('aria-pressed');
+  expect(ariaPressed).toBe(isDarkAfterPress === 'dark' ? 'true' : 'false');
+
+  // Check screen reader live status announcement
+  await expect(liveStatus).toContainText(/Thème (sombre|clair) activé/);
+
+  // Press key 't' again to toggle back
+  await page.keyboard.press('t');
+  const isDarkAfterSecondPress = await html.getAttribute('data-theme');
+  expect(isDarkAfterSecondPress).not.toBe(isDarkAfterPress);
+});
