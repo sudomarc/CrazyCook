@@ -1,0 +1,22 @@
+# CrazyCook
+
+> Restaurant website template for demonstration and client presentation.
+
+## Project
+CrazyCook is a static single-page restaurant template built with HTML, CSS and vanilla JavaScript.
+
+## Demo
+https://sudomarc.github.io/CrazyCook/
+
+## Sections
+- Hero / presentation
+- Story
+- Testimonials
+- Menu
+- Gallery
+- FAQ
+- Contact
+- Cart and simulated checkout flow
+
+## Customization
+Replace all TODO_* values in `site.config.json` with the real restaurant data before production use.
