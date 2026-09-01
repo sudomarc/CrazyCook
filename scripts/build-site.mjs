@@ -51,6 +51,19 @@ html = html.replace(/\s*<link rel="icon"[^>]*>/, '');
 html = html.replace(/(<title>.*?<\/title>)/, `$1\n${seo.trimEnd()}`);
 html = html.replace(/\n\s*<script>\s*\/\/ Définition immédiate des handlers[\s\S]*?<\/script>\s*/m, '\n    <script src="assets/js/image-fallback.js" defer></script>\n');
 
+const removeOrConfigureSocialLink = (label, value, placeholder) => {
+  const pattern = new RegExp(`\\s*<a href="#" aria-label="${label}">[\\s\\S]*?<\\/a>`, 'm');
+  if (isTodo(value)) {
+    html = html.replace(pattern, '');
+    return;
+  }
+  html = html.replace(pattern, (match) => match.replace('href="#"', `href="${value}"`));
+};
+
+removeOrConfigureSocialLink('Instagram', config.instagram, 'TODO_INSTAGRAM_ICI');
+removeOrConfigureSocialLink('Facebook', config.facebook, 'TODO_FACEBOOK_ICI');
+removeOrConfigureSocialLink('TikTok', config.tiktok, 'TODO_TIKTOK_ICI');
+
 const replacements = new Map([
   ['12 Avenue de l\'Indépendance, Conakry', config.address],
   ['+224 628 069 479', config.telephone],
@@ -61,9 +74,10 @@ const replacements = new Map([
   ['Commandé 27 fois aujourd\'hui', 'TODO_POPULARITE_ICI'],
   ['Nous livrons actuellement dans toute la presqu\'île de Kaloum ainsi que dans les quartiers de Dixinn, Bellevue et Madina à Conakry. Les frais de livraison sont fixes et s\'élèvent à 2 000 GNF par commande.', 'TODO_ZONES_LIVRAISON_ET_FRAIS_ICI'],
   ['Notre restaurant et notre service de livraison sont ouverts tous les jours, du lundi au dimanche, de 11h00 à 22h00 sans interruption.', config.openingHours[0]],
-  ['href="#" aria-label="Instagram"', `href="${isTodo(config.instagram) ? 'TODO_INSTAGRAM_ICI' : config.instagram}" aria-label="Instagram"`],
-  ['href="#" aria-label="Facebook"', `href="${isTodo(config.facebook) ? 'TODO_FACEBOOK_ICI' : config.facebook}" aria-label="Facebook"`],
-  ['href="#" aria-label="TikTok"', `href="${isTodo(config.tiktok) ? 'TODO_TIKTOK_ICI' : config.tiktok}" aria-label="TikTok"`],
+  ['CrazyCook est né à Conakry de l’envie de célébrer la richesse des rituels culinaires d’Afrique de l\'Ouest, sous un jour brut et contemporain.', 'CrazyCook est un exemple de template pensé pour célébrer une cuisine généreuse sous un jour brut et contemporain.'],
+  ['<span class="stat-value">Depuis 2024</span>', '<span class="stat-value">TODO_ANNEE_CREATION_ICI</span>'],
+  ['<span class="stat-label">Conakry</span>', '<span class="stat-label">TODO_VILLE_ICI</span>'],
+  ['Enfin un lieu à Conakry qui allie modernité esthétique et respect absolu des rituels de cuisson.', 'Enfin un lieu qui allie modernité esthétique et respect absolu des rituels de cuisson.'],
 ]);
 for (const [from, to] of replacements) html = html.replaceAll(from, to);
 
