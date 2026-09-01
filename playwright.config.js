@@ -11,9 +11,9 @@ module.exports = defineConfig({
     ignoreHTTPSErrors: true,
   },
   webServer: {
-    command: 'npm run build && npx http-server dist -p 8080',
+    command: 'npx http-server dist -p 8080',
     port: 8080,
     reuseExistingServer: false,
-    timeout: 60000,
+    timeout: 30000,
   },
 });
