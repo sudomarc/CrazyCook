@@ -1241,6 +1241,59 @@ ul {
     border-radius: 4px;
 }
 
+/* Copy button styling for address/contact info */
+.copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-left: 0.5rem;
+    padding: 0.2rem 0.55rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    font-family: inherit;
+    color: var(--burnt-earth);
+    background: rgba(139, 69, 19, 0.08);
+    border: 1px solid rgba(139, 69, 19, 0.18);
+    border-radius: 999px;
+    cursor: pointer;
+    vertical-align: middle;
+    transition: background 0.25s ease, color 0.25s ease, transform 0.2s ease, border-color 0.25s ease;
+}
+
+.copy-btn:hover {
+    background: var(--burnt-earth);
+    color: var(--cream);
+    transform: translateY(-1px);
+}
+
+.copy-btn.copied {
+    background: var(--forest-green);
+    color: white;
+    border-color: var(--forest-green);
+}
+
+.copy-btn:focus-visible {
+    outline: 2px solid var(--ochre);
+    outline-offset: 2px;
+}
+
+[data-theme="dark"] .copy-btn {
+    color: #F7C97A;
+    background: rgba(224, 166, 77, 0.12);
+    border-color: rgba(224, 166, 77, 0.25);
+}
+
+[data-theme="dark"] .copy-btn:hover {
+    background: var(--ochre);
+    color: var(--dark);
+}
+
+[data-theme="dark"] .copy-btn.copied {
+    background: var(--forest-green);
+    color: white;
+    border-color: var(--forest-green);
+}
+
 [data-theme="dark"] .contact-phone-link {
     color: #D8CDB8;
 }

@@ -1205,4 +1205,41 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
     };
 
     setupScrollSync();
+
+    // Gestion du bouton de copie d'adresse dans le presse-papier avec micro-feedback visuel et vocal
+    const copyAddressBtn = document.getElementById('copy-address-btn');
+    const contactAddressText = document.getElementById('contact-address-text');
+
+    if (copyAddressBtn && contactAddressText) {
+        copyAddressBtn.addEventListener('click', async () => {
+            const textToCopy = contactAddressText.textContent.trim();
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(textToCopy);
+                } else {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = textToCopy;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                }
+                announceCartAction('Adresse copiée dans le presse-papier.');
+            } catch (err) {
+                announceCartAction('Impossible de copier l\'adresse.');
+                return;
+            }
+
+            const label = copyAddressBtn.querySelector('.copy-label');
+            if (label) {
+                const originalText = label.textContent;
+                label.textContent = 'Copié ! ✓';
+                copyAddressBtn.classList.add('copied');
+                setTimeout(() => {
+                    label.textContent = originalText;
+                    copyAddressBtn.classList.remove('copied');
+                }, 1800);
+            }
+        });
+    }
 });
