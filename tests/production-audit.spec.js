@@ -1,6 +1,7 @@
 const { test, expect } = require('@playwright/test');
 
 const REQUIRED_FILES = [
+  '/.nojekyll',
   '/404.html',
   '/robots.txt',
   '/sitemap.xml',
