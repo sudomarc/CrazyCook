@@ -4,7 +4,21 @@ import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dist = path.join(root, 'dist');
-const config = JSON.parse(fs.readFileSync(path.join(root, 'site.config.json'), 'utf8'));
+const configPath = path.join(root, 'site.config.json');
+const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+
+if (!config.url || !/^https?:\/\/[^\s]+$/.test(config.url)) {
+  throw new Error(`Invalid site.config.json url: ${config.url}`);
+}
+
+if (!config.name || typeof config.name !== 'string') {
+  throw new Error('site.config.json must define a non-empty name');
+}
+
+if (!Array.isArray(config.openingHours) || config.openingHours.length === 0) {
+  throw new Error('site.config.json must define at least one openingHours entry');
+}
+
 const baseUrl = config.url.replace(/\/$/, '');
 const isTodo = (value) => typeof value !== 'string' || value.startsWith('TODO_');
 
@@ -14,6 +28,9 @@ fs.mkdirSync(dist, { recursive: true });
 const copy = (source, destination = source) => {
   const from = path.join(root, source);
   const to = path.join(dist, destination);
+  if (!fs.existsSync(from)) {
+    throw new Error(`Required build input is missing: ${source}`);
+  }
   fs.mkdirSync(path.dirname(to), { recursive: true });
   fs.cpSync(from, to, { recursive: true });
 };
@@ -51,7 +68,7 @@ html = html.replace(/\s*<link rel="icon"[^>]*>/, '');
 html = html.replace(/(<title>.*?<\/title>)/, `$1\n${seo.trimEnd()}`);
 html = html.replace(/\n\s*<script>\s*\/\/ Définition immédiate des handlers[\s\S]*?<\/script>\s*/m, '\n    <script src="assets/js/image-fallback.js" defer></script>\n');
 
-const removeOrConfigureSocialLink = (label, value, placeholder) => {
+const removeOrConfigureSocialLink = (label, value) => {
   const pattern = new RegExp(`\\s*<a href="#" aria-label="${label}">[\\s\\S]*?<\\/a>`, 'm');
   if (isTodo(value)) {
     html = html.replace(pattern, '');
@@ -60,9 +77,9 @@ const removeOrConfigureSocialLink = (label, value, placeholder) => {
   html = html.replace(pattern, (match) => match.replace('href="#"', `href="${value}"`));
 };
 
-removeOrConfigureSocialLink('Instagram', config.instagram, 'TODO_INSTAGRAM_ICI');
-removeOrConfigureSocialLink('Facebook', config.facebook, 'TODO_FACEBOOK_ICI');
-removeOrConfigureSocialLink('TikTok', config.tiktok, 'TODO_TIKTOK_ICI');
+removeOrConfigureSocialLink('Instagram', config.instagram);
+removeOrConfigureSocialLink('Facebook', config.facebook);
+removeOrConfigureSocialLink('TikTok', config.tiktok);
 
 const replacements = new Map([
   ['12 Avenue de l\'Indépendance, Conakry', config.address],
@@ -106,9 +123,13 @@ html = html.replace('</head>', `    <script type="application/ld+json">${JSON.st
 
 fs.writeFileSync(path.join(dist, 'index.html'), html);
 for (const file of ['404.html', 'robots.txt', 'sitemap.xml', 'llms.txt', 'site.webmanifest']) {
-  fs.copyFileSync(path.join(root, file), path.join(dist, file));
+  copy(file);
 }
 
 const ogSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630"><rect width="1200" height="630" fill="#1f1a17"/><text x="80" y="280" fill="#f5f0e8" font-family="Georgia,serif" font-size="92" font-weight="700">CrazyCook</text><text x="82" y="355" fill="#c8832a" font-family="Arial,sans-serif" font-size="30">Restaurant Template</text></svg>`;
 fs.writeFileSync(path.join(dist, 'assets/img/og-cover.svg'), ogSvg);
+
+// Tell static hosting layers not to treat this artifact as a Jekyll source tree.
+fs.writeFileSync(path.join(dist, '.nojekyll'), '');
+
 console.log(`Built ${dist} for ${baseUrl}`);
