@@ -1241,6 +1241,61 @@ ul {
     border-radius: 4px;
 }
 
+/* Bouton Copier l'adresse */
+.copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-left: 0.5rem;
+    padding: 0.2rem 0.55rem;
+    border: 1px solid rgba(26, 26, 26, 0.16);
+    border-radius: 999px;
+    background: white;
+    color: var(--burnt-earth);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    vertical-align: middle;
+    transition: transform 0.2s var(--ease-premium), background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.copy-btn:hover {
+    background: var(--burnt-earth);
+    color: var(--cream);
+    border-color: var(--burnt-earth);
+    transform: translateY(-1px);
+}
+
+.copy-btn:focus-visible {
+    outline: 2px solid var(--ochre);
+    outline-offset: 2px;
+}
+
+.copy-btn.is-copied {
+    background: var(--forest-green);
+    color: white;
+    border-color: var(--forest-green);
+}
+
+[data-theme="dark"] .copy-btn {
+    background: rgba(255, 255, 255, 0.08);
+    color: #F7C97A;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="dark"] .copy-btn:hover {
+    background: var(--ochre);
+    color: var(--dark);
+    border-color: var(--ochre);
+}
+
+[data-theme="dark"] .copy-btn.is-copied {
+    background: var(--forest-green);
+    color: white;
+    border-color: var(--forest-green);
+}
+
 [data-theme="dark"] .contact-phone-link {
     color: #D8CDB8;
 }

@@ -29,3 +29,7 @@
 ## 2026-08-22 - [In-Cart Quantity Badges and Dynamic ARIA Syncing on Catalog Item Cards]
 **Learning:** When users browse a menu or catalog, lack of immediate item quantity feedback on item cards causes cognitive load and forces repetitive cart drawer toggles. Dynamically injecting an in-cart quantity pill badge (`.order-pill`) next to action buttons and synchronizing screen-reader `aria-label` attributes (`Ajouter X au panier (N dans le panier)`) whenever cart state updates provides seamless visual and auditory context.
 **Action:** Connect catalog card badge rendering directly to the central cart render loop so all cart mutations (adding, updating, reordering, clearing) instantly reflect item counts on catalog cards.
+
+## 2026-09-02 - [Accessible Copy-to-Clipboard Micro-Interactions]
+**Learning:** When providing inline copy buttons for critical contact information (e.g. restaurant address), relying solely on visual state changes (like 'Copié ! ✓') leaves screen-reader users without feedback. Pairing immediate visual button state transitions with screen-reader announcements (`aria-live="polite"`) ensures equitable feedback across all modalities.
+**Action:** Always route clipboard confirmation actions through live region announcers (like `announceCartAction`) in addition to visual element toggles.
