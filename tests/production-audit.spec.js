@@ -49,6 +49,7 @@ test('production artifact has no browser or resource errors', async ({ page }) =
     expect(image.alt, `missing alt for ${image.src}`).toBeTruthy();
   }
 
+  await expect(page.locator('body')).not.toContainText(/TODO_[A-Z0-9_]+/);
   await expect(page.locator('[onload], [onerror], [onclick], [onchange], [onsubmit]')).toHaveCount(0);
   await expect(page.locator('title')).toHaveCount(1);
   await expect(page.locator('meta[name="description"]')).toHaveCount(1);
