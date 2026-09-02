@@ -1,44 +1,33 @@
-name: HTML & CSS Lint
+name: Code quality
 
 on:
   push:
-    branches:
-      - main
+    branches: ["main"]
   pull_request:
-    branches:
-      - main
+    branches: ["main"]
+
+permissions:
+  contents: read
 
 jobs:
-  htmlhint:
+  validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Install Node.js
-        uses: actions/setup-node@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: 20
+          cache: npm
 
-      - name: Install HTMLHint
-        run: npm install -g htmlhint
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Lint HTML
-        run: htmlhint index.html
+      - name: Build production artifact
+        run: npm run build
 
-  stylelint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Install Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-
-      - name: Install Stylelint
-        run: npm install -g stylelint stylelint-config-standard
-
-      - name: Lint CSS
-        run: stylelint "assets/css/*.css"
+      - name: Validate production artifact
+        run: npm test
