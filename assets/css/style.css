@@ -1230,6 +1230,40 @@ ul {
     transition: color 0.25s ease;
 }
 
+.copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-left: 0.5rem;
+    padding: 0.2rem 0.5rem;
+    font-size: 0.75rem;
+    font-family: inherit;
+    font-weight: 500;
+    color: var(--burnt-earth);
+    background: rgba(var(--burnt-earth-rgb), 0.08);
+    border: 1px solid rgba(var(--burnt-earth-rgb), 0.2);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    vertical-align: middle;
+}
+
+.copy-btn:hover {
+    background: rgba(var(--burnt-earth-rgb), 0.15);
+    border-color: var(--burnt-earth);
+}
+
+.copy-btn:focus-visible {
+    outline: 2px solid var(--ochre);
+    outline-offset: 2px;
+}
+
+.copy-btn.copied {
+    color: var(--forest-green);
+    background: rgba(var(--forest-green-rgb), 0.12);
+    border-color: var(--forest-green);
+}
+
 .contact-phone-link:hover {
     color: var(--ochre);
     text-decoration: underline;
