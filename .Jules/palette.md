@@ -29,3 +29,7 @@
 ## 2026-08-22 - [In-Cart Quantity Badges and Dynamic ARIA Syncing on Catalog Item Cards]
 **Learning:** When users browse a menu or catalog, lack of immediate item quantity feedback on item cards causes cognitive load and forces repetitive cart drawer toggles. Dynamically injecting an in-cart quantity pill badge (`.order-pill`) next to action buttons and synchronizing screen-reader `aria-label` attributes (`Ajouter X au panier (N dans le panier)`) whenever cart state updates provides seamless visual and auditory context.
 **Action:** Connect catalog card badge rendering directly to the central cart render loop so all cart mutations (adding, updating, reordering, clearing) instantly reflect item counts on catalog cards.
+
+## 2026-09-04 - [Real-Time Input Auto-Preservation in Multi-Step Drawer Forms]
+**Learning:** In multi-step modal form workflows where step transitions re-render innerHTML templates dynamically, persisting user input only on form submit causes typed entries to be lost if the user navigates backward ("Retour") before submitting. Adding a real-time `input` event listener on the modal container automatically preserves draft values in state, eliminating user frustration and friction during checkout step transitions.
+**Action:** Register an `input` event delegation handler on dynamic multi-step form containers to continuously preserve typed form data in state objects.

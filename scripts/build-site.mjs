@@ -67,6 +67,9 @@ html = html.replace(/\s*<meta name="description"[^>]*>/, '');
 html = html.replace(/\s*<link rel="icon"[^>]*>/, '');
 html = html.replace(/(<title>.*?<\/title>)/, `$1\n${seo.trimEnd()}`);
 html = html.replace(/\n\s*<script>\s*\/\/ Définition immédiate des handlers[\s\S]*?<\/script>\s*/m, '\n    <script src="assets/js/image-fallback.js" defer></script>\n');
+html = html.replaceAll(' onload="imageLoaded(this)"', '');
+html = html.replaceAll(' onerror="imageFailed(this)"', '');
+html = html.replaceAll(' onsubmit="return false;"', '');
 
 const removeOrConfigureSocialLink = (label, value) => {
   const pattern = new RegExp(`\\s*<a href="#" aria-label="${label}">[\\s\\S]*?<\\/a>`, 'm');
@@ -136,6 +139,15 @@ for (const file of ['404.html', 'robots.txt', 'sitemap.xml', 'llms.txt', 'site.w
 
 const ogSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630"><rect width="1200" height="630" fill="#1f1a17"/><text x="80" y="280" fill="#f5f0e8" font-family="Georgia,serif" font-size="92" font-weight="700">CrazyCook</text><text x="82" y="355" fill="#c8832a" font-family="Arial,sans-serif" font-size="30">Restaurant Template</text></svg>`;
 fs.writeFileSync(path.join(dist, 'assets/img/og-cover.svg'), ogSvg);
+
+// Support files for favicon/meta images in build artifact
+for (const imgName of ['favicon-16.png', 'favicon-32.png', 'apple-touch-icon.png', 'og-cover.png']) {
+  const targetPath = path.join(dist, 'assets/img', imgName);
+  if (!fs.existsSync(targetPath)) {
+    fs.mkdirSync(path.dirname(targetPath), { recursive: true });
+    fs.writeFileSync(targetPath, Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==', 'base64'));
+  }
+}
 
 // Tell static hosting layers not to treat this artifact as a Jekyll source tree.
 fs.writeFileSync(path.join(dist, '.nojekyll'), '');

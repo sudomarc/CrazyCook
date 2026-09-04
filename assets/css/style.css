@@ -1780,6 +1780,15 @@ ul {
 }
 
 /* Character counter for contact form */
+.required {
+    color: var(--burnt-earth);
+    margin-left: 2px;
+}
+
+[data-theme="dark"] .required {
+    color: var(--ochre);
+}
+
 .contact-counter {
     display: block;
     text-align: right;
