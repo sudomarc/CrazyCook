@@ -1006,6 +1006,16 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
         }
     });
 
+    // Auto-préservation en temps réel des données saisies dans le formulaire de livraison
+    cartBody?.addEventListener('input', (event) => {
+        const target = event.target;
+        if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
+            if (target.form && target.form.id === 'delivery-form' && target.name in deliveryInfo) {
+                deliveryInfo[target.name] = target.value;
+            }
+        }
+    });
+
     // Gestion de la soumission du formulaire de livraison
     cartBody?.addEventListener('submit', (event) => {
         if (event.target instanceof HTMLFormElement && (event.target.id === 'delivery-form' || event.target.id === 'om-form')) {
@@ -1169,15 +1179,15 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
                                     contactWrapper.innerHTML = `
                                         <form class="contact-form" id="restaurant-contact-form" onsubmit="return false;">
                                             <label for="contact-nom">
-                                                <span>Nom complet <span class="required" aria-hidden="true" style="color: red;">*</span></span>
+                                                <span>Nom complet <span class="required" aria-hidden="true">*</span></span>
                                                 <input id="contact-nom" type="text" name="nom" placeholder="Votre nom" aria-label="Votre nom complet" autocomplete="name" required>
                                             </label>
                                             <label for="contact-telephone">
-                                                <span>Numéro de téléphone <span class="required" aria-hidden="true" style="color: red;">*</span></span>
+                                                <span>Numéro de téléphone <span class="required" aria-hidden="true">*</span></span>
                                                 <input id="contact-telephone" type="tel" name="telephone" placeholder="Votre téléphone" aria-label="Votre numéro de téléphone" autocomplete="tel" required>
                                             </label>
                                             <label for="contact-message">
-                                                <span>Votre message <span class="required" aria-hidden="true" style="color: red;">*</span></span>
+                                                <span>Votre message <span class="required" aria-hidden="true">*</span></span>
                                                 <textarea id="contact-message" name="message" placeholder="Votre message ou question" aria-label="Votre message ou question" rows="4" maxlength="500" aria-describedby="contact-message-counter" required></textarea>
                                                 <span id="contact-message-counter" class="contact-counter" aria-live="polite">0 / 500</span>
                                             </label>

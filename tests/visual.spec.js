@@ -37,3 +37,29 @@ test('end-to-end order placement flow', async ({ page }) => {
 
   await expect(page.locator('.cart-confirmation h4')).toContainText('Paiement confirmé', { timeout: 5000 });
 });
+
+test('delivery form fields are preserved in real time when stepping back and forth', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  const addToCartButton = page.locator('.add-to-cart').first();
+  await addToCartButton.click();
+
+  await page.locator('#header-cart-toggle').click();
+  await page.locator('#cart-validate').click();
+
+  await page.locator('input[name="name"]').fill('Mamadou Diallo');
+  await page.locator('input[name="phone"]').fill('+224 628 00 00 00');
+  await page.locator('input[name="address"]').fill('Kaloum, Conakry');
+
+  // Step back to cart without submitting the form
+  await page.locator('#back-to-cart').click();
+  await expect(page.locator('.cart-items')).toBeVisible();
+
+  // Return to delivery step
+  await page.locator('#cart-validate').click();
+
+  // Verify typed inputs are preserved
+  await expect(page.locator('input[name="name"]')).toHaveValue('Mamadou Diallo');
+  await expect(page.locator('input[name="phone"]')).toHaveValue('+224 628 00 00 00');
+  await expect(page.locator('input[name="address"]')).toHaveValue('Kaloum, Conakry');
+});

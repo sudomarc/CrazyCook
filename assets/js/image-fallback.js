@@ -20,3 +20,24 @@ window.imageFailed = (img) => {
   }
   revealImage(img);
 };
+
+if (typeof document !== 'undefined') {
+  const initFallbackListeners = () => {
+    document.querySelectorAll('img').forEach((img) => {
+      if (img.loading === 'lazy') {
+        img.loading = 'eager';
+      }
+      if (img.complete && img.naturalWidth > 0) {
+        revealImage(img);
+      } else {
+        img.addEventListener('load', () => revealImage(img));
+        img.addEventListener('error', () => window.imageFailed(img));
+      }
+    });
+  };
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initFallbackListeners);
+  } else {
+    initFallbackListeners();
+  }
+}
