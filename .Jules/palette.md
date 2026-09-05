@@ -33,3 +33,7 @@
 ## 2026-09-04 - [Real-Time Input Auto-Preservation in Multi-Step Drawer Forms]
 **Learning:** In multi-step modal form workflows where step transitions re-render innerHTML templates dynamically, persisting user input only on form submit causes typed entries to be lost if the user navigates backward ("Retour") before submitting. Adding a real-time `input` event listener on the modal container automatically preserves draft values in state, eliminating user frustration and friction during checkout step transitions.
 **Action:** Register an `input` event delegation handler on dynamic multi-step form containers to continuously preserve typed form data in state objects.
+
+## 2026-09-15 - [WAI-ARIA Accordion Arrow Key Navigation Pattern]
+**Learning:** In custom interactive accordions, supporting only standard Tab key navigation obliges keyboard and screen reader users to step through all content elements sequentially to reach the next section header. Implementing WAI-ARIA compliant arrow key navigation (`ArrowDown`, `ArrowUp`, `Home`, `End`) on accordion triggers allows users to quickly scan and switch between header buttons, vastly improving keyboard efficiency and screen reader navigation.
+**Action:** Attach keydown listeners handling `ArrowDown`, `ArrowUp`, `Home`, and `End` on accordion header buttons to cycle focus sequentially across triggers.
