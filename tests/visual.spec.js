@@ -63,3 +63,30 @@ test('delivery form fields are preserved in real time when stepping back and for
   await expect(page.locator('input[name="phone"]')).toHaveValue('+224 628 00 00 00');
   await expect(page.locator('input[name="address"]')).toHaveValue('Kaloum, Conakry');
 });
+
+test('FAQ accordion triggers support WAI-ARIA keyboard navigation', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  const firstTrigger = page.locator('.faq-trigger').first();
+  await firstTrigger.focus();
+  await expect(firstTrigger).toBeFocused();
+
+  // Press ArrowDown to move focus to second trigger
+  await page.keyboard.press('ArrowDown');
+  const secondTrigger = page.locator('.faq-trigger').nth(1);
+  await expect(secondTrigger).toBeFocused();
+
+  // Press End to move focus to last trigger
+  await page.keyboard.press('End');
+  const lastTrigger = page.locator('.faq-trigger').last();
+  await expect(lastTrigger).toBeFocused();
+
+  // Press ArrowUp to move focus to third trigger
+  await page.keyboard.press('ArrowUp');
+  const thirdTrigger = page.locator('.faq-trigger').nth(2);
+  await expect(thirdTrigger).toBeFocused();
+
+  // Press Home to move focus back to first trigger
+  await page.keyboard.press('Home');
+  await expect(firstTrigger).toBeFocused();
+});

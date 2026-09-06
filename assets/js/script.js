@@ -1033,9 +1033,9 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
         validateOrder();
     });
 
-    // Gestion de l'accordéon FAQ
-    const faqTriggers = document.querySelectorAll('.faq-trigger');
-    faqTriggers.forEach((trigger) => {
+    // Gestion de l'accordéon FAQ (clics et navigation clavier WAI-ARIA avec flèches haut/bas, début/fin)
+    const faqTriggers = Array.from(document.querySelectorAll('.faq-trigger'));
+    faqTriggers.forEach((trigger, index) => {
         trigger.addEventListener('click', () => {
             const isExpanded = trigger.getAttribute('aria-expanded') === 'true';
             const answerId = trigger.getAttribute('aria-controls');
@@ -1057,6 +1057,24 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
             trigger.setAttribute('aria-expanded', !isExpanded ? 'true' : 'false');
             if (answerEl) {
                 answerEl.setAttribute('aria-hidden', isExpanded ? 'true' : 'false');
+            }
+        });
+
+        trigger.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                const nextIndex = (index + 1) % faqTriggers.length;
+                faqTriggers[nextIndex].focus();
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                const prevIndex = (index - 1 + faqTriggers.length) % faqTriggers.length;
+                faqTriggers[prevIndex].focus();
+            } else if (e.key === 'Home') {
+                e.preventDefault();
+                faqTriggers[0].focus();
+            } else if (e.key === 'End') {
+                e.preventDefault();
+                faqTriggers[faqTriggers.length - 1].focus();
             }
         });
     });
