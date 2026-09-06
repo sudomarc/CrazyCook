@@ -90,3 +90,23 @@ test('FAQ accordion triggers support WAI-ARIA keyboard navigation', async ({ pag
   await page.keyboard.press('Home');
   await expect(firstTrigger).toBeFocused();
 });
+
+test('back-to-top button scrolls page, transfers focus to main content, and announces action', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // Scroll down to make back-to-top button visible
+  await page.evaluate(() => window.scrollTo(0, 1000));
+  const backToTopBtn = page.locator('#back-to-top');
+  await expect(backToTopBtn).toBeVisible();
+
+  // Click back to top button
+  await backToTopBtn.click();
+
+  // Verify focus was transferred to #main-content
+  const mainContent = page.locator('#main-content');
+  await expect(mainContent).toBeFocused();
+
+  // Verify screen reader live status announcement
+  const liveStatus = page.locator('#cart-live-status');
+  await expect(liveStatus).toHaveText('Retour en haut de la page.');
+});
