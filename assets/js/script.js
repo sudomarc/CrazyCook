@@ -129,6 +129,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     backToTopButton?.addEventListener('click', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        const mainContent = document.getElementById('main-content');
+        if (mainContent) {
+            mainContent.focus({ preventScroll: true });
+        }
+        announceCartAction('Retour en haut de la page.');
     });
 
     // Mise à jour de l'état visuel du stepper de checkout
