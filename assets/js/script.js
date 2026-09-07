@@ -568,6 +568,8 @@ document.addEventListener('DOMContentLoaded', () => {
         cart = last.items.map(i => ({ name: i.name, price: i.price, quantity: i.quantity }));
         bumpBadge();
         renderCart();
+        openCart();
+        announceCartAction('Dernière commande ajoutée à votre panier.');
         // masquer la bannière pour cette session
         if (reorderBanner) reorderBanner.hidden = true;
         sessionStorage.setItem('crazycook:reorderDismissed', '1');
@@ -576,6 +578,7 @@ document.addEventListener('DOMContentLoaded', () => {
     reorderDismiss?.addEventListener('click', () => {
         if (reorderBanner) reorderBanner.hidden = true;
         sessionStorage.setItem('crazycook:reorderDismissed', '1');
+        announceCartAction('Bannière de recommandation fermée.');
     });
 
     // Affiche la bannière si on a une commande précédente
