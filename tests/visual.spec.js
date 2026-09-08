@@ -110,3 +110,30 @@ test('back-to-top button scrolls page, transfers focus to main content, and anno
   const liveStatus = page.locator('#cart-live-status');
   await expect(liveStatus).toHaveText('Retour en haut de la page.');
 });
+
+test('reorder banner reloads items, opens cart drawer, and announces action', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => {
+    localStorage.setItem('crazycook:lastOrder', JSON.stringify({
+      items: [{ name: 'Soupe de haricot noir', price: 8000, quantity: 2 }],
+      savedAt: Date.now()
+    }));
+  });
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const reorderBanner = page.locator('#reorder-banner');
+  await expect(reorderBanner).toBeVisible();
+
+  await page.locator('#reorder-button').click();
+
+  // Verify cart drawer is opened
+  const cartDrawer = page.locator('#cart-drawer');
+  await expect(cartDrawer).toHaveClass(/is-open/);
+
+  // Verify badge count updated
+  await expect(page.locator('#header-cart-count')).toHaveText('2');
+
+  // Verify live status announcement
+  const liveStatus = page.locator('#cart-live-status');
+  await expect(liveStatus).toHaveText('Dernière commande ajoutée à votre panier.');
+});
