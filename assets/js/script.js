@@ -348,6 +348,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // ÉTAPE 1 : Affichage du panier classique
         if (currentStep === 'cart') {
             cartBody.innerHTML = `
+                ${cart.length >= 2 ? `
+                    <div class="cart-items-header">
+                        <span class="cart-items-count">${itemCount} article${itemCount > 1 ? 's' : ''}</span>
+                        <button type="button" class="cart-clear-all" id="clear-cart-btn" aria-label="Vider tous les articles du panier">Vider le panier</button>
+                    </div>
+                ` : ''}
                 <div class="cart-items">
                     ${cart.map((item) => `
                         <article class="cart-item-card">
@@ -951,6 +957,13 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
     cartBody?.addEventListener('click', (event) => {
         const target = event.target;
         if (!(target instanceof HTMLElement)) return;
+
+        if (target.id === 'clear-cart-btn' || target.closest('#clear-cart-btn')) {
+            cart = [];
+            announceCartAction('Le panier a été vidé.');
+            renderCart({ action: 'clear' });
+            return;
+        }
 
         if (target.matches('[data-remove]')) {
             removeItem(target.dataset.remove);

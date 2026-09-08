@@ -110,3 +110,32 @@ test('back-to-top button scrolls page, transfers focus to main content, and anno
   const liveStatus = page.locator('#cart-live-status');
   await expect(liveStatus).toHaveText('Retour en haut de la page.');
 });
+
+test('clear cart button empties cart, shifts focus to empty state CTA, and announces action', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // Add 2 items to the cart
+  const addToCartButtons = page.locator('.add-to-cart');
+  await addToCartButtons.nth(0).click();
+  await addToCartButtons.nth(1).click();
+
+  // Open cart drawer
+  await page.locator('#header-cart-toggle').click();
+
+  // Verify clear cart button is visible
+  const clearCartBtn = page.locator('#clear-cart-btn');
+  await expect(clearCartBtn).toBeVisible();
+
+  // Click clear cart
+  await clearCartBtn.click();
+
+  // Verify empty state container is rendered
+  await expect(page.locator('.empty-state-container')).toBeVisible();
+
+  // Verify focus transferred to #empty-cart-cta
+  await expect(page.locator('#empty-cart-cta')).toBeFocused();
+
+  // Verify screen reader announcement
+  const liveStatus = page.locator('#cart-live-status');
+  await expect(liveStatus).toHaveText('Le panier a été vidé.');
+});

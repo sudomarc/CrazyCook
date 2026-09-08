@@ -37,3 +37,7 @@
 ## 2026-09-15 - [WAI-ARIA Accordion Arrow Key Navigation Pattern]
 **Learning:** In custom interactive accordions, supporting only standard Tab key navigation obliges keyboard and screen reader users to step through all content elements sequentially to reach the next section header. Implementing WAI-ARIA compliant arrow key navigation (`ArrowDown`, `ArrowUp`, `Home`, `End`) on accordion triggers allows users to quickly scan and switch between header buttons, vastly improving keyboard efficiency and screen reader navigation.
 **Action:** Attach keydown listeners handling `ArrowDown`, `ArrowUp`, `Home`, and `End` on accordion header buttons to cycle focus sequentially across triggers.
+
+## 2026-09-28 - [Batch State Resets and Smooth Focus Continuation in Modal Drawers]
+**Learning:** In modal drawer workflows, providing a batch action like 'Vider le panier' (Clear Cart) when multiple items are present eliminates tedious one-by-one deletions. To ensure high accessibility during a batch reset, pairing a live screen reader status announcement (`announceCartAction`) with an immediate asynchronous focus transfer to the newly rendered empty-state call-to-action button (`#empty-cart-cta`) prevents focus loss to `document.body` and seamlessly guides the user back to the catalog.
+**Action:** When implementing batch reset actions in dynamic modal dialogs, announce the action via live region and transfer focus asynchronously to the empty-state CTA element.

@@ -746,6 +746,42 @@ ul {
     padding: 0.6rem 1.2rem;
 }
 
+.cart-items-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.6rem;
+    font-size: 0.85rem;
+    color: var(--charcoal);
+}
+
+.cart-items-count {
+    font-weight: 600;
+    opacity: 0.8;
+}
+
+.cart-clear-all {
+    border: none;
+    background: transparent;
+    color: #8a5a37;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.82rem;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.cart-clear-all:hover {
+    color: var(--burnt-earth);
+    text-decoration: underline;
+}
+
+.cart-clear-all:focus-visible {
+    outline: 2px solid var(--burnt-earth);
+    outline-offset: 2px;
+}
+
 .cart-items {
     display: grid;
     gap: 0.8rem;
