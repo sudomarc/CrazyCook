@@ -137,3 +137,34 @@ test('reorder banner reloads items, opens cart drawer, and announces action', as
   const liveStatus = page.locator('#cart-live-status');
   await expect(liveStatus).toHaveText('Dernière commande ajoutée à votre panier.');
 });
+
+test('clear cart button clears all items, announces action, and focuses empty cart cta', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // Add 2 different items to cart
+  const addToCartButtons = page.locator('.add-to-cart');
+  await addToCartButtons.nth(0).click();
+  await addToCartButtons.nth(1).click();
+
+  // Open cart drawer
+  await page.locator('#header-cart-toggle').click();
+
+  // Verify "Vider le panier" button is visible
+  const clearCartBtn = page.locator('#clear-cart-btn');
+  await expect(clearCartBtn).toBeVisible();
+
+  // Click "Vider le panier" button
+  await clearCartBtn.click();
+
+  // Verify cart is now empty and empty CTA is focused
+  const emptyCta = page.locator('#empty-cart-cta');
+  await expect(emptyCta).toBeVisible();
+  await expect(emptyCta).toBeFocused();
+
+  // Verify header badge count reset to 0
+  await expect(page.locator('#header-cart-count')).toHaveText('0');
+
+  // Verify live status announcement
+  const liveStatus = page.locator('#cart-live-status');
+  await expect(liveStatus).toHaveText('Le panier a été vidé.');
+});
