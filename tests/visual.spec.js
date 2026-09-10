@@ -137,3 +137,33 @@ test('reorder banner reloads items, opens cart drawer, and announces action', as
   const liveStatus = page.locator('#cart-live-status');
   await expect(liveStatus).toHaveText('Dernière commande ajoutée à votre panier.');
 });
+
+test('clear cart button appears when 2+ items are added, empties cart, announces action and shifts focus', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // Add 2 different dishes
+  const buttons = page.locator('.add-to-cart');
+  await buttons.nth(0).click();
+  await buttons.nth(1).click();
+
+  // Open cart drawer
+  await page.locator('#header-cart-toggle').click();
+
+  // Verify "Vider le panier" button is visible
+  const clearBtn = page.locator('#clear-cart-btn');
+  await expect(clearBtn).toBeVisible();
+
+  // Click clear cart
+  await clearBtn.click();
+
+  // Verify cart is now empty
+  await expect(page.locator('.empty-state-text')).toBeVisible();
+
+  // Verify focus shifts to empty cart CTA
+  const emptyCta = page.locator('#empty-cart-cta');
+  await expect(emptyCta).toBeFocused();
+
+  // Verify live status announcement
+  const liveStatus = page.locator('#cart-live-status');
+  await expect(liveStatus).toHaveText('Le panier a été vidé.');
+});
