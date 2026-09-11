@@ -750,8 +750,8 @@ ul {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 0.6rem;
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
     border-bottom: 1px solid rgba(26, 26, 26, 0.08);
 }
 
@@ -775,7 +775,7 @@ ul {
 
 .cart-clear-all:hover {
     color: #d9534f;
-    text-decoration: underline;
+    background: rgba(217, 83, 79, 0.08);
 }
 
 .cart-clear-all:focus-visible {
@@ -797,6 +797,7 @@ ul {
 
 [data-theme="dark"] .cart-clear-all:hover {
     color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.12);
 }
 
 .cart-items {

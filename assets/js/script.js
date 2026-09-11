@@ -347,12 +347,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // ÉTAPE 1 : Affichage du panier classique
         if (currentStep === 'cart') {
-            const hasMultipleItems = cart.length >= 2;
-            const totalCount = cart.reduce((total, item) => total + item.quantity, 0);
             cartBody.innerHTML = `
-                ${hasMultipleItems ? `
+                ${cart.length >= 2 ? `
                     <div class="cart-items-header">
-                        <span class="cart-items-count">${totalCount} article${totalCount > 1 ? 's' : ''}</span>
+                        <span class="cart-items-count">${itemCount} article${itemCount > 1 ? 's' : ''}</span>
                         <button type="button" class="cart-clear-all" id="clear-cart-btn" aria-label="Vider tous les articles du panier">Vider le panier</button>
                     </div>
                 ` : ''}

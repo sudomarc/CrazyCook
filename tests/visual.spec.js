@@ -156,7 +156,10 @@ test('clear cart button clears all items, announces action, and focuses empty ca
   // Click "Vider le panier" button
   await clearCartBtn.click();
 
-  // Verify cart is now empty and empty CTA is focused
+  // Verify cart is now empty
+  await expect(page.locator('.empty-state-text')).toBeVisible();
+
+  // Verify empty CTA is visible and focused
   const emptyCta = page.locator('#empty-cart-cta');
   await expect(emptyCta).toBeVisible();
   await expect(emptyCta).toBeFocused();
