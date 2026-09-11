@@ -138,30 +138,34 @@ test('reorder banner reloads items, opens cart drawer, and announces action', as
   await expect(liveStatus).toHaveText('Dernière commande ajoutée à votre panier.');
 });
 
-test('clear cart button appears when 2+ items are added, empties cart, announces action and shifts focus', async ({ page }) => {
+test('clear cart button clears all items, announces action, and focuses empty cart cta', async ({ page }) => {
   await page.goto('/', { waitUntil: 'networkidle' });
 
-  // Add 2 different dishes
-  const buttons = page.locator('.add-to-cart');
-  await buttons.nth(0).click();
-  await buttons.nth(1).click();
+  // Add 2 different items to cart
+  const addToCartButtons = page.locator('.add-to-cart');
+  await addToCartButtons.nth(0).click();
+  await addToCartButtons.nth(1).click();
 
   // Open cart drawer
   await page.locator('#header-cart-toggle').click();
 
   // Verify "Vider le panier" button is visible
-  const clearBtn = page.locator('#clear-cart-btn');
-  await expect(clearBtn).toBeVisible();
+  const clearCartBtn = page.locator('#clear-cart-btn');
+  await expect(clearCartBtn).toBeVisible();
 
-  // Click clear cart
-  await clearBtn.click();
+  // Click "Vider le panier" button
+  await clearCartBtn.click();
 
   // Verify cart is now empty
   await expect(page.locator('.empty-state-text')).toBeVisible();
 
-  // Verify focus shifts to empty cart CTA
+  // Verify empty CTA is visible and focused
   const emptyCta = page.locator('#empty-cart-cta');
+  await expect(emptyCta).toBeVisible();
   await expect(emptyCta).toBeFocused();
+
+  // Verify header badge count reset to 0
+  await expect(page.locator('#header-cart-count')).toHaveText('0');
 
   // Verify live status announcement
   const liveStatus = page.locator('#cart-live-status');

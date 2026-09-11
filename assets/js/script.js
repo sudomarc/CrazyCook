@@ -351,7 +351,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${cart.length >= 2 ? `
                     <div class="cart-items-header">
                         <span class="cart-items-count">${itemCount} article${itemCount > 1 ? 's' : ''}</span>
-                        <button type="button" id="clear-cart-btn" class="cart-clear-all" aria-label="Vider tout le panier">Vider le panier</button>
+                        <button type="button" class="cart-clear-all" id="clear-cart-btn" aria-label="Vider tous les articles du panier">Vider le panier</button>
                     </div>
                 ` : ''}
                 <div class="cart-items">
@@ -961,10 +961,10 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
         const target = event.target;
         if (!(target instanceof HTMLElement)) return;
 
-        if (target.id === 'clear-cart-btn') {
+        if (target.id === 'clear-cart-btn' || target.closest('#clear-cart-btn')) {
             cart = [];
             announceCartAction('Le panier a été vidé.');
-            renderCart(true);
+            renderCart({ action: 'clear' });
             return;
         }
 
