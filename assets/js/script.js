@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
         announceCartAction('Retour en haut de la page.');
     });
 
-    // Mise à jour de l'état visuel du stepper de checkout
+    // Mise à jour de l'état visuel et interactif du stepper de checkout
     const updateStepper = () => {
         if (!stepperElement) return;
 
@@ -149,6 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
         stepperElement.hidden = false;
 
         const steps = ['cart', 'delivery', 'payment'];
+        const stepLabels = { cart: 'Panier', delivery: 'Livraison', payment: 'Paiement' };
         const currentIdx = steps.indexOf(currentStep === 'orange_money_form' ? 'payment' : currentStep);
 
         const stepItems = stepperElement.querySelectorAll('.step-item');
@@ -161,9 +162,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (idx < currentIdx) {
                 item.classList.add('completed');
+                item.setAttribute('role', 'button');
+                item.setAttribute('tabindex', '0');
+                item.setAttribute('aria-label', `Retourner à l'étape ${stepLabels[stepName] || stepName}`);
+                item.setAttribute('title', `Retourner à l'étape ${stepLabels[stepName] || stepName}`);
             } else if (idx === currentIdx) {
                 item.classList.add('active');
                 item.setAttribute('aria-current', 'step');
+                item.removeAttribute('role');
+                item.removeAttribute('tabindex');
+                item.removeAttribute('aria-label');
+                item.removeAttribute('title');
+            } else {
+                item.removeAttribute('role');
+                item.removeAttribute('tabindex');
+                item.removeAttribute('aria-label');
+                item.removeAttribute('title');
             }
         });
 
@@ -176,6 +190,33 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     };
+
+    // Gestion de la navigation directe via le stepper pour les étapes complétées
+    const handleStepperStepClick = (stepItem) => {
+        if (!stepItem || !stepItem.classList.contains('completed')) return;
+        const targetStep = stepItem.dataset.step;
+        if (targetStep && (targetStep === 'cart' || targetStep === 'delivery' || targetStep === 'payment')) {
+            const stepLabels = { cart: 'Panier', delivery: 'Livraison', payment: 'Paiement' };
+            currentStep = targetStep;
+            renderCart();
+            announceCartAction(`Retour à l'étape : ${stepLabels[targetStep] || targetStep}`);
+        }
+    };
+
+    stepperElement?.addEventListener('click', (e) => {
+        const stepItem = e.target.closest('.step-item');
+        handleStepperStepClick(stepItem);
+    });
+
+    stepperElement?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            const stepItem = e.target.closest('.step-item');
+            if (stepItem && stepItem.classList.contains('completed')) {
+                e.preventDefault();
+                handleStepperStepClick(stepItem);
+            }
+        }
+    });
 
     // Formatage des prix en GNF (ex: 16 000 GNF)
     const formatPrice = (value) => `${value.toLocaleString('fr-FR')} GNF`;

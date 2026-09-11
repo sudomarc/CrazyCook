@@ -138,6 +138,51 @@ test('reorder banner reloads items, opens cart drawer, and announces action', as
   await expect(liveStatus).toHaveText('Dernière commande ajoutée à votre panier.');
 });
 
+test('checkout stepper allows navigating back to completed steps via click and keyboard', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // Add item and open cart drawer
+  await page.locator('.add-to-cart').first().click();
+  await page.locator('#header-cart-toggle').click();
+
+  // Advance from Step 1 (Panier) to Step 2 (Livraison)
+  await page.locator('#cart-validate').click();
+  await page.locator('input[name="name"]').fill('Mamadou Diallo');
+  await page.locator('input[name="phone"]').fill('+224 628 00 00 00');
+  await page.locator('input[name="address"]').fill('Kaloum, Conakry');
+
+  // Advance from Step 2 (Livraison) to Step 3 (Paiement)
+  await page.locator('#cart-validate').click();
+  await expect(page.locator('.payment-step')).toBeVisible();
+
+  // Verify step 1 (Panier) and step 2 (Livraison) are marked as completed
+  const cartStep = page.locator('.step-item[data-step="cart"]');
+  const deliveryStep = page.locator('.step-item[data-step="delivery"]');
+  await expect(cartStep).toHaveClass(/completed/);
+  await expect(deliveryStep).toHaveClass(/completed/);
+
+  // Click completed step 2 (Livraison) in the stepper to jump back to delivery form
+  await deliveryStep.click();
+  await expect(page.locator('#delivery-form')).toBeVisible();
+  await expect(page.locator('input[name="name"]')).toHaveValue('Mamadou Diallo');
+
+  // Jump to step 3 (Paiement) again
+  await page.locator('#cart-validate').click();
+  await expect(page.locator('.payment-step')).toBeVisible();
+
+  // Use keyboard navigation (Enter key) on step 1 (Panier) in stepper
+  await cartStep.focus();
+  await expect(cartStep).toBeFocused();
+  await page.keyboard.press('Enter');
+
+  // Verify view returned to Step 1 (Panier)
+  await expect(page.locator('.cart-items')).toBeVisible();
+
+  // Verify screen reader announcement
+  const liveStatus = page.locator('#cart-live-status');
+  await expect(liveStatus).toHaveText('Retour à l\'étape : Panier');
+});
+
 test('clear cart button clears all items, announces action, and focuses empty cart cta', async ({ page }) => {
   await page.goto('/', { waitUntil: 'networkidle' });
 
