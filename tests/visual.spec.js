@@ -171,3 +171,36 @@ test('clear cart button clears all items, announces action, and focuses empty ca
   const liveStatus = page.locator('#cart-live-status');
   await expect(liveStatus).toHaveText('Le panier a été vidé.');
 });
+
+test('completed checkout stepper items are accessible and support click/keyboard step navigation', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // Add item and open cart
+  await page.locator('.add-to-cart').first().click();
+  await page.locator('#header-cart-toggle').click();
+
+  // Advance to step 2 (Livraison)
+  await page.locator('#cart-validate').click();
+  await expect(page.locator('#delivery-form')).toBeVisible();
+
+  // Verify step 1 (Panier) is completed, interactive, and has proper ARIA attributes
+  const step1 = page.locator('.step-item[data-step="cart"]');
+  await expect(step1).toHaveClass(/completed/);
+  await expect(step1).toHaveAttribute('role', 'button');
+  await expect(step1).toHaveAttribute('tabindex', '0');
+  await expect(step1).toHaveAttribute('aria-label', "Retourner à l'étape Panier");
+
+  // Click step 1 to navigate back
+  await step1.click();
+  await expect(page.locator('.cart-items')).toBeVisible();
+  await expect(page.locator('#cart-live-status')).toHaveText("Retour à l'étape Panier.");
+
+  // Advance to step 2 again
+  await page.locator('#cart-validate').click();
+  await expect(page.locator('#delivery-form')).toBeVisible();
+
+  // Navigate back using keyboard (focus + Enter)
+  await step1.focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('.cart-items')).toBeVisible();
+});

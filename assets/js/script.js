@@ -161,9 +161,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (idx < currentIdx) {
                 item.classList.add('completed');
+                item.setAttribute('role', 'button');
+                item.setAttribute('tabindex', '0');
+                const labelText = item.querySelector('.step-label')?.textContent || stepName;
+                item.setAttribute('aria-label', `Retourner à l'étape ${labelText}`);
             } else if (idx === currentIdx) {
                 item.classList.add('active');
                 item.setAttribute('aria-current', 'step');
+                item.removeAttribute('role');
+                item.removeAttribute('tabindex');
+                item.removeAttribute('aria-label');
+            } else {
+                item.removeAttribute('role');
+                item.removeAttribute('tabindex');
+                item.removeAttribute('aria-label');
             }
         });
 
@@ -585,6 +596,35 @@ document.addEventListener('DOMContentLoaded', () => {
         if (reorderBanner) reorderBanner.hidden = true;
         sessionStorage.setItem('crazycook:reorderDismissed', '1');
         announceCartAction('Bannière de recommandation fermée.');
+    });
+
+    // Navigation au clic ou clavier sur les étapes complétées du stepper
+    const handleStepperStepClick = (targetItem) => {
+        if (!targetItem || !targetItem.classList.contains('completed')) return;
+        const targetStep = targetItem.dataset.step;
+        if (targetStep === 'cart' || targetStep === 'delivery' || targetStep === 'payment') {
+            currentStep = targetStep;
+            const labelText = targetItem.querySelector('.step-label')?.textContent || targetStep;
+            announceCartAction(`Retour à l'étape ${labelText}.`);
+            renderCart();
+        }
+    };
+
+    stepperElement?.addEventListener('click', (e) => {
+        const stepItem = e.target.closest('.step-item.completed');
+        if (stepItem) {
+            handleStepperStepClick(stepItem);
+        }
+    });
+
+    stepperElement?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            const stepItem = e.target.closest('.step-item.completed');
+            if (stepItem) {
+                e.preventDefault();
+                handleStepperStepClick(stepItem);
+            }
+        }
     });
 
     // Affiche la bannière si on a une commande précédente
