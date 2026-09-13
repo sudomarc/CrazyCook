@@ -204,3 +204,27 @@ test('completed checkout stepper items are accessible and support click/keyboard
   await page.keyboard.press('Enter');
   await expect(page.locator('.cart-items')).toBeVisible();
 });
+
+test('cart stepper decrease button dynamically updates aria-label and title based on item quantity', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // Add item to cart and open cart drawer
+  const addToCartBtn = page.locator('.add-to-cart').first();
+  await addToCartBtn.click();
+  await page.locator('#header-cart-toggle').click();
+
+  const minusBtn = page.locator('.cart-stepper button[data-change="-"]');
+  const plusBtn = page.locator('.cart-stepper button[data-change="+"]');
+
+  // At quantity 1: minus button should indicate removal
+  await expect(minusBtn).toHaveAttribute('aria-label', /Retirer .* du panier/);
+  await expect(minusBtn).toHaveAttribute('title', 'Retirer du panier');
+  await expect(plusBtn).toHaveAttribute('title', 'Augmenter la quantité');
+
+  // Increase quantity to 2
+  await plusBtn.click();
+
+  // At quantity 2: minus button should indicate decrease
+  await expect(minusBtn).toHaveAttribute('aria-label', /Diminuer la quantité de .*/);
+  await expect(minusBtn).toHaveAttribute('title', 'Diminuer la quantité');
+});
