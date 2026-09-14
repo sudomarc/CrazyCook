@@ -1332,4 +1332,62 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
     };
 
     setupScrollSync();
+
+    // Gestion du filtrage par catégorie dans le menu (onglets WAI-ARIA avec support clavier)
+    const setupMenuCategoryFilters = () => {
+        const filterTabs = Array.from(document.querySelectorAll('.menu-filter-btn'));
+        const categoryBlocks = Array.from(document.querySelectorAll('.category-block'));
+
+        if (!filterTabs.length || !categoryBlocks.length) return;
+
+        filterTabs.forEach((tab, index) => {
+            tab.addEventListener('click', () => {
+                const targetCategory = tab.dataset.category;
+
+                // Mise à jour de l'onglet actif et des attributs ARIA
+                filterTabs.forEach((t) => {
+                    const isSelected = t === tab;
+                    t.classList.toggle('active', isSelected);
+                    t.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+                });
+
+                // Filtrage des blocs de catégories
+                let visibleDishCount = 0;
+                categoryBlocks.forEach((block) => {
+                    const blockCategory = block.dataset.category;
+                    if (targetCategory === 'all' || blockCategory === targetCategory) {
+                        block.hidden = false;
+                        visibleDishCount += block.querySelectorAll('.dish-card').length;
+                    } else {
+                        block.hidden = true;
+                    }
+                });
+
+                // Annonce vocale pour les lecteurs d'écran
+                const filterName = tab.textContent.trim();
+                announceCartAction(`Carte filtrée par ${filterName} : ${visibleDishCount} plat${visibleDishCount > 1 ? 's' : ''} disponible${visibleDishCount > 1 ? 's' : ''}.`);
+            });
+
+            // Navigation clavier WAI-ARIA (Flèches gauche/droite, Début, Fin)
+            tab.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    const nextIndex = (index + 1) % filterTabs.length;
+                    filterTabs[nextIndex].focus();
+                } else if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    const prevIndex = (index - 1 + filterTabs.length) % filterTabs.length;
+                    filterTabs[prevIndex].focus();
+                } else if (e.key === 'Home') {
+                    e.preventDefault();
+                    filterTabs[0].focus();
+                } else if (e.key === 'End') {
+                    e.preventDefault();
+                    filterTabs[filterTabs.length - 1].focus();
+                }
+            });
+        });
+    };
+
+    setupMenuCategoryFilters();
 });

@@ -271,11 +271,13 @@ ul {
     transition: transform 0.35s var(--ease-premium), background 0.3s ease, color 0.3s ease, box-shadow 0.35s ease;
 }
 
-/* BUGFIX : .button { display: inline-flex } bat [hidden] à spécificité égale
-   (classe > attribut), donc cartValidateButton.hidden = true restait visible.
-   On force explicitement le masquage ici. */
+/* Universal hidden attribute enforcement to prevent grid/flex rules from overriding native hidden */
+[hidden] {
+    display: none !important;
+}
+
 .button[hidden] {
-    display: none;
+    display: none !important;
 }
 
 .button-dark {
@@ -477,6 +479,63 @@ ul {
     color: #4e4638;
     max-width: 58ch;
     font-size: 1.02rem;
+}
+
+/* Menu Category Filter Tabs */
+.menu-filters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.menu-filter-btn {
+    background: transparent;
+    border: 1px solid rgba(26, 26, 26, 0.15);
+    border-radius: var(--radius-pill);
+    padding: 0.45rem 1.15rem;
+    font-family: var(--font-primary);
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--burnt-earth);
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.menu-filter-btn:hover {
+    background: rgba(184, 80, 31, 0.08);
+}
+
+.menu-filter-btn.active {
+    background: var(--burnt-earth);
+    color: var(--cream);
+    border-color: var(--burnt-earth);
+}
+
+.menu-filter-btn:focus-visible {
+    outline: 2px solid var(--burnt-earth);
+    outline-offset: 2px;
+}
+
+[data-theme="dark"] .menu-filter-btn {
+    border-color: rgba(255, 255, 255, 0.2);
+    color: var(--cream);
+}
+
+[data-theme="dark"] .menu-filter-btn:hover {
+    background: rgba(232, 168, 76, 0.12);
+}
+
+[data-theme="dark"] .menu-filter-btn.active {
+    background: var(--ochre);
+    color: #1a1a1a;
+    border-color: var(--ochre);
+}
+
+[data-theme="dark"] .menu-filter-btn:focus-visible {
+    outline: 2px solid var(--ochre);
+    outline-offset: 2px;
 }
 
 .menu-categories {
