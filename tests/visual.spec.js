@@ -204,3 +204,55 @@ test('completed checkout stepper items are accessible and support click/keyboard
   await page.keyboard.press('Enter');
   await expect(page.locator('.cart-items')).toBeVisible();
 });
+
+test('menu category filter tabs support category filtering, ARIA state updates, keyboard navigation, and live announcements', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // Verify all category blocks are initially visible
+  const allBlocks = page.locator('.category-block');
+  await expect(allBlocks).toHaveCount(3);
+  await expect(allBlocks.nth(0)).toBeVisible();
+  await expect(allBlocks.nth(1)).toBeVisible();
+  await expect(allBlocks.nth(2)).toBeVisible();
+
+  // Click 'Entrées' filter tab
+  const tabEntrees = page.locator('#filter-tab-entrees');
+  await tabEntrees.click();
+
+  // Verify 'Entrées' tab is active and aria-selected="true"
+  await expect(tabEntrees).toHaveClass(/active/);
+  await expect(tabEntrees).toHaveAttribute('aria-selected', 'true');
+  await expect(page.locator('#filter-tab-all')).toHaveAttribute('aria-selected', 'false');
+
+  // Verify only 'entrees' category block is visible
+  await expect(page.locator('.category-block[data-category="entrees"]')).toBeVisible();
+  await expect(page.locator('.category-block[data-category="plats"]')).toBeHidden();
+  await expect(page.locator('.category-block[data-category="desserts"]')).toBeHidden();
+
+  // Verify screen reader live status announcement
+  const liveStatus = page.locator('#cart-live-status');
+  await expect(liveStatus).toHaveText('Carte filtrée par Entrées : 2 plats disponibles.');
+
+  // Test WAI-ARIA keyboard navigation on filter tabs (ArrowRight to Plats)
+  await tabEntrees.focus();
+  await page.keyboard.press('ArrowRight');
+  const tabPlats = page.locator('#filter-tab-plats');
+  await expect(tabPlats).toBeFocused();
+
+  // Click focused tab
+  await tabPlats.click();
+  await expect(page.locator('.category-block[data-category="plats"]')).toBeVisible();
+  await expect(page.locator('.category-block[data-category="entrees"]')).toBeHidden();
+  await expect(liveStatus).toHaveText('Carte filtrée par Plats : 2 plats disponibles.');
+
+  // Press Home key to cycle focus back to 'Tous' tab
+  await page.keyboard.press('Home');
+  const tabAll = page.locator('#filter-tab-all');
+  await expect(tabAll).toBeFocused();
+  await tabAll.click();
+
+  // Verify all blocks visible again
+  await expect(page.locator('.category-block[data-category="entrees"]')).toBeVisible();
+  await expect(page.locator('.category-block[data-category="plats"]')).toBeVisible();
+  await expect(page.locator('.category-block[data-category="desserts"]')).toBeVisible();
+});
