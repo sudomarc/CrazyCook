@@ -1287,6 +1287,59 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
 
     setupContactForm();
 
+    // Configuration des filtres de catégories du menu (navigation WAI-ARIA et accessibilité)
+    const setupMenuFilters = () => {
+        const filterBtns = Array.from(document.querySelectorAll('.menu-filter-btn'));
+        const categoryBlocks = Array.from(document.querySelectorAll('.category-block[data-category]'));
+
+        if (!filterBtns.length || !categoryBlocks.length) return;
+
+        const applyFilter = (selectedCategory, targetBtn) => {
+            filterBtns.forEach((btn) => {
+                const isActive = btn === targetBtn;
+                btn.classList.toggle('active', isActive);
+                btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+            });
+
+            categoryBlocks.forEach((block) => {
+                const cat = block.dataset.category;
+                const isMatch = selectedCategory === 'all' || cat === selectedCategory;
+                block.hidden = !isMatch;
+            });
+
+            const categoryName = targetBtn.textContent.trim();
+            announceCartAction(`Filtre du menu : ${categoryName}.`);
+        };
+
+        filterBtns.forEach((btn, idx) => {
+            btn.addEventListener('click', () => {
+                applyFilter(btn.dataset.category, btn);
+            });
+
+            btn.addEventListener('keydown', (e) => {
+                let targetIndex = null;
+                if (e.key === 'ArrowRight') {
+                    targetIndex = (idx + 1) % filterBtns.length;
+                } else if (e.key === 'ArrowLeft') {
+                    targetIndex = (idx - 1 + filterBtns.length) % filterBtns.length;
+                } else if (e.key === 'Home') {
+                    targetIndex = 0;
+                } else if (e.key === 'End') {
+                    targetIndex = filterBtns.length - 1;
+                }
+
+                if (targetIndex !== null) {
+                    e.preventDefault();
+                    const targetBtn = filterBtns[targetIndex];
+                    targetBtn.focus();
+                    applyFilter(targetBtn.dataset.category, targetBtn);
+                }
+            });
+        });
+    };
+
+    setupMenuFilters();
+
     // Synchronisation dynamique de la navigation active au scroll avec attributs d'accessibilité (aria-current)
     const setupScrollSync = () => {
         const navLinks = document.querySelectorAll('.main-nav a[href]');
