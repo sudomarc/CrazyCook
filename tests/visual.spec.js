@@ -172,6 +172,54 @@ test('clear cart button clears all items, announces action, and focuses empty ca
   await expect(liveStatus).toHaveText('Le panier a été vidé.');
 });
 
+test('menu category filter tabs filter category blocks, support WAI-ARIA arrow navigation, and announce filter state', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+  await page.locator('#menu').scrollIntoViewIfNeeded();
+
+  const tabAll = page.locator('#tab-all');
+  const tabEntrees = page.locator('#tab-entrees');
+  const tabPlats = page.locator('#tab-plats');
+  const tabDesserts = page.locator('#tab-desserts');
+
+  const entreesBlock = page.locator('.category-block[data-category="entrees"]');
+  const platsBlock = page.locator('.category-block[data-category="plats"]');
+  const dessertsBlock = page.locator('.category-block[data-category="desserts"]');
+
+  // Verify initial state: all tabs visible, "Tous" active
+  await expect(tabAll).toHaveAttribute('aria-selected', 'true');
+  await expect(entreesBlock).toBeVisible();
+  await expect(platsBlock).toBeVisible();
+  await expect(dessertsBlock).toBeVisible();
+
+  // Click "Entrées" filter tab
+  await tabEntrees.click();
+  await expect(tabEntrees).toHaveAttribute('aria-selected', 'true');
+  await expect(tabAll).toHaveAttribute('aria-selected', 'false');
+
+  await expect(entreesBlock).toBeVisible();
+  await expect(platsBlock).toBeHidden();
+  await expect(dessertsBlock).toBeHidden();
+  await expect(page.locator('#cart-live-status')).toHaveText('Filtre du menu : Entrées.');
+
+  // Keyboard navigation: focus tabEntrees and press ArrowRight to move to tabPlats
+  await tabEntrees.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(tabPlats).toBeFocused();
+  await expect(tabPlats).toHaveAttribute('aria-selected', 'true');
+  await expect(platsBlock).toBeVisible();
+  await expect(entreesBlock).toBeHidden();
+  await expect(dessertsBlock).toBeHidden();
+  await expect(page.locator('#cart-live-status')).toHaveText('Filtre du menu : Plats.');
+
+  // Press Home to jump to tabAll
+  await page.keyboard.press('Home');
+  await expect(tabAll).toBeFocused();
+  await expect(tabAll).toHaveAttribute('aria-selected', 'true');
+  await expect(entreesBlock).toBeVisible();
+  await expect(platsBlock).toBeVisible();
+  await expect(dessertsBlock).toBeVisible();
+});
+
 test('completed checkout stepper items are accessible and support click/keyboard step navigation', async ({ page }) => {
   await page.goto('/', { waitUntil: 'networkidle' });
 
