@@ -204,3 +204,19 @@ test('completed checkout stepper items are accessible and support click/keyboard
   await page.keyboard.press('Enter');
   await expect(page.locator('.cart-items')).toBeVisible();
 });
+
+test('menu dishes display accessible dietary badges', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  const vegBadge = page.locator('.dietary-badge[aria-label="Plat végétarien"]').first();
+  await expect(vegBadge).toBeVisible();
+  await expect(vegBadge).toHaveAttribute('title', 'Végétarien');
+
+  const spicyBadge = page.locator('.dietary-badge--spicy').first();
+  await expect(spicyBadge).toBeVisible();
+  await expect(spicyBadge).toHaveAttribute('aria-label', /épicé/);
+
+  const fishBadge = page.locator('.dietary-badge--fish').first();
+  await expect(fishBadge).toBeVisible();
+  await expect(fishBadge).toHaveAttribute('title', 'Poisson');
+});
