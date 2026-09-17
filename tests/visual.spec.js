@@ -204,3 +204,39 @@ test('completed checkout stepper items are accessible and support click/keyboard
   await page.keyboard.press('Enter');
   await expect(page.locator('.cart-items')).toBeVisible();
 });
+
+test('menu category filter tabs support WAI-ARIA filtering and arrow key navigation', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  const tabAll = page.locator('#tab-all');
+  const tabEntrees = page.locator('#tab-entrees');
+  const tabPlats = page.locator('#tab-plats');
+
+  const catEntrees = page.locator('#cat-entrees');
+  const catPlats = page.locator('#cat-plats');
+  const catDesserts = page.locator('#cat-desserts');
+
+  // Verify all categories visible initially
+  await expect(catEntrees).toBeVisible();
+  await expect(catPlats).toBeVisible();
+  await expect(catDesserts).toBeVisible();
+
+  // Click Entrées tab
+  await tabEntrees.click();
+  await expect(tabEntrees).toHaveAttribute('aria-selected', 'true');
+  await expect(catEntrees).toBeVisible();
+  await expect(catPlats).toBeHidden();
+  await expect(catDesserts).toBeHidden();
+  await expect(page.locator('#cart-live-status')).toHaveText('Filtre du menu : Entrées');
+
+  // Keyboard navigation: press ArrowRight on focused tab
+  await tabEntrees.focus();
+  await page.keyboard.press('ArrowRight');
+
+  await expect(tabPlats).toBeFocused();
+  await expect(tabPlats).toHaveAttribute('aria-selected', 'true');
+  await expect(catEntrees).toBeHidden();
+  await expect(catPlats).toBeVisible();
+  await expect(catDesserts).toBeHidden();
+  await expect(page.locator('#cart-live-status')).toHaveText('Filtre du menu : Plats');
+});

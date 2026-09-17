@@ -37,3 +37,7 @@
 ## 2026-09-15 - [WAI-ARIA Accordion Arrow Key Navigation Pattern]
 **Learning:** In custom interactive accordions, supporting only standard Tab key navigation obliges keyboard and screen reader users to step through all content elements sequentially to reach the next section header. Implementing WAI-ARIA compliant arrow key navigation (`ArrowDown`, `ArrowUp`, `Home`, `End`) on accordion triggers allows users to quickly scan and switch between header buttons, vastly improving keyboard efficiency and screen reader navigation.
 **Action:** Attach keydown listeners handling `ArrowDown`, `ArrowUp`, `Home`, and `End` on accordion header buttons to cycle focus sequentially across triggers.
+
+## 2026-09-28 - [Accessible WAI-ARIA Tablist Pattern for Catalog Category Filtering]
+**Learning:** When displaying catalog or menu sections, providing accessible filter tabs (`role="tablist"`, `role="tab"`, `role="tabpanel"`) allows users to quickly narrow down choices without overwhelming vertical scrolling. To satisfy WAI-ARIA tab standards, only the selected tab should have `tabindex="0"`, while unselected tabs carry `tabindex="-1"`. Arrow keys (`ArrowRight`/`ArrowLeft`/`ArrowUp`/`ArrowDown`) and `Home`/`End` keys should seamlessly move focus and update `aria-selected` state, paired with live region announcements (`announceCartAction`) for screen reader feedback.
+**Action:** Implement full WAI-ARIA tablist arrow-key cycling and screen reader announcements whenever adding category filtering tabs to catalog sections.
