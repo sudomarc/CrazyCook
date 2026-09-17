@@ -209,8 +209,16 @@
                     </div>
                 </div>
 
+            <!-- Filtres de catégories de menu (WAI-ARIA Tablist) -->
+            <div class="menu-filters" role="tablist" aria-label="Catégories du menu">
+                <button type="button" role="tab" class="menu-filter-btn" id="tab-all" aria-selected="true" aria-controls="cat-entrees cat-plats cat-desserts" tabindex="0">Tous</button>
+                <button type="button" role="tab" class="menu-filter-btn" id="tab-entrees" aria-selected="false" aria-controls="cat-entrees" tabindex="-1">Entrées</button>
+                <button type="button" role="tab" class="menu-filter-btn" id="tab-plats" aria-selected="false" aria-controls="cat-plats" tabindex="-1">Plats</button>
+                <button type="button" role="tab" class="menu-filter-btn" id="tab-desserts" aria-selected="false" aria-controls="cat-desserts" tabindex="-1">Desserts</button>
+            </div>
+
             <div class="menu-categories">
-                <div class="category-block reveal">
+                <div class="category-block reveal" id="cat-entrees" role="tabpanel" aria-labelledby="tab-entrees" data-category="entrees">
                     <h3>Entrées</h3>
                     <article class="dish-card">
                         <div class="dish-head">
@@ -237,7 +245,7 @@
                     </article>
                 </div>
 
-                <div class="category-block reveal">
+                <div class="category-block reveal" id="cat-plats" role="tabpanel" aria-labelledby="tab-plats" data-category="plats">
                     <h3>Plats</h3>
                     <article class="dish-card">
                         <div class="dish-head">
@@ -265,7 +273,7 @@
                     </article>
                 </div>
 
-                <div class="category-block reveal">
+                <div class="category-block reveal" id="cat-desserts" role="tabpanel" aria-labelledby="tab-desserts" data-category="desserts">
                     <h3>Desserts</h3>
                     <article class="dish-card">
                         <div class="dish-head">

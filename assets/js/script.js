@@ -1332,4 +1332,61 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
     };
 
     setupScrollSync();
+
+    // Gestion des filtres de catégories du menu (WAI-ARIA Tablist)
+    const setupMenuCategoryFilters = () => {
+        const filterBtns = Array.from(document.querySelectorAll('.menu-filter-btn'));
+        const categoryBlocks = Array.from(document.querySelectorAll('.category-block'));
+
+        if (!filterBtns.length || !categoryBlocks.length) return;
+
+        const selectTab = (selectedBtn) => {
+            const filterCategory = selectedBtn.id.replace('tab-', '');
+
+            filterBtns.forEach((btn) => {
+                const isSelected = btn === selectedBtn;
+                btn.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+                btn.setAttribute('tabindex', isSelected ? '0' : '-1');
+            });
+
+            categoryBlocks.forEach((block) => {
+                if (filterCategory === 'all') {
+                    block.hidden = false;
+                } else {
+                    block.hidden = block.dataset.category !== filterCategory;
+                }
+            });
+
+            announceCartAction(`Filtre du menu : ${selectedBtn.textContent.trim()}`);
+        };
+
+        filterBtns.forEach((btn, index) => {
+            btn.addEventListener('click', () => selectTab(btn));
+
+            btn.addEventListener('keydown', (e) => {
+                let targetIndex = null;
+                if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    targetIndex = (index + 1) % filterBtns.length;
+                } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    targetIndex = (index - 1 + filterBtns.length) % filterBtns.length;
+                } else if (e.key === 'Home') {
+                    e.preventDefault();
+                    targetIndex = 0;
+                } else if (e.key === 'End') {
+                    e.preventDefault();
+                    targetIndex = filterBtns.length - 1;
+                }
+
+                if (targetIndex !== null) {
+                    const targetBtn = filterBtns[targetIndex];
+                    targetBtn.focus();
+                    selectTab(targetBtn);
+                }
+            });
+        });
+    };
+
+    setupMenuCategoryFilters();
 });
