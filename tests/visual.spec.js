@@ -204,3 +204,23 @@ test('completed checkout stepper items are accessible and support click/keyboard
   await page.keyboard.press('Enter');
   await expect(page.locator('.cart-items')).toBeVisible();
 });
+
+test('dish favorite buttons toggle state, persist in localStorage, and announce action', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  const favButton = page.locator('.dish-favorite-btn').first();
+  await expect(favButton).toBeVisible();
+  await expect(favButton).toHaveAttribute('aria-pressed', 'false');
+
+  // Click to add to favorites
+  await favButton.click();
+  await expect(favButton).toHaveAttribute('aria-pressed', 'true');
+  await expect(favButton).toHaveClass(/is-favorite/);
+  await expect(page.locator('#cart-live-status')).toHaveText(/ajouté à vos favoris/);
+
+  // Click again to remove from favorites
+  await favButton.click();
+  await expect(favButton).toHaveAttribute('aria-pressed', 'false');
+  await expect(favButton).not.toHaveClass(/is-favorite/);
+  await expect(page.locator('#cart-live-status')).toHaveText(/retiré de vos favoris/);
+});

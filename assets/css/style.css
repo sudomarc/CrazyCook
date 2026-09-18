@@ -559,9 +559,13 @@ ul {
 
 .dish-actions {
     margin-top: 0.75rem;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
 }
 
 .add-to-cart {
+    flex: 1;
     border: none;
     border-radius: 999px;
     background: var(--forest-green);
@@ -570,6 +574,54 @@ ul {
     font-weight: 700;
     cursor: pointer;
     transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.dish-favorite-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.65rem;
+    height: 2.65rem;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--burnt-earth);
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.dish-favorite-btn:hover {
+    background: rgba(184, 80, 66, 0.1);
+    border-color: var(--burnt-earth);
+    transform: scale(1.06);
+}
+
+.dish-favorite-btn.is-favorite {
+    background: var(--burnt-earth);
+    color: #ffffff;
+    border-color: var(--burnt-earth);
+}
+
+.dish-favorite-btn:focus-visible {
+    outline: 2px solid var(--burnt-earth);
+    outline-offset: 2px;
+}
+
+[data-theme="dark"] .dish-favorite-btn {
+    border-color: rgba(255, 255, 255, 0.2);
+    color: var(--ochre);
+}
+
+[data-theme="dark"] .dish-favorite-btn:hover {
+    background: rgba(224, 166, 77, 0.15);
+    border-color: var(--ochre);
+}
+
+[data-theme="dark"] .dish-favorite-btn.is-favorite {
+    background: var(--ochre);
+    color: var(--dark);
+    border-color: var(--ochre);
 }
 
 .add-to-cart:hover {

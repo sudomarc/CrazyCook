@@ -1287,6 +1287,59 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
 
     setupContactForm();
 
+    /* ---------- Favoris pour les plats du menu ---------- */
+    const FAVORITES_KEY = 'crazycook:favorites';
+    const getFavorites = () => {
+        try {
+            return JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
+        } catch (e) {
+            return [];
+        }
+    };
+    const saveFavorites = (favs) => {
+        try {
+            localStorage.setItem(FAVORITES_KEY, JSON.stringify(favs));
+        } catch (e) {}
+    };
+
+    const updateFavoriteButtons = () => {
+        const favs = getFavorites();
+        document.querySelectorAll('.dish-favorite-btn').forEach((btn) => {
+            const name = btn.getAttribute('data-name');
+            if (!name) return;
+            const isFav = favs.includes(name);
+            btn.setAttribute('aria-pressed', isFav ? 'true' : 'false');
+            btn.setAttribute('aria-label', isFav ? `Retirer ${name} de vos favoris` : `Ajouter ${name} à vos favoris`);
+            btn.setAttribute('title', isFav ? `Retirer ${name} de vos favoris` : `Ajouter aux favoris`);
+            btn.classList.toggle('is-favorite', isFav);
+            const icon = btn.querySelector('.fav-icon');
+            if (icon) icon.textContent = isFav ? '♥' : '♡';
+        });
+    };
+
+    const setupDishFavorites = () => {
+        document.querySelectorAll('.dish-favorite-btn').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const name = btn.getAttribute('data-name');
+                if (!name) return;
+                let favs = getFavorites();
+                const exists = favs.includes(name);
+                if (exists) {
+                    favs = favs.filter((item) => item !== name);
+                    announceCartAction(`${name} retiré de vos favoris.`);
+                } else {
+                    favs.push(name);
+                    announceCartAction(`${name} ajouté à vos favoris.`);
+                }
+                saveFavorites(favs);
+                updateFavoriteButtons();
+            });
+        });
+        updateFavoriteButtons();
+    };
+
+    setupDishFavorites();
+
     // Synchronisation dynamique de la navigation active au scroll avec attributs d'accessibilité (aria-current)
     const setupScrollSync = () => {
         const navLinks = document.querySelectorAll('.main-nav a[href]');
