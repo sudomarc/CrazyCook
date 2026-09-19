@@ -158,7 +158,7 @@
 
             <div class="avis-grid">
                 <article class="avis-card reveal">
-                    <div class="avis-stars" aria-label="Note de 5 étoiles">★★★★★</div>
+                    <div class="avis-stars" role="img" aria-label="Note de 5 étoiles sur 5">★★★★★</div>
                     <blockquote class="avis-quote">
                         « Une claque gustative absolue. Les brochettes de bœuf ont un goût de feu d'une authenticité rare. L'ambiance brute et feutrée nous fait voyager dès le premier instant. »
                     </blockquote>
@@ -166,7 +166,7 @@
                 </article>
 
                 <article class="avis-card reveal">
-                    <div class="avis-stars" aria-label="Note de 5 étoiles">★★★★★</div>
+                    <div class="avis-stars" role="img" aria-label="Note de 5 étoiles sur 5">★★★★★</div>
                     <blockquote class="avis-quote">
                         « Enfin un lieu à Conakry qui allie modernité esthétique et respect absolu des rituels de cuisson. La soupe de haricot noir est d’un réconfort infini. »
                     </blockquote>
@@ -174,7 +174,7 @@
                 </article>
 
                 <article class="avis-card reveal">
-                    <div class="avis-stars" aria-label="Note de 5 étoiles">★★★★★</div>
+                    <div class="avis-stars" role="img" aria-label="Note de 5 étoiles sur 5">★★★★★</div>
                     <blockquote class="avis-quote">
                         « Le service est d'une élégance rare, discret et attentif. Chaque plat est présenté comme une œuvre d’art rustique. Un incontournable absolu de notre ville. »
                     </blockquote>
@@ -189,8 +189,8 @@
                 <p class="eyebrow">Menu</p>
                     <div class="menu-intro-row">
                         <h2>Une carte pensée comme un parcours.</h2>
-                        <!-- Badge d'avis / social proof (placeholder) -->
-                        <div class="rating-badge" aria-hidden="true">4.8 ★ · 210 avis</div>
+                        <!-- Badge d'avis / social proof -->
+                        <div class="rating-badge" role="img" aria-label="Note de 4,8 sur 5 basée sur 210 avis">4.8 ★ · 210 avis</div>
                     </div>
                 <p>Chaque plat est préparé pour raconter un lieu, une saison et un rythme de vie.</p>
             </div>
@@ -204,7 +204,7 @@
                         </div>
                         <div class="reorder-actions">
                             <button id="reorder-button" class="button button-dark">Recommander</button>
-                            <button id="reorder-dismiss" class="button button-light" aria-label="Fermer">✕</button>
+                            <button id="reorder-dismiss" class="button button-light" aria-label="Fermer la recommandation" title="Fermer la recommandation">✕</button>
                         </div>
                     </div>
                 </div>
@@ -473,7 +473,7 @@
     <aside class="cart-drawer" id="cart-drawer" aria-label="Panier de commande" aria-hidden="true" role="dialog" aria-modal="true">
         <div class="cart-drawer__header">
             <h3>Votre commande</h3>
-            <button type="button" class="drawer-close" id="drawer-close" aria-label="Fermer le panier">×</button>
+            <button type="button" class="drawer-close" id="drawer-close" aria-label="Fermer le panier" title="Fermer le panier (Échap)">×</button>
         </div>
         <div class="checkout-stepper" id="checkout-stepper" hidden>
             <div class="step-item active" data-step="cart" aria-current="step">
@@ -517,19 +517,19 @@
                     Une cuisine de feu, d'épices et de transmission. Célébrer la richesse des rituels culinaires d'Afrique de l'Ouest sous un jour brut et contemporain.
                 </p>
                 <div class="footer-socials">
-                    <a href="#" aria-label="Instagram">
+                    <a href="#" aria-label="Instagram (nouvelle fenêtre)" title="Instagram" target="_blank" rel="noopener noreferrer">
                         <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                             <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
                             <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
                         </svg>
                     </a>
-                    <a href="#" aria-label="Facebook">
+                    <a href="#" aria-label="Facebook (nouvelle fenêtre)" title="Facebook" target="_blank" rel="noopener noreferrer">
                         <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
                         </svg>
                     </a>
-                    <a href="#" aria-label="TikTok">
+                    <a href="#" aria-label="TikTok (nouvelle fenêtre)" title="TikTok" target="_blank" rel="noopener noreferrer">
                         <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path>
                         </svg>

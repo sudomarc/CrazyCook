@@ -362,7 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${cart.length >= 2 ? `
                     <div class="cart-items-header">
                         <span class="cart-items-count">${itemCount} article${itemCount > 1 ? 's' : ''}</span>
-                        <button type="button" class="cart-clear-all" id="clear-cart-btn" aria-label="Vider tous les articles du panier">Vider le panier</button>
+                        <button type="button" class="cart-clear-all" id="clear-cart-btn" aria-label="Vider tous les articles du panier" title="Vider tous les articles du panier">Vider le panier</button>
                     </div>
                 ` : ''}
                 <div class="cart-items">
@@ -373,7 +373,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <strong>${item.name}</strong>
                                     <p>${formatPrice(item.price)} / unité</p>
                                 </div>
-                                <button type="button" class="cart-remove" data-remove="${item.name}" aria-label="Supprimer ${item.name} du panier">Supprimer</button>
+                                <button type="button" class="cart-remove" data-remove="${item.name}" aria-label="Supprimer ${item.name} du panier" title="Supprimer ${item.name} du panier">Supprimer</button>
                             </div>
                             <div class="cart-item-card__meta">
                                 <div class="cart-stepper">
