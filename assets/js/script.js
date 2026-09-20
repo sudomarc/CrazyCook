@@ -1140,6 +1140,33 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
         });
     });
 
+    // Menu category filter tabs (WAI-ARIA)
+    const filterBtns = Array.from(document.querySelectorAll('.menu-filter-btn'));
+    const catBlocks = document.querySelectorAll('.category-block[data-category]');
+    const setCategoryFilter = (targetBtn) => {
+        if (!targetBtn) return;
+        const cat = targetBtn.dataset.category;
+        filterBtns.forEach(btn => {
+            const active = btn === targetBtn;
+            btn.classList.toggle('active', active);
+            btn.setAttribute('aria-selected', active);
+            btn.setAttribute('tabindex', active ? '0' : '-1');
+        });
+        catBlocks.forEach(b => { b.hidden = cat !== 'all' && b.dataset.category !== cat; });
+        announceCartAction(`Filtre du menu : ${cat === 'all' ? 'Toutes les catégories' : cat}.`);
+    };
+    filterBtns.forEach((btn, idx) => {
+        btn.addEventListener('click', () => setCategoryFilter(btn));
+        btn.addEventListener('keydown', (e) => {
+            let next = idx;
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = (idx + 1) % filterBtns.length;
+            else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = (idx - 1 + filterBtns.length) % filterBtns.length;
+            else if (e.key === 'Home') next = 0;
+            else if (e.key === 'End') next = filterBtns.length - 1;
+            if (next !== idx) { e.preventDefault(); filterBtns[next].focus(); setCategoryFilter(filterBtns[next]); }
+        });
+    });
+
     // Premier rendu du panier au chargement
     renderCart();
 

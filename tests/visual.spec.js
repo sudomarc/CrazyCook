@@ -204,3 +204,38 @@ test('completed checkout stepper items are accessible and support click/keyboard
   await page.keyboard.press('Enter');
   await expect(page.locator('.cart-items')).toBeVisible();
 });
+
+test('menu category filter tabs filter categories and support WAI-ARIA arrow key navigation', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  const allFilter = page.locator('.menu-filter-btn[data-category="all"]');
+  const entreesFilter = page.locator('.menu-filter-btn[data-category="Entrées"]');
+  const platsFilter = page.locator('.menu-filter-btn[data-category="Plats"]');
+  const dessertsFilter = page.locator('.menu-filter-btn[data-category="Desserts"]');
+
+  await expect(allFilter).toHaveAttribute('aria-selected', 'true');
+
+  // Click 'Entrées' filter
+  await entreesFilter.click();
+  await expect(entreesFilter).toHaveAttribute('aria-selected', 'true');
+  await expect(page.locator('.category-block[data-category="Entrées"]')).toBeVisible();
+  await expect(page.locator('.category-block[data-category="Plats"]')).toBeHidden();
+  await expect(page.locator('.category-block[data-category="Desserts"]')).toBeHidden();
+  await expect(page.locator('#cart-live-status')).toHaveText('Filtre du menu : Entrées.');
+
+  // Keyboard navigation: focus 'Entrées' and press ArrowRight to move to 'Plats'
+  await entreesFilter.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(platsFilter).toBeFocused();
+  await expect(platsFilter).toHaveAttribute('aria-selected', 'true');
+  await expect(page.locator('.category-block[data-category="Plats"]')).toBeVisible();
+  await expect(page.locator('.category-block[data-category="Entrées"]')).toBeHidden();
+
+  // Press Home to return to 'Tous'
+  await page.keyboard.press('Home');
+  await expect(allFilter).toBeFocused();
+  await expect(allFilter).toHaveAttribute('aria-selected', 'true');
+  await expect(page.locator('.category-block[data-category="Entrées"]')).toBeVisible();
+  await expect(page.locator('.category-block[data-category="Plats"]')).toBeVisible();
+  await expect(page.locator('.category-block[data-category="Desserts"]')).toBeVisible();
+});
