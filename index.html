@@ -209,8 +209,16 @@
                     </div>
                 </div>
 
+            <!-- Filtres de catégories du menu (WAI-ARIA Tabs) -->
+            <div class="menu-filters reveal" role="tablist" aria-label="Filtrer la carte du menu par catégorie">
+                <button type="button" class="menu-filter-btn active" role="tab" aria-selected="true" tabindex="0" data-category="all">Tous</button>
+                <button type="button" class="menu-filter-btn" role="tab" aria-selected="false" tabindex="-1" data-category="Entrées">Entrées</button>
+                <button type="button" class="menu-filter-btn" role="tab" aria-selected="false" tabindex="-1" data-category="Plats">Plats</button>
+                <button type="button" class="menu-filter-btn" role="tab" aria-selected="false" tabindex="-1" data-category="Desserts">Desserts</button>
+            </div>
+
             <div class="menu-categories">
-                <div class="category-block reveal">
+                <div class="category-block reveal" data-category="Entrées">
                     <h3>Entrées</h3>
                     <article class="dish-card">
                         <div class="dish-head">
@@ -237,7 +245,7 @@
                     </article>
                 </div>
 
-                <div class="category-block reveal">
+                <div class="category-block reveal" data-category="Plats">
                     <h3>Plats</h3>
                     <article class="dish-card">
                         <div class="dish-head">
@@ -265,7 +273,7 @@
                     </article>
                 </div>
 
-                <div class="category-block reveal">
+                <div class="category-block reveal" data-category="Desserts">
                     <h3>Desserts</h3>
                     <article class="dish-card">
                         <div class="dish-head">

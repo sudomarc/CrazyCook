@@ -479,6 +479,14 @@ ul {
     font-size: 1.02rem;
 }
 
+.menu-filters { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 2rem; }
+.menu-filter-btn { border: 1px solid rgba(26, 26, 26, 0.12); background: white; color: #4e4638; padding: 0.55rem 1.1rem; border-radius: 999px; font-weight: 600; font-size: 0.88rem; cursor: pointer; transition: all 0.25s ease; }
+.menu-filter-btn:hover { border-color: var(--ochre); color: var(--burnt-earth); }
+.menu-filter-btn.active { background: var(--burnt-earth); color: var(--cream); border-color: var(--burnt-earth); }
+.menu-filter-btn:focus-visible { outline: 2px solid var(--ochre); outline-offset: 3px; }
+[data-theme="dark"] .menu-filter-btn { background: #221C18; border-color: rgba(255, 255, 255, 0.14); color: #D8CDB8; }
+[data-theme="dark"] .menu-filter-btn.active { background: var(--ochre); color: #171311; border-color: var(--ochre); }
+
 .menu-categories {
     display: grid;
     gap: 1.25rem;
