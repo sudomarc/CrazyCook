@@ -239,3 +239,23 @@ test('menu category filter tabs filter categories and support WAI-ARIA arrow key
   await expect(page.locator('.category-block[data-category="Plats"]')).toBeVisible();
   await expect(page.locator('.category-block[data-category="Desserts"]')).toBeVisible();
 });
+
+test('copy phone button copies phone number, provides visual feedback, and announces action', async ({ page, context }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  await page.locator('#contact').scrollIntoViewIfNeeded();
+
+  const copyPhoneBtn = page.locator('#copy-phone-btn');
+  await expect(copyPhoneBtn).toBeVisible();
+
+  await copyPhoneBtn.click();
+
+  // Verify visual feedback on button text and class
+  await expect(page.locator('#copy-phone-btn .copy-btn-text')).toHaveText('Copié ! ✓');
+  await expect(copyPhoneBtn).toHaveClass(/copied/);
+
+  // Verify live status announcement for screen readers
+  const liveStatus = page.locator('#cart-live-status');
+  await expect(liveStatus).toHaveText('Numéro de téléphone copié dans le presse-papier.');
+});
