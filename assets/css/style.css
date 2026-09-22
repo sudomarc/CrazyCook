@@ -1873,6 +1873,26 @@ ul {
     color: #ff6b6b;
 }
 
+/* Bannière d'estimation de temps de livraison dans le panier */
+.delivery-estimate-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 0.9rem;
+    background: rgba(184, 91, 53, 0.08);
+    border: 1px solid rgba(184, 91, 53, 0.2);
+    border-radius: 12px;
+    font-size: 0.85rem;
+    color: var(--burnt-earth);
+    margin-bottom: 1rem;
+}
+
+[data-theme="dark"] .delivery-estimate-banner {
+    background: rgba(224, 159, 62, 0.12);
+    border-color: rgba(224, 159, 62, 0.25);
+    color: var(--ochre);
+}
+
 /* Panel de succès pour le formulaire de contact */
 .contact-success-panel {
     background: white;

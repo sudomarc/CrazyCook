@@ -239,3 +239,36 @@ test('menu category filter tabs filter categories and support WAI-ARIA arrow key
   await expect(page.locator('.category-block[data-category="Plats"]')).toBeVisible();
   await expect(page.locator('.category-block[data-category="Desserts"]')).toBeVisible();
 });
+
+test('checkout delivery form displays estimated delivery banner and updates chef note character counter live', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // Add item to cart and open drawer
+  await page.locator('.add-to-cart').first().click();
+  await page.locator('#header-cart-toggle').click();
+
+  // Validate cart step to go to delivery step
+  await page.locator('#cart-validate').click();
+
+  // Verify delivery time estimate banner is visible
+  const banner = page.locator('.delivery-estimate-banner');
+  await expect(banner).toBeVisible();
+  await expect(banner).toContainText('Temps de livraison estimé : 30 à 45 min');
+
+  // Verify delivery note input and live character counter
+  const noteInput = page.locator('#delivery-note');
+  const counter = page.locator('#delivery-note-counter');
+
+  await expect(noteInput).toBeVisible();
+  await expect(counter).toHaveText('0 / 150');
+
+  // Type a custom note
+  await noteInput.fill('Sans piment, sauce à part S.V.P.');
+  await expect(counter).toHaveText('32 / 150');
+
+  // Fill long note to trigger warning class
+  const longNote = 'A'.repeat(135);
+  await noteInput.fill(longNote);
+  await expect(counter).toHaveText('135 / 150');
+  await expect(counter).toHaveClass(/warning/);
+});
