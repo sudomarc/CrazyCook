@@ -409,8 +409,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // ÉTAPE 2 : Saisie des informations de livraison
         if (currentStep === 'delivery') {
+            const noteLength = (deliveryInfo.note || '').length;
             cartBody.innerHTML = `
                 <div class="cart-form-container">
+                    <div class="delivery-estimate-banner" role="status">
+                        <span class="delivery-estimate-icon" aria-hidden="true">⏱️</span>
+                        <span>Livraison estimée : <strong>25 - 35 min</strong> (Conakry)</span>
+                    </div>
                     <h4 class="cart-step-title">Informations de livraison</h4>
                     <form class="cart-form" id="delivery-form">
                         <label for="delivery-name">
@@ -427,7 +432,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         </label>
                         <label for="delivery-note">
                             <span>Note spéciale pour le chef</span>
-                            <textarea id="delivery-note" name="note" placeholder="Ex: Épices douces, sans oignons...">${escapeHtml(deliveryInfo.note)}</textarea>
+                            <textarea id="delivery-note" name="note" placeholder="Ex: Épices douces, sans oignons..." maxlength="150" aria-describedby="delivery-note-counter">${escapeHtml(deliveryInfo.note)}</textarea>
+                            <span id="delivery-note-counter" class="contact-counter ${noteLength >= 130 ? 'warning' : ''}" aria-live="polite">${noteLength} / 150</span>
                         </label>
                         <div class="cart-actions cart-actions--delivery">
                             <button type="button" class="button button-light cart-back-btn cart-back-btn--cart" id="back-to-cart">Retour</button>
@@ -1073,6 +1079,18 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
         if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
             if (target.form && target.form.id === 'delivery-form' && target.name in deliveryInfo) {
                 deliveryInfo[target.name] = target.value;
+                if (target.id === 'delivery-note') {
+                    const counter = document.getElementById('delivery-note-counter');
+                    if (counter) {
+                        const len = target.value.length;
+                        counter.textContent = `${len} / 150`;
+                        if (len >= 130) {
+                            counter.classList.add('warning');
+                        } else {
+                            counter.classList.remove('warning');
+                        }
+                    }
+                }
             }
         }
     });

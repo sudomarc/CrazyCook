@@ -239,3 +239,33 @@ test('menu category filter tabs filter categories and support WAI-ARIA arrow key
   await expect(page.locator('.category-block[data-category="Plats"]')).toBeVisible();
   await expect(page.locator('.category-block[data-category="Desserts"]')).toBeVisible();
 });
+
+test('delivery estimate banner and note character counter update dynamically', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // Add item to cart and navigate to delivery step
+  await page.locator('.add-to-cart').first().click();
+  await page.locator('#header-cart-toggle').click();
+  await page.locator('#cart-validate').click();
+
+  // Verify delivery estimate banner is visible
+  const estimateBanner = page.locator('.delivery-estimate-banner');
+  await expect(estimateBanner).toBeVisible();
+  await expect(estimateBanner).toContainText('Livraison estimée : 25 - 35 min');
+
+  // Verify note character counter
+  const noteTextarea = page.locator('#delivery-note');
+  const noteCounter = page.locator('#delivery-note-counter');
+  await expect(noteCounter).toHaveText('0 / 150');
+
+  // Fill in note and check counter update
+  await noteTextarea.fill('Sans piment s\'il vous plaît');
+  await expect(noteCounter).toHaveText('27 / 150');
+  await expect(noteCounter).not.toHaveClass(/warning/);
+
+  // Fill text long enough to trigger warning (>130 chars)
+  const longNote = 'A'.repeat(135);
+  await noteTextarea.fill(longNote);
+  await expect(noteCounter).toHaveText('135 / 150');
+  await expect(noteCounter).toHaveClass(/warning/);
+});

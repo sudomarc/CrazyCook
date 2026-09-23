@@ -2186,6 +2186,33 @@ ul {
     background: #FF6600 !important;
 }
 
+.delivery-estimate-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 0.85rem;
+    background: rgba(var(--forest-green-rgb), 0.08);
+    border: 1px solid rgba(var(--forest-green-rgb), 0.2);
+    border-radius: 12px;
+    font-size: 0.85rem;
+    color: var(--forest-green);
+    margin-bottom: 0.85rem;
+}
+
+.delivery-estimate-banner strong {
+    color: var(--burnt-earth);
+}
+
+[data-theme="dark"] .delivery-estimate-banner {
+    background: rgba(224, 166, 77, 0.12);
+    border-color: rgba(224, 166, 77, 0.25);
+    color: #F8F1E5;
+}
+
+[data-theme="dark"] .delivery-estimate-banner strong {
+    color: #F7C97A;
+}
+
 .cart-amount-info {
     font-size: 0.9rem;
     margin: 0.5rem 0 1rem;
