@@ -377,9 +377,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                             <div class="cart-item-card__meta">
                                 <div class="cart-stepper">
-                                    <button type="button" data-change="-" data-name="${item.name}" aria-label="Diminuer la quantité de ${item.name}">−</button>
+                                    <button type="button" data-change="-" data-name="${item.name}" aria-label="${item.quantity === 1 ? `Retirer ${item.name} du panier` : `Diminuer la quantité de ${item.name}`}" title="${item.quantity === 1 ? 'Retirer du panier' : 'Diminuer la quantité'}">−</button>
                                     <span aria-live="polite" aria-label="Quantité de ${item.name} : ${item.quantity}">${item.quantity}</span>
-                                    <button type="button" data-change="+" data-name="${item.name}" aria-label="Augmenter la quantité de ${item.name}">+</button>
+                                    <button type="button" data-change="+" data-name="${item.name}" aria-label="Augmenter la quantité de ${item.name}" title="Augmenter la quantité">+</button>
                                 </div>
                                 <strong>${formatPrice(item.quantity * item.price)}</strong>
                             </div>
