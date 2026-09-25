@@ -293,3 +293,22 @@ test('cart stepper buttons update aria-label and title dynamically based on item
   await expect(minusBtn).toHaveAttribute('aria-label', /Diminuer la quantité de .*/);
   await expect(minusBtn).toHaveAttribute('title', 'Diminuer la quantité');
 });
+
+test('contact phone copy button copies telephone number, updates button text, and announces action', async ({ page, context }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.goto('/', { waitUntil: 'networkidle' });
+  await page.locator('#contact').scrollIntoViewIfNeeded();
+
+  const copyPhoneBtn = page.locator('#copy-phone-btn');
+  await expect(copyPhoneBtn).toBeVisible();
+
+  await copyPhoneBtn.click();
+
+  // Verify visual feedback state on the button
+  await expect(copyPhoneBtn).toHaveClass(/copied/);
+  await expect(copyPhoneBtn.locator('.copy-btn-text')).toHaveText('Copié ! ✓');
+
+  // Verify screen reader live status announcement
+  const liveStatus = page.locator('#cart-live-status');
+  await expect(liveStatus).toHaveText('Numéro de téléphone copié dans le presse-papier.');
+});
