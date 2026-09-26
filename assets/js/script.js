@@ -1188,18 +1188,20 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
     // Premier rendu du panier au chargement
     renderCart();
 
-    // Gestion du bouton de copie d'adresse avec retours visuel et vocal
-    const copyAddressBtn = document.getElementById('copy-address-btn');
-    const contactAddressText = document.getElementById('contact-address-text');
-    if (copyAddressBtn && contactAddressText) {
-        copyAddressBtn.addEventListener('click', async () => {
-            const address = contactAddressText.textContent.trim();
+    // Gestion des boutons de copie d'adresse et téléphone avec retours visuel et vocal
+    const setupCopyButton = (btnId, textId, successAnnouncement) => {
+        const copyBtn = document.getElementById(btnId);
+        const targetTextEl = document.getElementById(textId);
+        if (!copyBtn || !targetTextEl) return;
+
+        copyBtn.addEventListener('click', async () => {
+            const textToCopy = targetTextEl.textContent.trim();
             try {
                 if (navigator.clipboard && navigator.clipboard.writeText) {
-                    await navigator.clipboard.writeText(address);
+                    await navigator.clipboard.writeText(textToCopy);
                 } else {
                     const textarea = document.createElement('textarea');
-                    textarea.value = address;
+                    textarea.value = textToCopy;
                     textarea.style.position = 'fixed';
                     textarea.style.opacity = '0';
                     document.body.appendChild(textarea);
@@ -1208,23 +1210,26 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
                     textarea.remove();
                 }
 
-                const textSpan = copyAddressBtn.querySelector('.copy-btn-text');
+                const textSpan = copyBtn.querySelector('.copy-btn-text');
                 const originalText = textSpan ? textSpan.textContent : 'Copier';
 
-                copyAddressBtn.classList.add('copied');
+                copyBtn.classList.add('copied');
                 if (textSpan) textSpan.textContent = 'Copié ! ✓';
 
-                announceCartAction('Adresse copiée dans le presse-papier.');
+                announceCartAction(successAnnouncement);
 
                 setTimeout(() => {
-                    copyAddressBtn.classList.remove('copied');
+                    copyBtn.classList.remove('copied');
                     if (textSpan) textSpan.textContent = originalText;
                 }, 2000);
             } catch (err) {
                 /* fallback silencieux en cas d'erreur de permission */
             }
         });
-    }
+    };
+
+    setupCopyButton('copy-address-btn', 'contact-address-text', 'Adresse copiée dans le presse-papier.');
+    setupCopyButton('copy-phone-btn', 'contact-phone-text', 'Numéro de téléphone copié dans le presse-papier.');
 
     // Gestion de la soumission du formulaire de contact avec un micro-feedback et un état de chargement
     const setupContactForm = () => {

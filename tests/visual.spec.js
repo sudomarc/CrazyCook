@@ -293,3 +293,26 @@ test('cart stepper buttons update aria-label and title dynamically based on item
   await expect(minusBtn).toHaveAttribute('aria-label', /Diminuer la quantité de .*/);
   await expect(minusBtn).toHaveAttribute('title', 'Diminuer la quantité');
 });
+
+test('contact copy buttons copy address and phone with visual and screen reader feedback', async ({ page, context }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  await page.locator('#contact').scrollIntoViewIfNeeded();
+
+  // Test address copy button
+  const copyAddressBtn = page.locator('#copy-address-btn');
+  await expect(copyAddressBtn).toBeVisible();
+  await copyAddressBtn.click();
+  await expect(copyAddressBtn).toHaveClass(/copied/);
+  await expect(copyAddressBtn.locator('.copy-btn-text')).toHaveText('Copié ! ✓');
+  await expect(page.locator('#cart-live-status')).toHaveText('Adresse copiée dans le presse-papier.');
+
+  // Test phone copy button
+  const copyPhoneBtn = page.locator('#copy-phone-btn');
+  await expect(copyPhoneBtn).toBeVisible();
+  await copyPhoneBtn.click();
+  await expect(copyPhoneBtn).toHaveClass(/copied/);
+  await expect(copyPhoneBtn.locator('.copy-btn-text')).toHaveText('Copié ! ✓');
+  await expect(page.locator('#cart-live-status')).toHaveText('Numéro de téléphone copié dans le presse-papier.');
+});
