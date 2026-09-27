@@ -312,3 +312,20 @@ test('contact phone copy button copies telephone number, updates button text, an
   const liveStatus = page.locator('#cart-live-status');
   await expect(liveStatus).toHaveText('Numéro de téléphone copié dans le presse-papier.');
 });
+
+test('menu action buttons update title tooltips dynamically on cart interaction', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  const firstAddBtn = page.locator('.add-to-cart').first();
+  await expect(firstAddBtn).toHaveAttribute('title', 'Ajouter Soupe de haricot noir au panier');
+
+  // Click to add item to cart
+  await firstAddBtn.click();
+
+  // Title attribute should update with in-cart count
+  await expect(firstAddBtn).toHaveAttribute('title', 'Ajouter Soupe de haricot noir au panier (1 dans le panier)');
+
+  // Verify footer social media links have title tooltips
+  const instagramLink = page.locator('.footer-socials a').first();
+  await expect(instagramLink).toHaveAttribute('title', 'CrazyCook sur Instagram');
+});

@@ -86,11 +86,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 badge.textContent = `${count} dans le panier`;
                 badge.hidden = false;
                 button.setAttribute('aria-label', `Ajouter ${name} au panier (${count} dans le panier)`);
+                button.setAttribute('title', `Ajouter ${name} au panier (${count} dans le panier)`);
             } else {
                 if (badge) {
                     badge.hidden = true;
                 }
                 button.setAttribute('aria-label', `Ajouter ${name} au panier`);
+                button.setAttribute('title', `Ajouter ${name} au panier`);
             }
         });
     };
