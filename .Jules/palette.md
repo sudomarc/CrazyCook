@@ -37,3 +37,7 @@
 ## 2026-09-15 - [WAI-ARIA Accordion Arrow Key Navigation Pattern]
 **Learning:** In custom interactive accordions, supporting only standard Tab key navigation obliges keyboard and screen reader users to step through all content elements sequentially to reach the next section header. Implementing WAI-ARIA compliant arrow key navigation (`ArrowDown`, `ArrowUp`, `Home`, `End`) on accordion triggers allows users to quickly scan and switch between header buttons, vastly improving keyboard efficiency and screen reader navigation.
 **Action:** Attach keydown listeners handling `ArrowDown`, `ArrowUp`, `Home`, and `End` on accordion header buttons to cycle focus sequentially across triggers.
+
+## 2026-09-28 - [Keyboard Form Submission via Ctrl+Enter and Native Validation]
+**Learning:** Adding `Ctrl+Enter` / `Cmd+Enter` keydown listeners on form inputs and textareas significantly improves form ergonomics for power and keyboard users. Using `form.requestSubmit()` rather than calling `.submit()` or click handlers guarantees native HTML5 form validation (`reportValidity()`) triggers automatically, focusing any missing required fields with browser tooltips or submitting valid forms cleanly.
+**Action:** Trigger `form.requestSubmit()` in `(e.ctrlKey || e.metaKey) && e.key === 'Enter'` listeners to enable fast, accessible keyboard form submissions with built-in validation.

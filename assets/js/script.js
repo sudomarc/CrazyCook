@@ -1004,6 +1004,24 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
         }
     });
 
+    // Raccourci clavier Ctrl+Entrée / Cmd+Entrée pour valider les formulaires du panier
+    cartBody?.addEventListener('keydown', (event) => {
+        if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+            const target = event.target;
+            if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
+                const form = target.form;
+                if (form) {
+                    event.preventDefault();
+                    if (typeof form.requestSubmit === 'function') {
+                        form.requestSubmit();
+                    } else {
+                        validateOrder();
+                    }
+                }
+            }
+        }
+    });
+
     // Écoute des événements à l'intérieur du corps du panier (Boutons + / - / Supprimer / Retour)
     cartBody?.addEventListener('click', (event) => {
         const target = event.target;
@@ -1272,6 +1290,18 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
                 }
             });
 
+            // Raccourci clavier Ctrl+Entrée / Cmd+Entrée pour soumettre le formulaire de contact
+            contactForm.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    e.preventDefault();
+                    if (typeof contactForm.requestSubmit === 'function') {
+                        contactForm.requestSubmit();
+                    } else {
+                        contactForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+                    }
+                }
+            });
+
             // Initialisation initiale du compteur
             const initialMessageInput = document.getElementById('contact-message');
             if (initialMessageInput) {
@@ -1333,7 +1363,7 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
                                                 <textarea id="contact-message" name="message" placeholder="Votre message ou question" aria-label="Votre message ou question" rows="4" maxlength="500" aria-describedby="contact-message-counter" required></textarea>
                                                 <span id="contact-message-counter" class="contact-counter" aria-live="polite">0 / 500</span>
                                             </label>
-                                            <button type="submit" class="button button-dark full" id="contact-submit">Envoyer</button>
+                                            <button type="submit" class="button button-dark full" id="contact-submit" title="Envoyer le message (Ctrl+Entrée)">Envoyer</button>
                                         </form>
                                     `;
                                     contactWrapper.classList.remove('fade-out');
