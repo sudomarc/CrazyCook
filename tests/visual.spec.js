@@ -329,3 +329,40 @@ test('menu action buttons update title tooltips dynamically on cart interaction'
   const instagramLink = page.locator('.footer-socials a').first();
   await expect(instagramLink).toHaveAttribute('title', 'CrazyCook sur Instagram');
 });
+
+test('Ctrl+Enter shortcut submits contact and checkout delivery forms', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // 1. Contact form submission via Ctrl+Enter
+  await page.locator('#contact').scrollIntoViewIfNeeded();
+  await page.locator('#contact-nom').fill('Aissatou Bah');
+  await page.locator('#contact-telephone').fill('+224 620 00 00 00');
+  const contactTextarea = page.locator('#contact-message');
+  await contactTextarea.fill('Bonjour, quelle est votre offre traiteur ?');
+  await contactTextarea.focus();
+
+  // Press Control+Enter to submit
+  await page.keyboard.press('Control+Enter');
+
+  // Verify success message panel is displayed
+  await expect(page.locator('.contact-success-panel')).toBeVisible({ timeout: 5000 });
+  await expect(page.locator('.contact-success-panel h4')).toContainText('Aissatou Bah');
+
+  // 2. Checkout delivery form submission via Ctrl+Enter
+  await page.locator('.add-to-cart').first().click();
+  await page.locator('#header-cart-toggle').click();
+  await page.locator('#cart-validate').click(); // Navigate to delivery step
+
+  await page.locator('input[name="name"]').fill('Mamadou Diallo');
+  await page.locator('input[name="phone"]').fill('+224 628 00 00 00');
+  await page.locator('input[name="address"]').fill('Kaloum, Conakry');
+  const deliveryNote = page.locator('#delivery-note');
+  await deliveryNote.fill('Piment à part SVP');
+  await deliveryNote.focus();
+
+  // Press Control+Enter in checkout form
+  await page.keyboard.press('Control+Enter');
+
+  // Verify transition to payment step
+  await expect(page.locator('.payment-step')).toBeVisible();
+});
