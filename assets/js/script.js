@@ -390,7 +390,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
             if (cartTotalPrice) cartTotalPrice.textContent = formatPrice(getSubtotal());
-            if (cartValidateButton) cartValidateButton.textContent = 'Valider ma commande';
+            if (cartValidateButton) {
+                cartValidateButton.textContent = 'Valider ma commande';
+                cartValidateButton.setAttribute('aria-label', `Valider ma commande (${formatPrice(getSubtotal())})`);
+                cartValidateButton.setAttribute('title', `Valider ma commande (Total : ${formatPrice(getSubtotal())})`);
+            }
 
             if (focusInfo) {
                 let targetEl = null;
@@ -446,6 +450,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (cartTotalPrice) cartTotalPrice.textContent = formatPrice(getSubtotal());
             if (cartValidateButton) {
                 cartValidateButton.textContent = 'Choisir le paiement';
+                cartValidateButton.setAttribute('aria-label', 'Choisir le mode de paiement (Ctrl+Entrée)');
+                cartValidateButton.setAttribute('title', 'Choisir le mode de paiement [Ctrl+Entrée]');
                 cartValidateButton.hidden = false;
             }
             setTimeout(() => document.getElementById('delivery-name')?.focus(), 0);
@@ -502,6 +508,8 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             if (cartValidateButton) {
                 cartValidateButton.textContent = 'Confirmer le paiement';
+                cartValidateButton.setAttribute('aria-label', 'Confirmer le paiement Orange Money (Ctrl+Entrée)');
+                cartValidateButton.setAttribute('title', 'Confirmer le paiement Orange Money [Ctrl+Entrée]');
                 cartValidateButton.hidden = false;
             }
             setTimeout(() => document.getElementById('om-phone')?.focus(), 0);

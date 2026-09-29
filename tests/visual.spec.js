@@ -366,3 +366,25 @@ test('Ctrl+Enter shortcut submits contact and checkout delivery forms', async ({
   // Verify transition to payment step
   await expect(page.locator('.payment-step')).toBeVisible();
 });
+
+test('cart drawer close button and checkout action button present descriptive ARIA labels and tooltip shortcut hints', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // Add item and open cart
+  await page.locator('.add-to-cart').first().click();
+  await page.locator('#header-cart-toggle').click();
+
+  // Verify drawer close button title attribute
+  const drawerCloseBtn = page.locator('#drawer-close');
+  await expect(drawerCloseBtn).toHaveAttribute('title', 'Fermer le panier (Échap)');
+
+  // Verify step 1 cart-validate button title and aria-label attributes
+  const validateBtn = page.locator('#cart-validate');
+  await expect(validateBtn).toHaveAttribute('aria-label', /Valider ma commande \(\d[\d\s]* GNF\)/);
+  await expect(validateBtn).toHaveAttribute('title', /Valider ma commande \(Total : \d[\d\s]* GNF\)/);
+
+  // Advance to delivery step
+  await validateBtn.click();
+  await expect(validateBtn).toHaveAttribute('aria-label', 'Choisir le mode de paiement (Ctrl+Entrée)');
+  await expect(validateBtn).toHaveAttribute('title', 'Choisir le mode de paiement [Ctrl+Entrée]');
+});
