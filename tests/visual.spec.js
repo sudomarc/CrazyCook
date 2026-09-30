@@ -159,17 +159,29 @@ test('clear cart button clears all items, announces action, and focuses empty ca
   // Verify cart is now empty
   await expect(page.locator('.empty-state-text')).toBeVisible();
 
-  // Verify empty CTA is visible and focused
-  const emptyCta = page.locator('#empty-cart-cta');
-  await expect(emptyCta).toBeVisible();
-  await expect(emptyCta).toBeFocused();
-
   // Verify header badge count reset to 0
   await expect(page.locator('#header-cart-count')).toHaveText('0');
 
   // Verify live status announcement
   const liveStatus = page.locator('#cart-live-status');
-  await expect(liveStatus).toHaveText('Le panier a été vidé.');
+  await expect(liveStatus).toHaveText('Le panier a été vidé. Vous pouvez le restaurer.');
+
+  // Verify "Restaurer le panier" button is visible and focused
+  const undoBtn = page.locator('#undo-clear-cart-btn');
+  await expect(undoBtn).toBeVisible();
+  await expect(undoBtn).toBeFocused();
+
+  // Verify empty CTA is also visible
+  const emptyCta = page.locator('#empty-cart-cta');
+  await expect(emptyCta).toBeVisible();
+
+  // Click "Restaurer le panier"
+  await undoBtn.click();
+
+  // Verify cart items are restored
+  await expect(page.locator('.cart-items')).toBeVisible();
+  await expect(page.locator('#header-cart-count')).toHaveText('2');
+  await expect(liveStatus).toHaveText('Le panier a été restauré.');
 });
 
 test('completed checkout stepper items are accessible and support click/keyboard step navigation', async ({ page }) => {

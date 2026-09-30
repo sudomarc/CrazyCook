@@ -41,3 +41,7 @@
 ## 2026-09-28 - [Keyboard Form Submission via Ctrl+Enter and Native Validation]
 **Learning:** Adding `Ctrl+Enter` / `Cmd+Enter` keydown listeners on form inputs and textareas significantly improves form ergonomics for power and keyboard users. Using `form.requestSubmit()` rather than calling `.submit()` or click handlers guarantees native HTML5 form validation (`reportValidity()`) triggers automatically, focusing any missing required fields with browser tooltips or submitting valid forms cleanly.
 **Action:** Trigger `form.requestSubmit()` in `(e.ctrlKey || e.metaKey) && e.key === 'Enter'` listeners to enable fast, accessible keyboard form submissions with built-in validation.
+
+## 2026-10-12 - [Forgiving UX: Undo Buffer for Bulk Destructive Actions]
+**Learning:** Bulk destructive actions like "Clear Cart" ("Vider le panier") can lead to accidental data loss and user frustration if clicked by mistake. Providing an instant "Undo / Restaurer" action in the empty state container preserves the cleared state in memory (`previousCart`), transfers keyboard focus immediately to the restore button, and announces the restoration option via screen reader live regions (`#cart-live-status`).
+**Action:** Whenever implementing bulk clearing or deletion actions, maintain a temporary restore buffer and offer an accessible "Undo / Restaurer" button at the focus landing point.
