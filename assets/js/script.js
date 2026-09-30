@@ -99,6 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Gestion de l'état simple (Panier & Étape de commande)
     let cart = [];
+    let previousCart = null; // Sauvegarde temporaire pour annuler l'action "Vider le panier"
     let currentStep = 'cart'; // 'cart' | 'delivery' | 'payment' | 'processing' | 'confirmation'
     let paymentMethod = null; // 'orange_money' | 'cod'
     let transactionRef = null; // Référence simulée générée après paiement Orange Money
@@ -337,6 +338,9 @@ document.addEventListener('DOMContentLoaded', () => {
             cartBody.innerHTML = `
                 <div class="empty-state-container">
                     <p class="empty-state-text">Ajoutez un plat pour composer votre commande.</p>
+                    ${previousCart && previousCart.length > 0 ? `
+                        <button type="button" class="button button-light" id="undo-clear-cart-btn" aria-label="Restaurer les articles annulés du panier" title="Restaurer les articles annulés">Restaurer le panier ↩</button>
+                    ` : ''}
                     <button type="button" class="button button-dark" id="empty-cart-cta">Découvrir le menu</button>
                 </div>
             `;
@@ -347,8 +351,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (focusInfo) {
+                const undoBtn = document.getElementById('undo-clear-cart-btn');
                 const emptyCta = document.getElementById('empty-cart-cta');
-                setTimeout(() => (emptyCta || drawerClose)?.focus(), 0);
+                setTimeout(() => (undoBtn || emptyCta || drawerClose)?.focus(), 0);
             }
             return;
         }
@@ -693,6 +698,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Ajouter un élément au panier
     const addToCart = (name, price) => {
+        previousCart = null; // Réinitialiser l'historique d'annulation si nouvel ajout
         const existingItem = cart.find((item) => item.name === name);
         if (existingItem) {
             existingItem.quantity += 1;
@@ -1030,15 +1036,27 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
         }
     });
 
-    // Écoute des événements à l'intérieur du corps du panier (Boutons + / - / Supprimer / Retour)
+    // Écoute des événements à l'intérieur du corps du panier (Boutons + / - / Supprimer / Retour / Restaurer)
     cartBody?.addEventListener('click', (event) => {
         const target = event.target;
         if (!(target instanceof HTMLElement)) return;
 
         if (target.id === 'clear-cart-btn' || target.closest('#clear-cart-btn')) {
+            previousCart = [...cart];
             cart = [];
-            announceCartAction('Le panier a été vidé.');
+            announceCartAction('Le panier a été vidé. Vous pouvez le restaurer.');
             renderCart({ action: 'clear' });
+            return;
+        }
+
+        if (target.id === 'undo-clear-cart-btn' || target.closest('#undo-clear-cart-btn')) {
+            if (previousCart && previousCart.length > 0) {
+                cart = [...previousCart];
+                previousCart = null;
+                announceCartAction('Le panier a été restauré.');
+                bumpBadge();
+                renderCart({ action: 'restore' });
+            }
             return;
         }
 
