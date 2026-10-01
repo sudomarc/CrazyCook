@@ -36,6 +36,12 @@ test('end-to-end order placement flow', async ({ page }) => {
   await page.locator('#cart-validate').click();
 
   await expect(page.locator('.cart-confirmation h4')).toContainText('Paiement confirmé', { timeout: 5000 });
+
+  const whatsappBtn = page.locator('#open-whatsapp-btn');
+  await expect(whatsappBtn).toBeVisible();
+  await expect(whatsappBtn).toBeFocused();
+  await expect(whatsappBtn).toHaveAttribute('aria-label', 'Ouvrir la commande sur WhatsApp');
+  await expect(whatsappBtn).toHaveAttribute('title', 'Ouvrir la commande sur WhatsApp');
 });
 
 test('delivery form fields are preserved in real time when stepping back and forth', async ({ page }) => {

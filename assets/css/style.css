@@ -2238,8 +2238,33 @@ ul {
     margin-top: 1rem;
 }
 
-.cart-confirmation-btn {
+.cart-confirmation-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
     margin-top: 1rem;
+}
+
+.cart-confirmation-actions .button-light {
+    border-color: rgba(26, 26, 26, 0.2);
+    color: var(--dark);
+    background: transparent;
+}
+
+.cart-confirmation-actions .button-light:hover {
+    background: rgba(26, 26, 26, 0.06);
+    color: var(--burnt-earth);
+}
+
+[data-theme="dark"] .cart-confirmation-actions .button-light {
+    border-color: rgba(255, 255, 255, 0.24);
+    color: #F8F1E5;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .cart-confirmation-actions .button-light:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #F7C97A;
 }
 
 .contact-form-wrapper {

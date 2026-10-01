@@ -547,7 +547,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${paymentMethod === 'orange_money' ? 'Paiement confirmé ✅' : 'Commande envoyée !'}
                     </h4>
                     ${paymentMethod === 'orange_money' ? `<p class="cart-ref-text">Référence : <strong>${transactionRef}</strong></p>` : ''}
-                    <p class="cart-congrats-text">Votre commande a été générée et vous allez être redirigé vers WhatsApp pour finaliser l'envoi.</p>
+                    <p class="cart-congrats-text">Votre commande a été générée et transmise. Vous pouvez aussi ouvrir WhatsApp directement ci-dessous.</p>
                     <p><strong>Client :</strong> ${escapeHtml(deliveryInfo.name)}</p>
                     <p><strong>Téléphone :</strong> ${escapeHtml(deliveryInfo.phone)}</p>
                     <p><strong>Adresse :</strong> ${escapeHtml(deliveryInfo.address)}</p>
@@ -557,14 +557,17 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="cart-summary__row"><span>Livraison</span><strong>${formatPrice(deliveryFee)}</strong></div>
                         <div class="cart-summary__row"><span>Total</span><strong>${formatPrice(totalWithDelivery)}</strong></div>
                     </div>
-                    <button type="button" class="button button-dark full cart-confirmation-btn" id="restart-order">Nouvelle commande</button>
+                    <div class="cart-confirmation-actions">
+                        <button type="button" class="button button-dark full" id="open-whatsapp-btn" aria-label="Ouvrir la commande sur WhatsApp" title="Ouvrir la commande sur WhatsApp">Ouvrir WhatsApp 💬</button>
+                        <button type="button" class="button button-light full" id="restart-order" aria-label="Commencer une nouvelle commande" title="Commencer une nouvelle commande">Nouvelle commande</button>
+                    </div>
                 </div>
             `;
             if (cartTotalPrice) cartTotalPrice.textContent = formatPrice(totalWithDelivery);
             if (cartValidateButton) {
-                cartValidateButton.hidden = true; // Cacher le bouton principal car on a le bouton 'restart-order'
+                cartValidateButton.hidden = true; // Cacher le bouton principal car on a les boutons de confirmation
             }
-            setTimeout(() => document.getElementById('restart-order')?.focus(), 0);
+            setTimeout(() => document.getElementById('open-whatsapp-btn')?.focus(), 0);
         }
     };
 
@@ -1102,6 +1105,12 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
                 try { saveLastOrder(); } catch (e) {}
                 sendWhatsAppOrder();
             }
+            return;
+        }
+
+        if (target.id === 'open-whatsapp-btn' || target.closest('#open-whatsapp-btn')) {
+            sendWhatsAppOrder();
+            announceCartAction('Commande ouverte sur WhatsApp.');
             return;
         }
 
