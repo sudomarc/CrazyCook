@@ -435,7 +435,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </label>
                         <label for="delivery-phone">
                             <span>Numéro de téléphone <span class="required" aria-hidden="true">*</span></span>
-                            <input id="delivery-phone" type="tel" name="phone" value="${escapeHtml(deliveryInfo.phone)}" placeholder="Ex: +224 628 06 94 79" autocomplete="tel" required>
+                            <input id="delivery-phone" type="tel" name="phone" value="${escapeHtml(deliveryInfo.phone)}" placeholder="Ex: +224 628 06 94 79" autocomplete="tel" inputmode="tel" required>
                         </label>
                         <label for="delivery-address">
                             <span>Adresse de livraison (ou lien Google Maps) <span class="required" aria-hidden="true">*</span></span>
@@ -505,7 +505,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <form class="cart-form" id="om-form">
                         <label for="om-phone">
                             <span>Numéro Orange Money <span class="required" aria-hidden="true">*</span></span>
-                            <input id="om-phone" type="tel" name="omPhone" value="${escapeHtml(deliveryInfo.phone)}" placeholder="Ex: 628 06 94 79" autocomplete="tel" required>
+                            <input id="om-phone" type="tel" name="omPhone" value="${escapeHtml(deliveryInfo.phone)}" placeholder="Ex: 628 06 94 79" autocomplete="tel" inputmode="tel" required>
                         </label>
                     </form>
                     <button type="button" class="button button-light cart-back-btn cart-back-btn--payment" id="back-to-payment">Retour</button>
@@ -1391,7 +1391,7 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
                                             </label>
                                             <label for="contact-telephone">
                                                 <span>Numéro de téléphone <span class="required" aria-hidden="true">*</span></span>
-                                                <input id="contact-telephone" type="tel" name="telephone" placeholder="Votre téléphone" aria-label="Votre numéro de téléphone" autocomplete="tel" required>
+                                                <input id="contact-telephone" type="tel" name="telephone" placeholder="Votre téléphone" aria-label="Votre numéro de téléphone" autocomplete="tel" inputmode="tel" required>
                                             </label>
                                             <label for="contact-message">
                                                 <span>Votre message <span class="required" aria-hidden="true">*</span></span>

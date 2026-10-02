@@ -406,3 +406,27 @@ test('cart drawer close button and checkout action button present descriptive AR
   await expect(validateBtn).toHaveAttribute('aria-label', 'Choisir le mode de paiement (Ctrl+Entrée)');
   await expect(validateBtn).toHaveAttribute('title', 'Choisir le mode de paiement [Ctrl+Entrée]');
 });
+
+test('telephone input fields specify inputmode="tel" for optimized mobile keyboard layout', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // 1. Contact telephone input
+  const contactPhone = page.locator('#contact-telephone');
+  await expect(contactPhone).toHaveAttribute('inputmode', 'tel');
+
+  // 2. Checkout delivery telephone input
+  await page.locator('.add-to-cart').first().click();
+  await page.locator('#header-cart-toggle').click();
+  await page.locator('#cart-validate').click(); // Navigate to delivery step
+  const deliveryPhone = page.locator('#delivery-phone');
+  await expect(deliveryPhone).toHaveAttribute('inputmode', 'tel');
+
+  // 3. Orange Money telephone input
+  await page.locator('input[name="name"]').fill('Demo User');
+  await page.locator('input[name="phone"]').fill('+224 628 00 00 00');
+  await page.locator('input[name="address"]').fill('Kaloum, Conakry');
+  await page.locator('#cart-validate').click(); // Navigate to payment step
+  await page.locator('[data-payment="orange_money"]').click(); // Open Orange Money form
+  const omPhone = page.locator('#om-phone');
+  await expect(omPhone).toHaveAttribute('inputmode', 'tel');
+});
