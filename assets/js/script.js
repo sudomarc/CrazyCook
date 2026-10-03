@@ -468,23 +468,23 @@ document.addEventListener('DOMContentLoaded', () => {
             cartBody.innerHTML = `
                 <div class="payment-step">
                     <h4 class="cart-step-title">Mode de paiement</h4>
-                    <div class="payment-options">
-                        <button type="button" class="payment-option" data-payment="orange_money">
-                            <span class="payment-option__badge payment-option__badge--om">OM</span>
+                    <div class="payment-options" role="radiogroup" aria-label="Mode de paiement">
+                        <button type="button" class="payment-option" data-payment="orange_money" aria-label="Payer avec Orange Money (Paiement mobile instantané)" title="Payer par Orange Money">
+                            <span class="payment-option__badge payment-option__badge--om" aria-hidden="true">OM</span>
                             <span class="payment-option__label">
                                 <strong>Orange Money</strong>
                                 <small>Paiement mobile instantané</small>
                             </span>
                         </button>
-                        <button type="button" class="payment-option" data-payment="cod">
-                            <span class="payment-option__badge">💵</span>
+                        <button type="button" class="payment-option" data-payment="cod" aria-label="Payer à la livraison (Espèces à la réception)" title="Payer à la livraison">
+                            <span class="payment-option__badge" aria-hidden="true">💵</span>
                             <span class="payment-option__label">
                                 <strong>Paiement à la livraison</strong>
                                 <small>Espèces à la réception</small>
                             </span>
                         </button>
                     </div>
-                    <button type="button" class="button button-light cart-back-btn cart-back-btn--delivery" id="back-to-delivery">Retour</button>
+                    <button type="button" class="button button-light cart-back-btn cart-back-btn--delivery" id="back-to-delivery" aria-label="Retourner à l'étape des informations de livraison" title="Retourner aux informations de livraison">Retour</button>
                 </div>
             `;
             if (cartTotalPrice) cartTotalPrice.textContent = formatPrice(getSubtotal());
@@ -1021,8 +1021,26 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
         }
     });
 
-    // Raccourci clavier Ctrl+Entrée / Cmd+Entrée pour valider les formulaires du panier
+    // Écoute des touches du clavier pour la navigation entre options de paiement et les raccourcis
     cartBody?.addEventListener('keydown', (event) => {
+        const target = event.target;
+        if (target instanceof HTMLElement && target.closest('.payment-option')) {
+            const currentOption = target.closest('.payment-option');
+            const options = Array.from(cartBody.querySelectorAll('.payment-option'));
+            const idx = options.indexOf(currentOption);
+            if (idx !== -1) {
+                let nextIdx = idx;
+                if (event.key === 'ArrowDown' || event.key === 'ArrowRight') nextIdx = (idx + 1) % options.length;
+                else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') nextIdx = (idx - 1 + options.length) % options.length;
+                else if (event.key === 'Home') nextIdx = 0;
+                else if (event.key === 'End') nextIdx = options.length - 1;
+                if (nextIdx !== idx) {
+                    event.preventDefault();
+                    options[nextIdx].focus();
+                }
+            }
+        }
+
         if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
             const target = event.target;
             if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
