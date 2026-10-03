@@ -430,3 +430,38 @@ test('telephone input fields specify inputmode="tel" for optimized mobile keyboa
   const omPhone = page.locator('#om-phone');
   await expect(omPhone).toHaveAttribute('inputmode', 'tel');
 });
+
+test('payment options present descriptive ARIA attributes and support arrow key navigation', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // Add item to cart and navigate to payment step
+  await page.locator('.add-to-cart').first().click();
+  await page.locator('#header-cart-toggle').click();
+  await page.locator('#cart-validate').click(); // Delivery step
+  await page.locator('input[name="name"]').fill('Demo User');
+  await page.locator('input[name="phone"]').fill('+224 628 00 00 00');
+  await page.locator('input[name="address"]').fill('Kaloum, Conakry');
+  await page.locator('#cart-validate').click(); // Payment step
+
+  const omOption = page.locator('[data-payment="orange_money"]');
+  const codOption = page.locator('[data-payment="cod"]');
+  const backBtn = page.locator('#back-to-delivery');
+
+  // Verify ARIA labels and tooltips
+  await expect(omOption).toHaveAttribute('aria-label', 'Payer avec Orange Money (Paiement mobile instantané)');
+  await expect(omOption).toHaveAttribute('title', 'Payer par Orange Money');
+  await expect(codOption).toHaveAttribute('aria-label', 'Payer à la livraison (Espèces à la réception)');
+  await expect(codOption).toHaveAttribute('title', 'Payer à la livraison');
+  await expect(backBtn).toHaveAttribute('aria-label', "Retourner à l'étape des informations de livraison");
+
+  // Verify initial focus is on first option
+  await expect(omOption).toBeFocused();
+
+  // Press ArrowDown to navigate to COD option
+  await page.keyboard.press('ArrowDown');
+  await expect(codOption).toBeFocused();
+
+  // Press ArrowUp to navigate back to Orange Money
+  await page.keyboard.press('ArrowUp');
+  await expect(omOption).toBeFocused();
+});
