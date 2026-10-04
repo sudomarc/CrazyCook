@@ -45,3 +45,7 @@
 ## 2026-10-12 - [Forgiving UX: Undo Buffer for Bulk Destructive Actions]
 **Learning:** Bulk destructive actions like "Clear Cart" ("Vider le panier") can lead to accidental data loss and user frustration if clicked by mistake. Providing an instant "Undo / Restaurer" action in the empty state container preserves the cleared state in memory (`previousCart`), transfers keyboard focus immediately to the restore button, and announces the restoration option via screen reader live regions (`#cart-live-status`).
 **Action:** Whenever implementing bulk clearing or deletion actions, maintain a temporary restore buffer and offer an accessible "Undo / Restaurer" button at the focus landing point.
+
+## 2026-11-04 - [Accessible In-Page Anchor Navigation & Screen Reader Section Focus]
+**Learning:** In single-page web applications, clicking in-page anchor links (`<a href="#section">`) natively scrolls the viewport to the target element but fails to shift DOM keyboard focus, leaving focus stranded on the trigger link. To ensure seamless keyboard and screen reader navigation, set `tabindex="-1"` dynamically on the target section element, defer `.focus({ preventScroll: true })` until scroll completion, and announce section arrival via the live region (`announceCartAction`).
+**Action:** Attach click handlers on in-page anchor links to set `tabindex="-1"` on target containers, transfer focus asynchronously, and trigger live region screen reader announcements.
