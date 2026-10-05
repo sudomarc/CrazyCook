@@ -465,3 +465,17 @@ test('payment options present descriptive ARIA attributes and support arrow key 
   await page.keyboard.press('ArrowUp');
   await expect(omOption).toBeFocused();
 });
+
+test('in-page anchor links transfer focus to target section and announce section title via live status', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // Click hero CTA link "Voir le menu" (#menu)
+  const menuCtaLink = page.locator('.hero-actions a[href="#menu"]');
+  await menuCtaLink.click();
+
+  const menuSection = page.locator('#menu');
+  await expect(menuSection).toBeFocused();
+
+  const liveStatus = page.locator('#cart-live-status');
+  await expect(liveStatus).toHaveText(/Navigation vers la section : .*/);
+});

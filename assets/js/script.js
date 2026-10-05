@@ -1478,4 +1478,24 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
     };
 
     setupScrollSync();
+
+    // Smooth anchor navigation focus management & screen reader announcements
+    document.querySelectorAll('a[href^="#"]:not([href="#"])').forEach((anchorLink) => {
+        anchorLink.addEventListener('click', (e) => {
+            const targetId = anchorLink.getAttribute('href').substring(1);
+            if (!targetId) return;
+            const targetEl = document.getElementById(targetId);
+            if (!targetEl) return;
+
+            if (!targetEl.hasAttribute('tabindex')) {
+                targetEl.setAttribute('tabindex', '-1');
+            }
+
+            setTimeout(() => {
+                targetEl.focus({ preventScroll: true });
+                const headingText = targetEl.querySelector('h2, h3, .eyebrow')?.textContent?.trim() || targetId;
+                announceCartAction(`Navigation vers la section : ${headingText}`);
+            }, 100);
+        });
+    });
 });
