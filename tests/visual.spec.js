@@ -479,3 +479,30 @@ test('in-page anchor links transfer focus to target section and announce section
   const liveStatus = page.locator('#cart-live-status');
   await expect(liveStatus).toHaveText(/Navigation vers la section : .*/);
 });
+
+test('empty cart CTA closes drawer, transfers focus to menu section, and announces section navigation', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // Open cart drawer while cart is empty
+  await page.locator('#header-cart-toggle').click();
+
+  const emptyCta = page.locator('#empty-cart-cta');
+  await expect(emptyCta).toBeVisible();
+  await expect(emptyCta).toHaveAttribute('aria-label', 'Fermer le panier et parcourir la carte du menu');
+  await expect(emptyCta).toHaveAttribute('title', 'Fermer le panier et parcourir le menu');
+
+  // Click empty cart CTA
+  await emptyCta.click();
+
+  // Verify cart drawer is closed
+  const cartDrawer = page.locator('#cart-drawer');
+  await expect(cartDrawer).not.toHaveClass(/is-open/);
+
+  // Verify menu section received focus
+  const menuSection = page.locator('#menu');
+  await expect(menuSection).toBeFocused();
+
+  // Verify live region announcement
+  const liveStatus = page.locator('#cart-live-status');
+  await expect(liveStatus).toHaveText(/Navigation vers la section : .*/);
+});
