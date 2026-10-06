@@ -341,7 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${previousCart && previousCart.length > 0 ? `
                         <button type="button" class="button button-light" id="undo-clear-cart-btn" aria-label="Restaurer les articles annulés du panier" title="Restaurer les articles annulés">Restaurer le panier ↩</button>
                     ` : ''}
-                    <button type="button" class="button button-dark" id="empty-cart-cta">Découvrir le menu</button>
+                    <button type="button" class="button button-dark" id="empty-cart-cta" aria-label="Fermer le panier et parcourir la carte du menu" title="Fermer le panier et parcourir le menu">Découvrir le menu</button>
                 </div>
             `;
             if (cartTotalPrice) cartTotalPrice.textContent = '0 GNF';
@@ -1137,12 +1137,21 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
             return;
         }
 
-        if (target.id === 'empty-cart-cta') {
+        if (target.id === 'empty-cart-cta' || target.closest('#empty-cart-cta')) {
             closeCart();
             const menuSection = document.getElementById('menu');
             if (menuSection) {
+                if (!menuSection.hasAttribute('tabindex')) {
+                    menuSection.setAttribute('tabindex', '-1');
+                }
                 menuSection.scrollIntoView({ behavior: 'smooth' });
+                setTimeout(() => {
+                    menuSection.focus({ preventScroll: true });
+                    const headingText = menuSection.querySelector('h2, h3, .eyebrow')?.textContent?.trim() || 'Menu';
+                    announceCartAction(`Navigation vers la section : ${headingText}`);
+                }, 100);
             }
+            return;
         }
     });
 
