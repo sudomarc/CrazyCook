@@ -480,6 +480,32 @@ test('in-page anchor links transfer focus to target section and announce section
   await expect(liveStatus).toHaveText(/Navigation vers la section : .*/);
 });
 
+test('checkout back navigation buttons present descriptive ARIA labels and title tooltips', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // Add item and open cart drawer
+  await page.locator('.add-to-cart').first().click();
+  await page.locator('#header-cart-toggle').click();
+
+  // Navigate to Delivery step
+  await page.locator('#cart-validate').click();
+  const backToCartBtn = page.locator('#back-to-cart');
+  await expect(backToCartBtn).toHaveAttribute('aria-label', 'Retour au panier de commande');
+  await expect(backToCartBtn).toHaveAttribute('title', 'Retourner au panier');
+
+  // Fill delivery info and navigate to Payment step
+  await page.locator('input[name="name"]').fill('Demo User');
+  await page.locator('input[name="phone"]').fill('+224 628 00 00 00');
+  await page.locator('input[name="address"]').fill('Kaloum, Conakry');
+  await page.locator('#cart-validate').click();
+
+  // Select Orange Money option to navigate to simulation step
+  await page.locator('[data-payment="orange_money"]').click();
+  const backToPaymentBtn = page.locator('#back-to-payment');
+  await expect(backToPaymentBtn).toHaveAttribute('aria-label', 'Retour au choix du mode de paiement');
+  await expect(backToPaymentBtn).toHaveAttribute('title', 'Retourner aux modes de paiement');
+});
+
 test('empty cart CTA closes drawer, transfers focus to menu section, and announces section navigation', async ({ page }) => {
   await page.goto('/', { waitUntil: 'networkidle' });
 
