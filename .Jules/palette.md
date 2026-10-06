@@ -49,3 +49,7 @@
 ## 2026-11-04 - [Accessible In-Page Anchor Navigation & Screen Reader Section Focus]
 **Learning:** In single-page web applications, clicking in-page anchor links (`<a href="#section">`) natively scrolls the viewport to the target element but fails to shift DOM keyboard focus, leaving focus stranded on the trigger link. To ensure seamless keyboard and screen reader navigation, set `tabindex="-1"` dynamically on the target section element, defer `.focus({ preventScroll: true })` until scroll completion, and announce section arrival via the live region (`announceCartAction`).
 **Action:** Attach click handlers on in-page anchor links to set `tabindex="-1"` on target containers, transfer focus asynchronously, and trigger live region screen reader announcements.
+
+## 2026-11-18 - [WCAG 2.5.3 Label in Name Consistency for Buttons with Visible Text]
+**Learning:** When enhancing buttons that already contain visible text with `aria-label` attributes for extra screen reader context, voice control software (e.g. Dragon, Voice Control) requires the `aria-label` string to begin with or explicitly contain the visual text (WCAG 2.5.3 Label in Name). If the `aria-label` deviates significantly from the visible label, voice recognition commands speaking the visual text fail to activate the button.
+**Action:** Always prefix `aria-label` strings with the exact visible text content (e.g., `aria-label="Retour au panier de commande"` for a button displaying `"Retour"`).

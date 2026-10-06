@@ -369,7 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${cart.length >= 2 ? `
                     <div class="cart-items-header">
                         <span class="cart-items-count">${itemCount} article${itemCount > 1 ? 's' : ''}</span>
-                        <button type="button" class="cart-clear-all" id="clear-cart-btn" aria-label="Vider tous les articles du panier">Vider le panier</button>
+                        <button type="button" class="cart-clear-all" id="clear-cart-btn" aria-label="Vider tous les articles du panier" title="Vider tous les articles du panier">Vider le panier</button>
                     </div>
                 ` : ''}
                 <div class="cart-items">
@@ -447,7 +447,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <span id="delivery-note-counter" class="contact-counter ${noteLength >= 130 ? 'warning' : ''}" aria-live="polite">${noteLength} / 150</span>
                         </label>
                         <div class="cart-actions cart-actions--delivery">
-                            <button type="button" class="button button-light cart-back-btn cart-back-btn--cart" id="back-to-cart">Retour</button>
+                            <button type="button" class="button button-light cart-back-btn cart-back-btn--cart" id="back-to-cart" aria-label="Retour au panier de commande" title="Retourner au panier">Retour</button>
                         </div>
                     </form>
                 </div>
@@ -508,7 +508,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <input id="om-phone" type="tel" name="omPhone" value="${escapeHtml(deliveryInfo.phone)}" placeholder="Ex: 628 06 94 79" autocomplete="tel" inputmode="tel" required>
                         </label>
                     </form>
-                    <button type="button" class="button button-light cart-back-btn cart-back-btn--payment" id="back-to-payment">Retour</button>
+                    <button type="button" class="button button-light cart-back-btn cart-back-btn--payment" id="back-to-payment" aria-label="Retour au choix du mode de paiement" title="Retourner aux modes de paiement">Retour</button>
                 </div>
             `;
             if (cartValidateButton) {
@@ -1398,7 +1398,7 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
                             <div class="contact-success-panel">
                                 <h4>Merci ${userName} ! ✨</h4>
                                 <p>Votre message a bien été reçu. L'équipe de CrazyCook vous répondra dans les plus brefs délais.</p>
-                                <button type="button" class="button button-dark" id="contact-reset">Écrire à nouveau</button>
+                                <button type="button" class="button button-dark" id="contact-reset" aria-label="Écrire à nouveau un message à CrazyCook" title="Écrire un nouveau message">Écrire à nouveau</button>
                             </div>
                         `;
                         contactWrapper.classList.remove('fade-out');
