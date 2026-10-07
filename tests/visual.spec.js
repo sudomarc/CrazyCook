@@ -480,6 +480,32 @@ test('in-page anchor links transfer focus to target section and announce section
   await expect(liveStatus).toHaveText(/Navigation vers la section : .*/);
 });
 
+test('footer category links navigate to menu and automatically select category tab', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // Scroll to footer
+  await page.locator('.site-footer').scrollIntoViewIfNeeded();
+
+  // Click "Entrées" link in footer "Notre Carte" column
+  const entreesFooterLink = page.locator('.footer-column a[data-category="Entrées"]');
+  await expect(entreesFooterLink).toBeVisible();
+  await entreesFooterLink.click();
+
+  // Verify focus transferred to #menu
+  const menuSection = page.locator('#menu');
+  await expect(menuSection).toBeFocused();
+
+  // Verify 'Entrées' category filter tab is automatically selected
+  const entreesFilter = page.locator('.menu-filter-btn[data-category="Entrées"]');
+  await expect(entreesFilter).toHaveAttribute('aria-selected', 'true');
+  await expect(page.locator('.category-block[data-category="Entrées"]')).toBeVisible();
+  await expect(page.locator('.category-block[data-category="Plats"]')).toBeHidden();
+
+  // Verify live status announcement
+  const liveStatus = page.locator('#cart-live-status');
+  await expect(liveStatus).toHaveText('Filtre du menu : Entrées.');
+});
+
 test('checkout back navigation buttons present descriptive ARIA labels and title tooltips', async ({ page }) => {
   await page.goto('/', { waitUntil: 'networkidle' });
 

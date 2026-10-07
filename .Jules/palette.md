@@ -53,3 +53,7 @@
 ## 2026-11-18 - [WCAG 2.5.3 Label in Name Consistency for Buttons with Visible Text]
 **Learning:** When enhancing buttons that already contain visible text with `aria-label` attributes for extra screen reader context, voice control software (e.g. Dragon, Voice Control) requires the `aria-label` string to begin with or explicitly contain the visual text (WCAG 2.5.3 Label in Name). If the `aria-label` deviates significantly from the visible label, voice recognition commands speaking the visual text fail to activate the button.
 **Action:** Always prefix `aria-label` strings with the exact visible text content (e.g., `aria-label="Retour au panier de commande"` for a button displaying `"Retour"`).
+
+## 2026-11-20 - [Contextual Anchor Navigation to Filtered Catalog Views]
+**Learning:** When footer or secondary in-page links target a section containing a tabbed or filtered view (e.g. `<a href="#menu" data-category="Entrées">`), scrolling to the section without updating the filter state leaves the user on a generic view, forcing an unnecessary extra click. Attaching category metadata to anchor elements and invoking the category filter handler on navigation seamlessly aligns the UI with the user's explicit intent while announcing the filter update via screen reader live status.
+**Action:** Attach filter/category metadata to secondary anchor links targeting tabbed sections and trigger filter selection during anchor navigation events.
