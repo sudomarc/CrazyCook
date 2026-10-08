@@ -380,7 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <strong>${item.name}</strong>
                                     <p>${formatPrice(item.price)} / unité</p>
                                 </div>
-                                <button type="button" class="cart-remove" data-remove="${item.name}" aria-label="Supprimer ${item.name} du panier">Supprimer</button>
+                                <button type="button" class="cart-remove" data-remove="${item.name}" aria-label="Supprimer ${item.name} du panier" title="Supprimer ${item.name} du panier">Supprimer</button>
                             </div>
                             <div class="cart-item-card__meta">
                                 <div class="cart-stepper">
@@ -1510,8 +1510,10 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
 
             setTimeout(() => {
                 targetEl.focus({ preventScroll: true });
-                const headingText = targetEl.querySelector('h2, h3, .eyebrow')?.textContent?.trim() || targetId;
-                announceCartAction(`Navigation vers la section : ${headingText}`);
+                if (!category) {
+                    const headingText = targetEl.querySelector('h2, h3, .eyebrow')?.textContent?.trim() || targetId;
+                    announceCartAction(`Navigation vers la section : ${headingText}`);
+                }
             }, 100);
         });
     });

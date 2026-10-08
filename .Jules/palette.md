@@ -57,3 +57,7 @@
 ## 2026-11-20 - [Contextual Anchor Navigation to Filtered Catalog Views]
 **Learning:** When footer or secondary in-page links target a section containing a tabbed or filtered view (e.g. `<a href="#menu" data-category="Entrées">`), scrolling to the section without updating the filter state leaves the user on a generic view, forcing an unnecessary extra click. Attaching category metadata to anchor elements and invoking the category filter handler on navigation seamlessly aligns the UI with the user's explicit intent while announcing the filter update via screen reader live status.
 **Action:** Attach filter/category metadata to secondary anchor links targeting tabbed sections and trigger filter selection during anchor navigation events.
+
+## 2026-11-21 - [Preventing Overwrite of Specific Filter Announcements in Live Regions]
+**Learning:** When anchor link navigation triggers both a contextual filter change (e.g. `setCategoryFilter`) and a generic section navigation event, deferred calls to `announceCartAction` inside `setTimeout` will overwrite the specific filter message in screen reader live regions. Suppressing generic section navigation announcements when contextual filter metadata (`data-category`) is present preserves the most specific and useful announcement for screen reader users.
+**Action:** Skip generic section navigation live status announcements if a contextual filter status announcement was already dispatched during anchor link click handling.
