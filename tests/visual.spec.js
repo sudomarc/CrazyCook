@@ -480,6 +480,29 @@ test('in-page anchor links transfer focus to target section and announce section
   await expect(liveStatus).toHaveText(/Navigation vers la section : .*/);
 });
 
+test('cart remove button and category filter tabs present descriptive ARIA labels and title tooltips', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // 1. Verify menu category filter tabs title tooltips and ARIA labels
+  const allFilter = page.locator('.menu-filter-btn[data-category="all"]');
+  await expect(allFilter).toHaveAttribute('aria-label', 'Afficher tous les plats du menu');
+  await expect(allFilter).toHaveAttribute('title', 'Afficher tous les plats');
+
+  const entreesFilter = page.locator('.menu-filter-btn[data-category="Entrées"]');
+  await expect(entreesFilter).toHaveAttribute('aria-label', 'Afficher uniquement les entrées');
+  await expect(entreesFilter).toHaveAttribute('title', 'Afficher uniquement les entrées');
+
+  // 2. Add item to cart and open cart drawer
+  await page.locator('.add-to-cart').first().click();
+  await page.locator('#header-cart-toggle').click();
+
+  // 3. Verify cart remove button title tooltip and ARIA label
+  const removeBtn = page.locator('.cart-remove').first();
+  await expect(removeBtn).toBeVisible();
+  await expect(removeBtn).toHaveAttribute('aria-label', 'Supprimer Soupe de haricot noir du panier');
+  await expect(removeBtn).toHaveAttribute('title', 'Supprimer Soupe de haricot noir du panier');
+});
+
 test('footer category links navigate to menu and automatically select category tab', async ({ page }) => {
   await page.goto('/', { waitUntil: 'networkidle' });
 
