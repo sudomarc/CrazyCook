@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
             title = `Ouvrir le panier (${countText}) [C]`;
         }
 
-        [cartToggle, mobileCartToggle].forEach((btn) => {
+        [cartToggle, mobileCartToggle, footerCartToggle].forEach((btn) => {
             if (btn) {
                 btn.setAttribute('aria-label', label);
                 btn.setAttribute('title', title);
@@ -353,7 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (focusInfo) {
                 const undoBtn = document.getElementById('undo-clear-cart-btn');
                 const emptyCta = document.getElementById('empty-cart-cta');
-                setTimeout(() => (undoBtn || emptyCta || drawerClose)?.focus(), 0);
+                setTimeout(() => (undoBtn || emptyCta || drawerClose)?.focus(), 50);
             }
             return;
         }
@@ -1498,6 +1498,14 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
 
             if (!targetEl.hasAttribute('tabindex')) {
                 targetEl.setAttribute('tabindex', '-1');
+            }
+
+            const category = anchorLink.dataset.category;
+            if (category) {
+                const targetBtn = filterBtns.find((btn) => btn.dataset.category === category);
+                if (targetBtn) {
+                    setCategoryFilter(targetBtn);
+                }
             }
 
             setTimeout(() => {
