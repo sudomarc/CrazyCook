@@ -1402,10 +1402,12 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
                             </div>
                         `;
                         contactWrapper.classList.remove('fade-out');
+                        announceCartAction(`Message envoyé avec succès. Merci ${userName} !`);
 
-                        // Ajouter un écouteur sur le bouton de réinitialisation
+                        // Transférer le focus sur le bouton de réinitialisation
                         const resetButton = document.getElementById('contact-reset');
                         if (resetButton) {
+                            setTimeout(() => resetButton.focus(), 50);
                             resetButton.addEventListener('click', () => {
                                 contactWrapper.classList.add('fade-out');
                                 setTimeout(() => {
@@ -1429,8 +1431,10 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
                                         </form>
                                     `;
                                     contactWrapper.classList.remove('fade-out');
+                                    announceCartAction('Formulaire de contact réinitialisé.');
                                     // Setup contact form events recursively without dispatching DOMContentLoaded
                                     setupContactForm();
+                                    setTimeout(() => document.getElementById('contact-nom')?.focus(), 50);
                                 }, 300);
                             });
                         }

@@ -480,6 +480,39 @@ test('in-page anchor links transfer focus to target section and announce section
   await expect(liveStatus).toHaveText(/Navigation vers la section : .*/);
 });
 
+test('contact form submission and reset workflow manages focus and announces status via live region', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+  await page.locator('#contact').scrollIntoViewIfNeeded();
+
+  // Fill in contact form
+  await page.locator('#contact-nom').fill('Fatou Camara');
+  await page.locator('#contact-telephone').fill('+224 621 00 00 00');
+  await page.locator('#contact-message').fill('Bonjour, avez-vous une option végétarienne ?');
+
+  // Submit contact form
+  await page.locator('#contact-submit').click();
+
+  // Verify success panel is displayed
+  const successPanel = page.locator('.contact-success-panel');
+  await expect(successPanel).toBeVisible({ timeout: 5000 });
+
+  // Verify reset button is focused and screen reader live region announced success
+  const resetButton = page.locator('#contact-reset');
+  await expect(resetButton).toBeFocused();
+
+  const liveStatus = page.locator('#cart-live-status');
+  await expect(liveStatus).toHaveText('Message envoyé avec succès. Merci Fatou Camara !');
+
+  // Click reset button
+  await resetButton.click();
+
+  // Verify form is restored, #contact-nom receives focus, and live region announces reset
+  const contactNom = page.locator('#contact-nom');
+  await expect(contactNom).toBeVisible({ timeout: 5000 });
+  await expect(contactNom).toBeFocused();
+  await expect(liveStatus).toHaveText('Formulaire de contact réinitialisé.');
+});
+
 test('footer category links navigate to menu and automatically select category tab', async ({ page }) => {
   await page.goto('/', { waitUntil: 'networkidle' });
 
