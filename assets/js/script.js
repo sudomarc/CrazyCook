@@ -365,7 +365,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // ÉTAPE 1 : Affichage du panier classique
         if (currentStep === 'cart') {
+            const subtotal = getSubtotal();
+            const FREE_DELIVERY_THRESHOLD = 30000;
+            const remaining = FREE_DELIVERY_THRESHOLD - subtotal;
+            const percent = Math.min(100, Math.round((subtotal / FREE_DELIVERY_THRESHOLD) * 100));
+
             cartBody.innerHTML = `
+                <div class="free-delivery-banner" role="status">
+                    <div class="free-delivery-text">
+                        ${remaining > 0
+                            ? `Plus que <strong>${formatPrice(remaining)}</strong> pour la <strong>livraison gratuite</strong> !`
+                            : `🎉 <strong>Livraison gratuite offerte !</strong>`
+                        }
+                    </div>
+                    <div class="free-delivery-progress" role="progressbar" aria-valuenow="${percent}" aria-valuemin="0" aria-valuemax="100" aria-label="Progression vers la livraison gratuite">
+                        <div class="free-delivery-bar" style="width: ${percent}%;"></div>
+                    </div>
+                </div>
                 ${cart.length >= 2 ? `
                     <div class="cart-items-header">
                         <span class="cart-items-count">${itemCount} article${itemCount > 1 ? 's' : ''}</span>
@@ -497,11 +513,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // ÉTAPE 3bis : Simulation du paiement Orange Money
         if (currentStep === 'orange_money_form') {
+            const deliveryFee = getSubtotal() >= 30000 ? 0 : 2000;
             cartBody.innerHTML = `
                 <div class="om-simulation">
                     <p class="om-disclaimer"><!-- SIMULATION — pas de vrai paiement, prototype de démonstration --> Ceci est une simulation à des fins de démonstration.</p>
                     <h4 class="cart-step-title">Paiement Orange Money</h4>
-                    <p class="cart-amount-info">Montant à payer : <strong>${formatPrice(getSubtotal() + 2000)}</strong></p>
+                    <p class="cart-amount-info">Montant à payer : <strong>${formatPrice(getSubtotal() + deliveryFee)}</strong></p>
                     <form class="cart-form" id="om-form">
                         <label for="om-phone">
                             <span>Numéro Orange Money <span class="required" aria-hidden="true">*</span></span>
@@ -537,7 +554,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // ÉTAPE 4 : Confirmation de commande
         if (currentStep === 'confirmation') {
-            const deliveryFee = 2000;
+            const deliveryFee = getSubtotal() >= 30000 ? 0 : 2000;
             const totalWithDelivery = getSubtotal() + deliveryFee;
             const paymentLabel = paymentMethod === 'orange_money' ? 'Orange Money' : 'Paiement à la livraison';
 

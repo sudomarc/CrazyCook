@@ -480,6 +480,34 @@ test('in-page anchor links transfer focus to target section and announce section
   await expect(liveStatus).toHaveText(/Navigation vers la section : .*/);
 });
 
+test('cart drawer free delivery progress bar updates dynamically as items are added', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // Add 1 item (Soupe de haricot noir: 8,000 GNF) and open cart drawer
+  const addToCartBtn = page.locator('.add-to-cart').first();
+  await addToCartBtn.click();
+  await page.locator('#header-cart-toggle').click();
+
+  const freeDeliveryBanner = page.locator('.free-delivery-banner');
+  await expect(freeDeliveryBanner).toBeVisible();
+  await expect(freeDeliveryBanner).toContainText('Plus que 22\u00a0000 GNF pour la livraison gratuite');
+
+  const progressBar = page.locator('.free-delivery-progress');
+  await expect(progressBar).toHaveAttribute('role', 'progressbar');
+  await expect(progressBar).toHaveAttribute('aria-valuenow', '27'); // 8000/30000 = 26.67% -> 27%
+
+  // Close cart drawer, add high-value item (Filet de poisson fumé: 18,000 GNF twice -> +36,000 GNF, total 44,000 GNF)
+  await page.locator('#drawer-close').click();
+  const fishAddBtn = page.locator('.add-to-cart[data-name="Filet de poisson fumé"]');
+  await fishAddBtn.click();
+  await fishAddBtn.click();
+
+  // Re-open cart drawer and check free delivery unlocked state
+  await page.locator('#header-cart-toggle').click();
+  await expect(freeDeliveryBanner).toContainText('Livraison gratuite offerte');
+  await expect(progressBar).toHaveAttribute('aria-valuenow', '100');
+});
+
 test('footer category links navigate to menu and automatically select category tab', async ({ page }) => {
   await page.goto('/', { waitUntil: 'networkidle' });
 
