@@ -64,8 +64,17 @@ const seo = `
     <link rel="apple-touch-icon" href="${baseUrl}/assets/img/apple-touch-icon.png" sizes="180x180">
 `;
 
-html = html.replace(/\s*<meta name="description"[^>]*>/, '');
-html = html.replace(/\s*<link rel="icon"[^>]*>/, '');
+// Normaliser les signaux SEO présents dans le HTML source avant de générer la version de production.
+html = html.replace(/\s*<meta name="description"[^>]*>/g, '');
+html = html.replace(/\s*<meta name="author"[^>]*>/g, '');
+html = html.replace(/\s*<meta name="robots"[^>]*>/g, '');
+html = html.replace(/\s*<link rel="canonical"[^>]*>/g, '');
+html = html.replace(/\s*<meta property="og:[^"]+"[^>]*>/g, '');
+html = html.replace(/\s*<meta name="twitter:[^"]+"[^>]*>/g, '');
+html = html.replace(/\s*<link rel="manifest"[^>]*>/g, '');
+html = html.replace(/\s*<link rel="apple-touch-icon"[^>]*>/g, '');
+html = html.replace(/\s*<link rel="icon"[^>]*>/g, '');
+html = html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/g, '');
 html = html.replace(/(<title>.*?<\/title>)/, `$1\n${seo.trimEnd()}`);
 html = html.replace(/\n\s*<script>\s*\/\/ Définition immédiate des handlers[\s\S]*?<\/script>\s*/m, '\n    <script src="assets/js/image-fallback.js" defer></script>\n');
 html = html.replaceAll(' onload="imageLoaded(this)"', '');
