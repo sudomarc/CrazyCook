@@ -60,7 +60,10 @@ test('production artifact has no browser or resource errors', async ({ page }) =
   await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(1);
 
   const schema = JSON.parse(await page.locator('script[type="application/ld+json"]').textContent());
-  expect(schema['@type']).toBe('Restaurant');
+  expect(schema['@type']).toBe('WebSite');
+  expect(schema.creator.name).toBe('Sudomarc');
+  expect(schema.creator.sameAs).toBe('https://github.com/sudomarc');
+  await expect(page.locator('meta[name="author"]')).toHaveAttribute('content', 'Sudomarc');
   expect(schema.url).toBe('https://sudomarc.github.io/CrazyCook/');
   expect(schema.name).toBe('CrazyCook');
 
