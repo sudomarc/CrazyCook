@@ -207,6 +207,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Calcul du sous-total du panier
     const getSubtotal = () => cart.reduce((total, item) => total + item.quantity * item.price, 0);
+    const FREE_DELIVERY_THRESHOLD = 30000;
+    const getDeliveryFee = () => (getSubtotal() >= FREE_DELIVERY_THRESHOLD ? 0 : 2000);
 
     // Déclenchement de l'animation CSS (bump/pulse) sur le badge du panier
     const bumpBadge = () => {
@@ -365,7 +367,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // ÉTAPE 1 : Affichage du panier classique
         if (currentStep === 'cart') {
+            const subtotal = getSubtotal();
+            const remaining = Math.max(0, FREE_DELIVERY_THRESHOLD - subtotal);
+            const progressPercent = Math.min(100, Math.round((subtotal / FREE_DELIVERY_THRESHOLD) * 100));
+            const isUnlocked = subtotal >= FREE_DELIVERY_THRESHOLD;
+
             cartBody.innerHTML = `
+                <div class="free-delivery-banner ${isUnlocked ? 'is-unlocked' : ''}" role="status" aria-label="${isUnlocked ? 'Livraison gratuite offerte !' : `Encore ${formatPrice(remaining)} pour la livraison gratuite`}">
+                    <div class="free-delivery-banner__header">
+                        <span>${isUnlocked ? '🎉 <strong>Livraison gratuite offerte !</strong>' : `🚚 Plus que <strong>${formatPrice(remaining)}</strong> pour la livraison gratuite`}</span>
+                    </div>
+                    <div class="free-delivery-banner__bar" role="progressbar" aria-valuenow="${progressPercent}" aria-valuemin="0" aria-valuemax="100" aria-valuetext="${progressPercent}% pour la livraison gratuite">
+                        <div class="free-delivery-banner__fill" style="width: ${progressPercent}%;"></div>
+                    </div>
+                </div>
                 ${cart.length >= 2 ? `
                     <div class="cart-items-header">
                         <span class="cart-items-count">${itemCount} article${itemCount > 1 ? 's' : ''}</span>
@@ -501,7 +516,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="om-simulation">
                     <p class="om-disclaimer"><!-- SIMULATION — pas de vrai paiement, prototype de démonstration --> Ceci est une simulation à des fins de démonstration.</p>
                     <h4 class="cart-step-title">Paiement Orange Money</h4>
-                    <p class="cart-amount-info">Montant à payer : <strong>${formatPrice(getSubtotal() + 2000)}</strong></p>
+                    <p class="cart-amount-info">Montant à payer : <strong>${formatPrice(getSubtotal() + getDeliveryFee())}</strong></p>
                     <form class="cart-form" id="om-form">
                         <label for="om-phone">
                             <span>Numéro Orange Money <span class="required" aria-hidden="true">*</span></span>
@@ -537,7 +552,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // ÉTAPE 4 : Confirmation de commande
         if (currentStep === 'confirmation') {
-            const deliveryFee = 2000;
+            const deliveryFee = getDeliveryFee();
             const totalWithDelivery = getSubtotal() + deliveryFee;
             const paymentLabel = paymentMethod === 'orange_money' ? 'Orange Money' : 'Paiement à la livraison';
 

@@ -2283,6 +2283,84 @@ ul {
     color: #D8CDB8;
 }
 
+/* Free Delivery Progress Bar */
+.free-delivery-banner {
+    background: rgba(var(--forest-green-rgb), 0.08);
+    border: 1px solid rgba(var(--forest-green-rgb), 0.2);
+    border-radius: 14px;
+    padding: 0.75rem 0.9rem;
+    margin-bottom: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.free-delivery-banner.is-unlocked {
+    background: rgba(var(--ochre-rgb), 0.12);
+    border-color: rgba(var(--ochre-rgb), 0.3);
+}
+
+.free-delivery-banner__header {
+    font-size: 0.85rem;
+    color: var(--burnt-earth);
+    display: flex;
+    align-items: center;
+}
+
+.free-delivery-banner__header strong {
+    color: var(--forest-green);
+}
+
+.free-delivery-banner.is-unlocked .free-delivery-banner__header strong {
+    color: var(--ochre);
+}
+
+.free-delivery-banner__bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(26, 26, 26, 0.1);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.free-delivery-banner__fill {
+    height: 100%;
+    background: var(--forest-green);
+    border-radius: 999px;
+    transition: width 0.4s var(--ease-premium), background-color 0.3s ease;
+}
+
+.free-delivery-banner.is-unlocked .free-delivery-banner__fill {
+    background: var(--ochre);
+}
+
+[data-theme="dark"] .free-delivery-banner {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .free-delivery-banner.is-unlocked {
+    background: rgba(224, 166, 77, 0.15);
+    border-color: rgba(224, 166, 77, 0.3);
+}
+
+[data-theme="dark"] .free-delivery-banner__header {
+    color: #D8CDB8;
+}
+
+[data-theme="dark"] .free-delivery-banner__header strong {
+    color: #F7C97A;
+}
+
+[data-theme="dark"] .free-delivery-banner__bar {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+[data-theme="dark"] .free-delivery-banner__fill {
+    background: var(--ochre);
+}
+
 /* Floating Back-to-Top Button */
 .back-to-top {
     position: fixed;

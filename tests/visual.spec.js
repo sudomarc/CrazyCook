@@ -532,6 +532,43 @@ test('checkout back navigation buttons present descriptive ARIA labels and title
   await expect(backToPaymentBtn).toHaveAttribute('title', 'Retourner aux modes de paiement');
 });
 
+test('free delivery progress bar renders in cart, updates progress dynamically, and sets delivery fee to 0 GNF when threshold is met', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // Add 1 Filet de poisson fumé (18,000 GNF) to cart and open cart drawer
+  const fishAddBtn = page.locator('.add-to-cart[data-name="Filet de poisson fumé"]');
+  await fishAddBtn.click();
+  await page.locator('#header-cart-toggle').click();
+
+  // Progress bar banner should show remaining 12,000 GNF
+  const freeDeliveryBanner = page.locator('.free-delivery-banner');
+  await expect(freeDeliveryBanner).toBeVisible();
+  await expect(freeDeliveryBanner).toContainText('12 000 GNF');
+  await expect(freeDeliveryBanner).not.toHaveClass(/is-unlocked/);
+
+  // Use stepper + button in drawer to increase Filet de poisson fumé to 2 -> Subtotal: 36,000 GNF (>= 30,000 GNF threshold)
+  const plusBtn = page.locator('.cart-stepper button[data-change="+"]');
+  await plusBtn.click();
+
+  // Progress bar banner should unlock free delivery
+  await expect(freeDeliveryBanner).toHaveClass(/is-unlocked/);
+  await expect(freeDeliveryBanner).toContainText('Livraison gratuite offerte !');
+
+  // Navigate through checkout to payment simulation step
+  await page.locator('#cart-validate').click(); // Delivery step
+  await page.locator('input[name="name"]').fill('Demo User');
+  await page.locator('input[name="phone"]').fill('+224 628 00 00 00');
+  await page.locator('input[name="address"]').fill('Kaloum, Conakry');
+  await page.locator('#cart-validate').click(); // Payment step
+
+  await page.locator('[data-payment="orange_money"]').click(); // Orange Money step
+
+  // Verify total amount to pay matches 36,000 GNF (18,000 * 2 = 36,000 GNF with 0 GNF delivery fee)
+  const amountInfo = page.locator('.cart-amount-info');
+  await expect(amountInfo).toContainText('36');
+  await expect(amountInfo).toContainText('000 GNF');
+});
+
 test('empty cart CTA closes drawer, transfers focus to menu section, and announces section navigation', async ({ page }) => {
   await page.goto('/', { waitUntil: 'networkidle' });
 
