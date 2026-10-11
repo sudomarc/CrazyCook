@@ -41,21 +41,22 @@ let html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 
 const seo = `
     <meta name="description" content="${config.name} — ${config.description}">
+    <meta name="author" content="Sudomarc">
     <meta name="robots" content="index,follow">
     <link rel="canonical" href="${baseUrl}/">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="fr_FR">
     <meta property="og:site_name" content="${config.name}">
-    <meta property="og:title" content="${config.name} | Restaurant template">
+    <meta property="og:title" content="${config.name} — Démo de site restaurant | Sudomarc">
     <meta property="og:description" content="${config.description}">
     <meta property="og:url" content="${baseUrl}/">
     <meta property="og:image" content="${baseUrl}/assets/img/og-cover.png">
-    <meta property="og:image:alt" content="${config.name} — aperçu du template restaurant">
+    <meta property="og:image:alt" content="${config.name} — aperçu de la démo de site restaurant">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="${config.name} | Restaurant template">
+    <meta name="twitter:title" content="${config.name} — Démo de site restaurant | Sudomarc">
     <meta name="twitter:description" content="${config.description}">
     <meta name="twitter:image" content="${baseUrl}/assets/img/og-cover.png">
-    <meta name="twitter:image:alt" content="${config.name} — aperçu du template restaurant">
+    <meta name="twitter:image:alt" content="${config.name} — aperçu de la démo de site restaurant">
     <link rel="manifest" href="${baseUrl}/site.webmanifest">
     <link rel="icon" href="${baseUrl}/assets/img/favicon.svg" type="image/svg+xml">
     <link rel="icon" href="${baseUrl}/assets/img/favicon-16.png" type="image/png" sizes="16x16">
@@ -105,28 +106,22 @@ for (const [from, to] of replacements) html = html.replaceAll(from, to);
 html = html.replace(/\s*<span class="order-pill">\s*<\/span>/g, '');
 html = html.replace(/<div class="rating-badge"[^>]*>\s*<\/div>/g, '');
 
-const restaurantJsonLd = {
+const websiteJsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'Restaurant',
+  '@type': 'WebSite',
   name: config.name,
   url: `${baseUrl}/`,
   description: isTodo(config.description) ? undefined : config.description,
   image: [`${baseUrl}/assets/img/og-cover.png`],
-  telephone: isTodo(config.telephone) ? undefined : config.telephone,
-  priceRange: isTodo(config.priceRange) ? undefined : config.priceRange,
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: isTodo(config.address) ? undefined : config.address,
-    addressLocality: isTodo(config.city) ? undefined : config.city,
-    postalCode: isTodo(config.postalCode) ? undefined : config.postalCode,
-    addressCountry: isTodo(config.country) ? undefined : config.country,
+  creator: {
+    '@type': 'Person',
+    name: 'Sudomarc',
+    sameAs: 'https://github.com/sudomarc',
   },
-  openingHours: config.openingHours.filter((value) => !isTodo(value)),
-  sameAs: [config.instagram, config.facebook, config.tiktok].filter((value) => !isTodo(value)),
 };
 
 const compact = (value) => JSON.parse(JSON.stringify(value));
-html = html.replace('</head>', `    <script type="application/ld+json">${JSON.stringify(compact(restaurantJsonLd))}</script>\n</head>`);
+html = html.replace('</head>', `    <script type="application/ld+json">${JSON.stringify(compact(websiteJsonLd))}</script>\n</head>`);
 
 if (/TODO_[A-Z0-9_]+/.test(html)) {
   throw new Error('Production HTML still contains a TODO placeholder');
