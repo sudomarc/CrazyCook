@@ -1240,9 +1240,72 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
         });
     });
 
-    // Menu category filter tabs (WAI-ARIA)
+    // Recherche en direct dans le menu avec annonces vocales et masquage dynamique
+    const menuSearchInput = document.getElementById('menu-search');
+    const menuSearchEmpty = document.getElementById('menu-search-empty');
+    const searchQueryText = document.getElementById('search-query-text');
+    const resetMenuSearchBtn = document.getElementById('reset-menu-search');
+
     const filterBtns = Array.from(document.querySelectorAll('.menu-filter-btn'));
     const catBlocks = document.querySelectorAll('.category-block[data-category]');
+
+    const performMenuSearch = () => {
+        if (!menuSearchInput) return;
+        const query = menuSearchInput.value.trim().toLowerCase();
+        const activeCategoryBtn = filterBtns.find(btn => btn.classList.contains('active'));
+        const activeCat = activeCategoryBtn ? activeCategoryBtn.dataset.category : 'all';
+
+        let visibleDishesCount = 0;
+
+        document.querySelectorAll('.dish-card').forEach((card) => {
+            const title = card.querySelector('h4')?.textContent.toLowerCase() || '';
+            const desc = card.querySelector('.dish-desc')?.textContent.toLowerCase() || '';
+            const detail = card.querySelector('.dish-detail')?.textContent.toLowerCase() || '';
+            const matchesQuery = !query || title.includes(query) || desc.includes(query) || detail.includes(query);
+
+            const categoryBlock = card.closest('.category-block');
+            const matchesCategory = activeCat === 'all' || categoryBlock?.dataset.category === activeCat;
+
+            const isVisible = matchesQuery && matchesCategory;
+            card.hidden = !isVisible;
+            if (isVisible) visibleDishesCount++;
+        });
+
+        // Masquer les blocs de catégorie sans plats visibles
+        catBlocks.forEach((block) => {
+            const categoryMatches = activeCat === 'all' || block.dataset.category === activeCat;
+            const hasVisibleDish = Array.from(block.querySelectorAll('.dish-card')).some(card => !card.hidden);
+            block.hidden = !categoryMatches || !hasVisibleDish;
+        });
+
+        if (menuSearchEmpty) {
+            menuSearchEmpty.hidden = visibleDishesCount > 0 || !query;
+            if (searchQueryText) searchQueryText.textContent = menuSearchInput.value.trim();
+        }
+
+        if (query) {
+            announceCartAction(`${visibleDishesCount} plat${visibleDishesCount > 1 ? 's' : ''} trouvé${visibleDishesCount > 1 ? 's' : ''} pour « ${menuSearchInput.value.trim()} ».`);
+        }
+    };
+
+    menuSearchInput?.addEventListener('input', performMenuSearch);
+    menuSearchInput?.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            menuSearchInput.value = '';
+            performMenuSearch();
+        }
+    });
+
+    resetMenuSearchBtn?.addEventListener('click', () => {
+        if (menuSearchInput) {
+            menuSearchInput.value = '';
+            performMenuSearch();
+            menuSearchInput.focus();
+            announceCartAction('Recherche réinitialisée.');
+        }
+    });
+
+    // Menu category filter tabs (WAI-ARIA)
     const setCategoryFilter = (targetBtn) => {
         if (!targetBtn) return;
         const cat = targetBtn.dataset.category;
@@ -1252,7 +1315,11 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
             btn.setAttribute('aria-selected', active);
             btn.setAttribute('tabindex', active ? '0' : '-1');
         });
-        catBlocks.forEach(b => { b.hidden = cat !== 'all' && b.dataset.category !== cat; });
+        if (menuSearchInput && menuSearchInput.value) {
+            performMenuSearch();
+        } else {
+            catBlocks.forEach(b => { b.hidden = cat !== 'all' && b.dataset.category !== cat; });
+        }
         announceCartAction(`Filtre du menu : ${cat === 'all' ? 'Toutes les catégories' : cat}.`);
     };
     filterBtns.forEach((btn, idx) => {

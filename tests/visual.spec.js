@@ -480,6 +480,42 @@ test('in-page anchor links transfer focus to target section and announce section
   await expect(liveStatus).toHaveText(/Navigation vers la section : .*/);
 });
 
+test('menu live search filters dish cards, displays empty state, announces match count, and handles reset', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  const searchInput = page.locator('#menu-search');
+  await expect(searchInput).toBeVisible();
+  await expect(searchInput).toHaveAttribute('aria-label', 'Rechercher un plat dans le menu');
+
+  // Search for "bœuf"
+  await searchInput.fill('bœuf');
+  await expect(page.locator('.dish-card:has-text("Brochettes de bœuf")')).toBeVisible();
+  await expect(page.locator('.dish-card:has-text("Soupe de haricot noir")')).toBeHidden();
+  await expect(page.locator('#cart-live-status')).toHaveText('1 plat trouvé pour « bœuf ».');
+
+  // Search for non-existent dish "pizza"
+  await searchInput.fill('pizza');
+  const emptyState = page.locator('#menu-search-empty');
+  await expect(emptyState).toBeVisible();
+  await expect(emptyState).toContainText('Aucun plat ne correspond à « pizza »');
+
+  // Click reset button
+  const resetBtn = page.locator('#reset-menu-search');
+  await resetBtn.click();
+
+  // Verify search cleared and dishes visible again
+  await expect(searchInput).toHaveValue('');
+  await expect(page.locator('.dish-card:has-text("Soupe de haricot noir")')).toBeVisible();
+  await expect(page.locator('.dish-card:has-text("Brochettes de bœuf")')).toBeVisible();
+
+  // Test Escape key clearing
+  await searchInput.fill('poisson');
+  await expect(page.locator('.dish-card:has-text("Filet de poisson fumé")')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(searchInput).toHaveValue('');
+  await expect(page.locator('.dish-card:has-text("Soupe de haricot noir")')).toBeVisible();
+});
+
 test('footer category links navigate to menu and automatically select category tab', async ({ page }) => {
   await page.goto('/', { waitUntil: 'networkidle' });
 

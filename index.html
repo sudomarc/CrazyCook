@@ -240,6 +240,12 @@
                     </div>
                 </div>
 
+            <!-- Barre de recherche rapide dans le menu -->
+            <div class="menu-search-wrapper reveal">
+                <label for="menu-search" class="sr-only">Rechercher un plat dans le menu</label>
+                <input type="search" id="menu-search" class="menu-search-input" placeholder="🔍 Rechercher un plat (ex: bœuf, poisson, soupe...)" aria-label="Rechercher un plat dans le menu" autocomplete="off">
+            </div>
+
             <!-- Filtres de catégories du menu (WAI-ARIA Tabs) -->
             <div class="menu-filters reveal" role="tablist" aria-label="Filtrer la carte du menu par catégorie">
                 <button type="button" class="menu-filter-btn active" role="tab" aria-selected="true" tabindex="0" data-category="all">Tous</button>
@@ -247,6 +253,10 @@
                 <button type="button" class="menu-filter-btn" role="tab" aria-selected="false" tabindex="-1" data-category="Plats">Plats</button>
                 <button type="button" class="menu-filter-btn" role="tab" aria-selected="false" tabindex="-1" data-category="Desserts">Desserts</button>
             </div>
+
+            <p id="menu-search-empty" class="menu-search-empty" hidden>
+                Aucun plat ne correspond à « <span id="search-query-text"></span> ». <button type="button" id="reset-menu-search" class="button button-light" style="margin-left: 0.5rem; padding: 0.35rem 0.85rem; font-size: 0.85rem;" aria-label="Réinitialiser la recherche du menu" title="Réinitialiser la recherche">Réinitialiser</button>
+            </p>
 
             <div class="menu-categories">
                 <div class="category-block reveal" data-category="Entrées">

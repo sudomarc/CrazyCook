@@ -57,3 +57,7 @@
 ## 2026-11-20 - [Contextual Anchor Navigation to Filtered Catalog Views]
 **Learning:** When footer or secondary in-page links target a section containing a tabbed or filtered view (e.g. `<a href="#menu" data-category="Entrées">`), scrolling to the section without updating the filter state leaves the user on a generic view, forcing an unnecessary extra click. Attaching category metadata to anchor elements and invoking the category filter handler on navigation seamlessly aligns the UI with the user's explicit intent while announcing the filter update via screen reader live status.
 **Action:** Attach filter/category metadata to secondary anchor links targeting tabbed sections and trigger filter selection during anchor navigation events.
+
+## 2026-12-05 - [Accessible Live Menu Search with Synchronized Category Toggling & Live ARIA Status]
+**Learning:** When adding a live search filter above categorized or tabbed catalog sections, filtering child item cards alone leaves empty parent category headers/blocks visible, resulting in cluttered layouts. Dynamically hiding empty category containers, combining query matching with active category tab states, supporting `Escape` key resets, and announcing match counts via screen reader live regions (`announceCartAction`) delivers a highly accessible and delightful search experience.
+**Action:** When implementing catalog search inputs, synchronize search filtering with category tabs, hide empty category wrappers, and announce search match counts via live regions.
