@@ -232,6 +232,10 @@ test('menu category filter tabs filter categories and support WAI-ARIA arrow key
   const dessertsFilter = page.locator('.menu-filter-btn[data-category="Desserts"]');
 
   await expect(allFilter).toHaveAttribute('aria-selected', 'true');
+  await expect(allFilter).toHaveAttribute('aria-label', 'Tous les plats du menu');
+  await expect(allFilter).toHaveAttribute('title', 'Afficher tous les plats');
+  await expect(entreesFilter).toHaveAttribute('aria-label', 'Entrées');
+  await expect(entreesFilter).toHaveAttribute('title', 'Filtrer par Entrées');
 
   // Click 'Entrées' filter
   await entreesFilter.click();
@@ -298,11 +302,14 @@ test('cart stepper buttons update aria-label and title dynamically based on item
 
   const minusBtn = page.locator('.cart-stepper button[data-change="-"]');
   const plusBtn = page.locator('.cart-stepper button[data-change="+"]');
+  const removeBtn = page.locator('.cart-remove').first();
 
-  // At quantity 1: minus button should indicate removal
+  // At quantity 1: minus button should indicate removal, remove button presents title tooltip
   await expect(minusBtn).toHaveAttribute('aria-label', /Retirer .* du panier/);
   await expect(minusBtn).toHaveAttribute('title', 'Retirer du panier');
   await expect(plusBtn).toHaveAttribute('title', 'Augmenter la quantité');
+  await expect(removeBtn).toHaveAttribute('aria-label', /Supprimer .* du panier/);
+  await expect(removeBtn).toHaveAttribute('title', /Supprimer .* du panier/);
 
   // Increment quantity to 2
   await plusBtn.click();
