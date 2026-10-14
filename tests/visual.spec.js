@@ -480,6 +480,44 @@ test('in-page anchor links transfer focus to target section and announce section
   await expect(liveStatus).toHaveText(/Navigation vers la section : .*/);
 });
 
+test('free delivery progress bar calculates remaining spend and applies free delivery above threshold', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // Add 1 dish (8 000 GNF) and open cart drawer
+  const addBtn = page.locator('.add-to-cart[data-name="Soupe de haricot noir"]');
+  await addBtn.click();
+  await page.locator('#header-cart-toggle').click();
+
+  const banner = page.locator('.free-delivery-banner');
+  const progressBar = banner.locator('[role="progressbar"]');
+
+  await expect(banner).toBeVisible();
+  await expect(banner).toContainText('Plus que 22 000 GNF pour la livraison gratuite !');
+  await expect(progressBar).toHaveAttribute('aria-valuenow', '27');
+
+  // Close cart drawer and add more items to exceed 30,000 GNF
+  await page.locator('#drawer-close').click();
+  const fishBtn = page.locator('.add-to-cart[data-name="Filet de poisson fumé"]');
+  await fishBtn.click();
+  await fishBtn.click(); // 8000 + 18000*2 = 44000 GNF >= 30000 GNF
+
+  await page.locator('#header-cart-toggle').click();
+  await expect(banner).toContainText('🎉 Livraison offerte débloquée !');
+  await expect(progressBar).toHaveAttribute('aria-valuenow', '100');
+
+  // Complete checkout steps to verify 0 GNF delivery fee in confirmation
+  await page.locator('#cart-validate').click(); // Delivery step
+  await page.locator('input[name="name"]').fill('Demo User');
+  await page.locator('input[name="phone"]').fill('+224 628 00 00 00');
+  await page.locator('input[name="address"]').fill('Kaloum, Conakry');
+  await page.locator('#cart-validate').click(); // Payment step
+  await page.locator('[data-payment="cod"]').click(); // Confirm with COD
+
+  // Verify delivery fee is 0 GNF in summary row
+  const summaryRows = page.locator('.cart-summary__row');
+  await expect(summaryRows.nth(1)).toContainText('0 GNF');
+});
+
 test('footer category links navigate to menu and automatically select category tab', async ({ page }) => {
   await page.goto('/', { waitUntil: 'networkidle' });
 
