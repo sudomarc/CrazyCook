@@ -480,6 +480,43 @@ test('in-page anchor links transfer focus to target section and announce section
   await expect(liveStatus).toHaveText(/Navigation vers la section : .*/);
 });
 
+test('free delivery progress bar calculates remaining spend and waives delivery fee at 30,000 GNF', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // Add 1 item (Brochettes de bœuf = 16,000 GNF)
+  const addBeefBtn = page.locator('.add-to-cart[data-name="Brochettes de bœuf"]');
+  await addBeefBtn.click();
+
+  // Open cart drawer
+  await page.locator('#header-cart-toggle').click();
+
+  // Check progress bar text (30,000 - 16,000 = 14,000 GNF remaining)
+  const deliveryBanner = page.locator('.free-delivery-banner');
+  await expect(deliveryBanner).toBeVisible();
+  await expect(deliveryBanner).toContainText('14 000 GNF');
+
+  const progressbar = page.locator('.free-delivery-progress-track');
+  await expect(progressbar).toHaveAttribute('aria-valuenow', '16000');
+
+  // Add second item (Brochettes de bœuf = total 32,000 GNF >= 30,000 GNF)
+  await page.locator('.cart-stepper button[data-change="+"]').click();
+
+  // Check progress bar indicates free delivery unlocked
+  await expect(deliveryBanner).toContainText('Livraison offerte !');
+  await expect(progressbar).toHaveAttribute('aria-valuenow', '32000');
+
+  // Proceed through checkout and verify delivery fee is 0 GNF
+  await page.locator('#cart-validate').click(); // Delivery step
+  await page.locator('input[name="name"]').fill('Demo User');
+  await page.locator('input[name="phone"]').fill('+224 628 00 00 00');
+  await page.locator('input[name="address"]').fill('Kaloum, Conakry');
+  await page.locator('#cart-validate').click(); // Payment step
+
+  await page.locator('[data-payment="orange_money"]').click(); // Orange Money form
+  const omAmount = page.locator('.cart-amount-info');
+  await expect(omAmount).toContainText('32 000 GNF'); // 32,000 + 0 delivery fee
+});
+
 test('footer category links navigate to menu and automatically select category tab', async ({ page }) => {
   await page.goto('/', { waitUntil: 'networkidle' });
 
