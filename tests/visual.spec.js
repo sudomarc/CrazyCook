@@ -480,6 +480,33 @@ test('in-page anchor links transfer focus to target section and announce section
   await expect(liveStatus).toHaveText(/Navigation vers la section : .*/);
 });
 
+test('contact form async submission displays loading spinner, sets aria-busy, and announces status', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  await page.locator('#contact').scrollIntoViewIfNeeded();
+  await page.locator('#contact-nom').fill('Fatou Camara');
+  await page.locator('#contact-telephone').fill('+224 621 11 22 33');
+  await page.locator('#contact-message').fill('Question sur une réservation de groupe');
+
+  const contactForm = page.locator('#restaurant-contact-form');
+  const submitBtn = page.locator('#contact-submit');
+
+  // Submit the form
+  await submitBtn.click();
+
+  // Verify aria-busy and spinner during submission
+  await expect(contactForm).toHaveAttribute('aria-busy', 'true');
+  await expect(submitBtn.locator('.button-spinner')).toBeVisible();
+
+  // Verify live region announcement during sending
+  const liveStatus = page.locator('#cart-live-status');
+  await expect(liveStatus).toHaveText('Envoi de votre message en cours...');
+
+  // Wait for success panel to render
+  await expect(page.locator('.contact-success-panel')).toBeVisible({ timeout: 5000 });
+  await expect(liveStatus).toHaveText('Message envoyé avec succès. Merci Fatou Camara !');
+});
+
 test('footer category links navigate to menu and automatically select category tab', async ({ page }) => {
   await page.goto('/', { waitUntil: 'networkidle' });
 

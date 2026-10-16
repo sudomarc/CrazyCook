@@ -57,3 +57,7 @@
 ## 2026-11-20 - [Contextual Anchor Navigation to Filtered Catalog Views]
 **Learning:** When footer or secondary in-page links target a section containing a tabbed or filtered view (e.g. `<a href="#menu" data-category="Entrées">`), scrolling to the section without updating the filter state leaves the user on a generic view, forcing an unnecessary extra click. Attaching category metadata to anchor elements and invoking the category filter handler on navigation seamlessly aligns the UI with the user's explicit intent while announcing the filter update via screen reader live status.
 **Action:** Attach filter/category metadata to secondary anchor links targeting tabbed sections and trigger filter selection during anchor navigation events.
+
+## 2026-11-22 - [Accessible Async Form Submission States with Inline Loading Spinners & ARIA Busy]
+**Learning:** During asynchronous form submissions, disabling the submit button alone is insufficient for both visual and screen reader users. Visual users need an immediate inline animated loading indicator inside the button to confirm the action is in progress, while screen reader users require `aria-busy="true"` set on the form element along with an assertive/polite live region announcement (`announceCartAction`) to communicate submission state changes.
+**Action:** Always set `aria-busy="true"` on forms during async operations, display an inline SVG spinner inside the submit button, and update live regions with progress and completion status.
