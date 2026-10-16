@@ -1380,9 +1380,14 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
                 const formData = new FormData(contactForm);
                 const userName = formData.get('nom') || '';
 
-                // Mettre le formulaire en état de chargement
-                contactSubmit.textContent = 'Envoi en cours...';
+                // Mettre le formulaire en état de chargement avec spinner visuel et accessibilité ARIA
+                contactForm.setAttribute('aria-busy', 'true');
                 contactSubmit.disabled = true;
+                contactSubmit.innerHTML = `
+                    <svg class="button-spinner" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="animation: om-spin 0.8s linear infinite; margin-right: 0.5rem;"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.5" stroke-dasharray="42" stroke-dashoffset="12"></circle></svg>
+                    <span>Envoi en cours...</span>
+                `;
+                announceCartAction('Envoi de votre message en cours...');
 
                 // Désactiver tous les champs de saisie
                 const inputs = contactForm.querySelectorAll('input, textarea');
@@ -1402,6 +1407,7 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
                             </div>
                         `;
                         contactWrapper.classList.remove('fade-out');
+                        announceCartAction(`Message envoyé avec succès. Merci ${userName} !`);
 
                         // Ajouter un écouteur sur le bouton de réinitialisation
                         const resetButton = document.getElementById('contact-reset');
