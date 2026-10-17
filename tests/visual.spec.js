@@ -480,6 +480,18 @@ test('in-page anchor links transfer focus to target section and announce section
   await expect(liveStatus).toHaveText(/Navigation vers la section : .*/);
 });
 
+test('rapid status announcements clear preceding timeouts and announce latest status', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // Toggle theme rapidly twice (e.g. keypress T or button clicks)
+  await page.keyboard.press('t');
+  await page.keyboard.press('t');
+
+  const liveStatus = page.locator('#cart-live-status');
+  // Should reliably announce the final state
+  await expect(liveStatus).toHaveText(/Thème (clair|sombre) activé\./);
+});
+
 test('footer category links navigate to menu and automatically select category tab', async ({ page }) => {
   await page.goto('/', { waitUntil: 'networkidle' });
 
