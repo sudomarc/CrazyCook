@@ -28,11 +28,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const cartLiveStatus = document.getElementById('cart-live-status');
     const backToTopButton = document.getElementById('back-to-top');
 
-    // Annonce vocale pour les lecteurs d'écran lors des modifications du panier
+    // Annonce vocale pour les lecteurs d'écran lors des modifications du panier et des actions UI
+    let announceTimeout = null;
     const announceCartAction = (message) => {
         if (cartLiveStatus) {
+            if (announceTimeout) {
+                clearTimeout(announceTimeout);
+            }
             cartLiveStatus.textContent = '';
-            setTimeout(() => {
+            announceTimeout = setTimeout(() => {
                 cartLiveStatus.textContent = message;
             }, 50);
         }
