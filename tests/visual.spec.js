@@ -35,6 +35,10 @@ test('end-to-end order placement flow', async ({ page }) => {
   await page.locator('input[name="omPhone"]').fill('000000000');
   await page.locator('#cart-validate').click();
 
+  const processingEl = page.locator('.om-processing');
+  await expect(processingEl).toHaveAttribute('role', 'status');
+  await expect(processingEl).toHaveAttribute('aria-live', 'polite');
+
   await expect(page.locator('.cart-confirmation h4')).toContainText('Paiement confirmé', { timeout: 5000 });
 
   const whatsappBtn = page.locator('#open-whatsapp-btn');
