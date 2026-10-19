@@ -693,9 +693,11 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.remove('cart-open');
         updateCartToggleLabels();
 
-        // Restituer le focus à l'élément précédemment actif
-        if (previouslyFocusedElement && typeof previouslyFocusedElement.focus === 'function') {
+        // Restituer le focus à l'élément précédemment actif s'il est toujours présent dans le DOM
+        if (previouslyFocusedElement && document.body.contains(previouslyFocusedElement) && typeof previouslyFocusedElement.focus === 'function') {
             previouslyFocusedElement.focus();
+        } else if (cartToggle && typeof cartToggle.focus === 'function') {
+            cartToggle.focus();
         }
     };
 

@@ -216,6 +216,7 @@ test('completed checkout stepper items are accessible and support click/keyboard
   // Advance to step 2 again
   await page.locator('#cart-validate').click();
   await expect(page.locator('#delivery-form')).toBeVisible();
+  await expect(page.locator('#delivery-name')).toBeFocused();
 
   // Navigate back using keyboard (focus + Enter)
   await step1.focus();
