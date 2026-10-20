@@ -1380,9 +1380,11 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
                 const formData = new FormData(contactForm);
                 const userName = formData.get('nom') || '';
 
-                // Mettre le formulaire en état de chargement
-                contactSubmit.textContent = 'Envoi en cours...';
+                // Mettre le formulaire en état de chargement avec ARIA et annonce
+                contactForm.setAttribute('aria-busy', 'true');
+                contactSubmit.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="display:inline-block; vertical-align:middle; margin-right:0.5rem; animation: om-spin 0.8s linear infinite;"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none" opacity="0.25"></circle><path d="M12 2 a10 10 0 0 1 10 10" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"></path></svg>Envoi en cours...';
                 contactSubmit.disabled = true;
+                announceCartAction('Envoi de votre message en cours...');
 
                 // Désactiver tous les champs de saisie
                 const inputs = contactForm.querySelectorAll('input, textarea');
@@ -1390,6 +1392,7 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
 
                 // Simuler l'envoi asynchrone du formulaire (1.2 seconde)
                 setTimeout(() => {
+                    contactForm.removeAttribute('aria-busy');
                     // Afficher un message de succès personnalisé et élégant
                     contactWrapper.classList.add('fade-out');
 
@@ -1402,10 +1405,12 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
                             </div>
                         `;
                         contactWrapper.classList.remove('fade-out');
+                        announceCartAction(`Merci ${userName} ! Votre message a bien été reçu.`);
 
-                        // Ajouter un écouteur sur le bouton de réinitialisation
+                        // Transférer le focus sur le bouton de réinitialisation pour la navigation au clavier
                         const resetButton = document.getElementById('contact-reset');
                         if (resetButton) {
+                            setTimeout(() => resetButton.focus(), 50);
                             resetButton.addEventListener('click', () => {
                                 contactWrapper.classList.add('fade-out');
                                 setTimeout(() => {
@@ -1429,8 +1434,9 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
                                         </form>
                                     `;
                                     contactWrapper.classList.remove('fade-out');
-                                    // Setup contact form events recursively without dispatching DOMContentLoaded
+                                    announceCartAction('Formulaire réinitialisé.');
                                     setupContactForm();
+                                    setTimeout(() => document.getElementById('contact-nom')?.focus(), 50);
                                 }, 300);
                             });
                         }
