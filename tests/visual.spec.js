@@ -480,6 +480,48 @@ test('in-page anchor links transfer focus to target section and announce section
   await expect(liveStatus).toHaveText(/Navigation vers la section : .*/);
 });
 
+test('contact form submission sets aria-busy, displays loading spinner, announces live status, and transfers focus on submit and reset', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  await page.locator('#contact').scrollIntoViewIfNeeded();
+  await page.locator('#contact-nom').fill('Fanta Camara');
+  await page.locator('#contact-telephone').fill('+224 621 11 22 33');
+  await page.locator('#contact-message').fill('Bonjour, acceptez-vous les réservations de groupe ?');
+
+  const contactForm = page.locator('#restaurant-contact-form');
+  const submitBtn = page.locator('#contact-submit');
+
+  // Submit form
+  await submitBtn.click();
+
+  // Verify aria-busy and spinner during submission
+  await expect(contactForm).toHaveAttribute('aria-busy', 'true');
+  await expect(submitBtn).toContainText('Envoi en cours...');
+  await expect(submitBtn.locator('svg')).toBeVisible();
+
+  const liveStatus = page.locator('#cart-live-status');
+  await expect(liveStatus).toHaveText('Envoi de votre message en cours...');
+
+  // Wait for success panel
+  const successPanel = page.locator('.contact-success-panel');
+  await expect(successPanel).toBeVisible({ timeout: 5000 });
+  await expect(successPanel.locator('h4')).toContainText('Fanta Camara');
+
+  // Verify focus transferred to reset button
+  const resetBtn = page.locator('#contact-reset');
+  await expect(resetBtn).toBeFocused();
+  await expect(liveStatus).toHaveText('Merci Fanta Camara ! Votre message a bien été reçu.');
+
+  // Click reset button
+  await resetBtn.click();
+
+  // Verify form is restored and focus returns to name input
+  const nameInput = page.locator('#contact-nom');
+  await expect(nameInput).toBeVisible();
+  await expect(nameInput).toBeFocused();
+  await expect(liveStatus).toHaveText('Formulaire réinitialisé.');
+});
+
 test('footer category links navigate to menu and automatically select category tab', async ({ page }) => {
   await page.goto('/', { waitUntil: 'networkidle' });
 

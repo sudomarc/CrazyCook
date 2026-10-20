@@ -57,3 +57,7 @@
 ## 2026-11-20 - [Contextual Anchor Navigation to Filtered Catalog Views]
 **Learning:** When footer or secondary in-page links target a section containing a tabbed or filtered view (e.g. `<a href="#menu" data-category="Entrées">`), scrolling to the section without updating the filter state leaves the user on a generic view, forcing an unnecessary extra click. Attaching category metadata to anchor elements and invoking the category filter handler on navigation seamlessly aligns the UI with the user's explicit intent while announcing the filter update via screen reader live status.
 **Action:** Attach filter/category metadata to secondary anchor links targeting tabbed sections and trigger filter selection during anchor navigation events.
+
+## 2026-12-05 - [Accessible Async Form Submission States and Post-Submit Focus Transfer]
+**Learning:** When async form submissions dynamically replace inner markup with success or reset panels, screen readers require explicit `aria-busy="true"` indicators and live status updates (`#cart-live-status`) to announce submission progress and results. Deferring DOM focus (`setTimeout(..., 50)`) to the newly injected primary action (such as `#contact-reset` or `#contact-nom`) prevents focus loss to `document.body` and maintains seamless keyboard flows.
+**Action:** Always combine `aria-busy="true"` and live status announcements with asynchronous focus transfer when forms replace target DOM nodes on submit or reset.
