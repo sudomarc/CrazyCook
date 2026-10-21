@@ -2192,6 +2192,26 @@ ul {
     background: #FF6600 !important;
 }
 
+.free-delivery-banner {
+    background: rgba(200, 131, 42, 0.08);
+    border: 1px solid rgba(200, 131, 42, 0.2);
+    border-radius: 12px;
+    padding: 0.65rem 0.85rem;
+    margin-bottom: 0.85rem;
+    font-size: 0.82rem;
+    color: var(--burnt-earth);
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+.free-delivery-banner.is-complete { background: rgba(var(--forest-green-rgb), 0.08); border-color: rgba(var(--forest-green-rgb), 0.25); color: var(--forest-green); }
+.free-delivery-bar { height: 6px; background: rgba(26, 26, 26, 0.08); border-radius: 999px; overflow: hidden; }
+.free-delivery-progress { height: 100%; background: var(--ochre); border-radius: 999px; transition: width 0.4s var(--ease-premium); }
+.free-delivery-banner.is-complete .free-delivery-progress { background: var(--forest-green); }
+[data-theme="dark"] .free-delivery-banner { background: rgba(224, 166, 77, 0.12); border-color: rgba(224, 166, 77, 0.25); color: #F7C97A; }
+[data-theme="dark"] .free-delivery-banner.is-complete { color: #A8E080; }
+[data-theme="dark"] .free-delivery-bar { background: rgba(255, 255, 255, 0.1); }
+
 .delivery-estimate-banner {
     display: flex;
     align-items: center;

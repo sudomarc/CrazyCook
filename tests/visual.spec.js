@@ -480,6 +480,52 @@ test('in-page anchor links transfer focus to target section and announce section
   await expect(liveStatus).toHaveText(/Navigation vers la section : .*/);
 });
 
+test('free delivery progress indicator updates dynamically and applies 0 GNF fee when threshold reached', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // Add 1 Soupe de haricot noir (8 000 GNF) and open cart
+  await page.locator('.add-to-cart[data-name="Soupe de haricot noir"]').click();
+  await page.locator('#header-cart-toggle').click();
+
+  const banner = page.locator('.free-delivery-banner');
+  const progressBar = page.locator('.free-delivery-bar');
+
+  await expect(banner).toBeVisible();
+  await expect(banner).toContainText('Plus que 22 000 GNF pour la livraison gratuite');
+  await expect(progressBar).toHaveAttribute('aria-valuenow', '27');
+  await expect(banner).not.toHaveClass(/is-complete/);
+
+  // Close cart drawer and add Filet de poisson fumé (18 000 GNF) + Brochettes de bœuf (16 000 GNF) -> Total 42 000 GNF (>= 30 000 GNF)
+  await page.locator('#drawer-close').click();
+  await page.locator('.add-to-cart[data-name="Filet de poisson fumé"]').click();
+  await page.locator('.add-to-cart[data-name="Brochettes de bœuf"]').click();
+
+  // Open cart drawer
+  await page.locator('#header-cart-toggle').click();
+
+  await expect(banner).toHaveClass(/is-complete/);
+  await expect(banner).toContainText('Livraison gratuite offerte !');
+  await expect(progressBar).toHaveAttribute('aria-valuenow', '100');
+
+  // Validate order and advance through checkout
+  await page.locator('#cart-validate').click();
+  await page.locator('input[name="name"]').fill('Demo User');
+  await page.locator('input[name="phone"]').fill('+224 628 00 00 00');
+  await page.locator('input[name="address"]').fill('Kaloum, Conakry');
+  await page.locator('#cart-validate').click();
+
+  // Pay with Orange Money simulation
+  await page.locator('[data-payment="orange_money"]').click();
+  await page.locator('input[name="omPhone"]').fill('628000000');
+  await page.locator('#cart-validate').click();
+
+  // Verify confirmation summary specifies 0 GNF for delivery
+  await expect(page.locator('.cart-confirmation h4')).toContainText('Paiement confirmé', { timeout: 5000 });
+  const deliveryRow = page.locator('.cart-summary__row').nth(1);
+  await expect(deliveryRow).toContainText('Livraison');
+  await expect(deliveryRow).toContainText('0 GNF');
+});
+
 test('contact form submission sets aria-busy, displays loading spinner, announces live status, and transfers focus on submit and reset', async ({ page }) => {
   await page.goto('/', { waitUntil: 'networkidle' });
 
