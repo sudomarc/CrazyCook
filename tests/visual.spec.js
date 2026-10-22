@@ -480,6 +480,27 @@ test('in-page anchor links transfer focus to target section and announce section
   await expect(liveStatus).toHaveText(/Navigation vers la section : .*/);
 });
 
+test('footer social media links prevent default scroll jump and announce action to screen reader', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // Scroll to footer
+  await page.locator('.site-footer').scrollIntoViewIfNeeded();
+  const initialScrollY = await page.evaluate(() => window.scrollY);
+  expect(initialScrollY).toBeGreaterThan(500);
+
+  // Click first social media link (Instagram)
+  const instagramLink = page.locator('.footer-socials a').first();
+  await instagramLink.click();
+
+  // Verify page did not jump to top (scrollY remains high)
+  const scrollYAfterClick = await page.evaluate(() => window.scrollY);
+  expect(scrollYAfterClick).toBeGreaterThan(500);
+
+  // Verify screen reader live status announcement
+  const liveStatus = page.locator('#cart-live-status');
+  await expect(liveStatus).toHaveText('Lien CrazyCook sur Instagram (démonstration).');
+});
+
 test('contact form submission sets aria-busy, displays loading spinner, announces live status, and transfers focus on submit and reset', async ({ page }) => {
   await page.goto('/', { waitUntil: 'networkidle' });
 
