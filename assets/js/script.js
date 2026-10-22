@@ -1521,4 +1521,13 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
             }, 100);
         });
     });
+
+    // Éviter le saut brusque vers le haut de page lors du clic sur les liens réseaux sociaux démo (href="#")
+    document.querySelectorAll('.footer-socials a[href="#"]').forEach((socialLink) => {
+        socialLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            const platform = socialLink.getAttribute('aria-label') || 'Réseau social';
+            announceCartAction(`Lien ${platform} (démonstration).`);
+        });
+    });
 });
