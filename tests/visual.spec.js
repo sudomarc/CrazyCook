@@ -298,11 +298,14 @@ test('cart stepper buttons update aria-label and title dynamically based on item
 
   const minusBtn = page.locator('.cart-stepper button[data-change="-"]');
   const plusBtn = page.locator('.cart-stepper button[data-change="+"]');
+  const removeBtn = page.locator('.cart-remove').first();
 
   // At quantity 1: minus button should indicate removal
   await expect(minusBtn).toHaveAttribute('aria-label', /Retirer .* du panier/);
   await expect(minusBtn).toHaveAttribute('title', 'Retirer du panier');
   await expect(plusBtn).toHaveAttribute('title', 'Augmenter la quantité');
+  await expect(removeBtn).toHaveAttribute('aria-label', /Supprimer .* du panier/);
+  await expect(removeBtn).toHaveAttribute('title', /Supprimer .* du panier/);
 
   // Increment quantity to 2
   await plusBtn.click();
