@@ -1324,6 +1324,15 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
     setupCopyButton('copy-address-btn', 'contact-address-text', 'Adresse copiée dans le presse-papier.');
     setupCopyButton('copy-phone-btn', 'contact-phone-text', 'Numéro de téléphone copié dans le presse-papier.');
 
+    // Prévenir le saut de page sur les liens réseaux sociaux de démonstration et informer les lecteurs d'écran
+    document.querySelectorAll('.footer-socials a[href="#"]').forEach((socialLink) => {
+        socialLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            const network = socialLink.getAttribute('title') || socialLink.getAttribute('aria-label') || 'Réseau social';
+            announceCartAction(`Lien démo : ${network} (bientôt disponible).`);
+        });
+    });
+
     // Gestion de la soumission du formulaire de contact avec un micro-feedback et un état de chargement
     const setupContactForm = () => {
         const contactForm = document.getElementById('restaurant-contact-form');
