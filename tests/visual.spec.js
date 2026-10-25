@@ -480,6 +480,42 @@ test('in-page anchor links transfer focus to target section and announce section
   await expect(liveStatus).toHaveText(/Navigation vers la section : .*/);
 });
 
+test('transaction reference copy button copies reference, updates visual state, and announces action', async ({ page, context }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // Complete Orange Money checkout
+  await page.locator('.add-to-cart').first().click();
+  await page.locator('#header-cart-toggle').click();
+  await page.locator('#cart-validate').click();
+
+  await page.locator('input[name="name"]').fill('Mamadou Diallo');
+  await page.locator('input[name="phone"]').fill('+224 628 00 00 00');
+  await page.locator('input[name="address"]').fill('Kaloum, Conakry');
+  await page.locator('#cart-validate').click();
+
+  await page.locator('[data-payment="orange_money"]').click();
+  await page.locator('input[name="omPhone"]').fill('628000000');
+  await page.locator('#cart-validate').click();
+
+  await expect(page.locator('.cart-confirmation h4')).toContainText('Paiement confirmé', { timeout: 5000 });
+
+  const copyRefBtn = page.locator('#copy-ref-btn');
+  await expect(copyRefBtn).toBeVisible();
+  await expect(copyRefBtn).toHaveAttribute('aria-label', 'Copier la référence de transaction dans le presse-papier');
+  await expect(copyRefBtn).toHaveAttribute('title', 'Copier la référence');
+
+  await copyRefBtn.click();
+
+  // Verify visual feedback state on the button
+  await expect(copyRefBtn).toHaveClass(/copied/);
+  await expect(copyRefBtn.locator('.copy-btn-text')).toHaveText('Copié ! ✓');
+
+  // Verify screen reader live status announcement
+  const liveStatus = page.locator('#cart-live-status');
+  await expect(liveStatus).toHaveText('Référence de transaction copiée dans le presse-papier.');
+});
+
 test('contact form submission sets aria-busy, displays loading spinner, announces live status, and transfers focus on submit and reset', async ({ page }) => {
   await page.goto('/', { waitUntil: 'networkidle' });
 

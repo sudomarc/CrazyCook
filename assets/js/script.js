@@ -546,7 +546,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h4 class="cart-confirmation-title">
                         ${paymentMethod === 'orange_money' ? 'Paiement confirmé ✅' : 'Commande envoyée !'}
                     </h4>
-                    ${paymentMethod === 'orange_money' ? `<p class="cart-ref-text">Référence : <strong>${transactionRef}</strong></p>` : ''}
+                    ${paymentMethod === 'orange_money' ? `
+                        <p class="cart-ref-text">
+                            Référence : <strong>${transactionRef}</strong>
+                            <button type="button" id="copy-ref-btn" class="copy-btn" aria-label="Copier la référence de transaction dans le presse-papier" title="Copier la référence">
+                                <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                                <span class="copy-btn-text">Copier</span>
+                            </button>
+                        </p>
+                    ` : ''}
                     <p class="cart-congrats-text">Votre commande a été générée et transmise. Vous pouvez aussi ouvrir WhatsApp directement ci-dessous.</p>
                     <p><strong>Client :</strong> ${escapeHtml(deliveryInfo.name)}</p>
                     <p><strong>Téléphone :</strong> ${escapeHtml(deliveryInfo.phone)}</p>
@@ -1122,6 +1133,46 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
                 renderCart();
                 try { saveLastOrder(); } catch (e) {}
                 sendWhatsAppOrder();
+            }
+            return;
+        }
+
+        if (target.id === 'copy-ref-btn' || target.closest('#copy-ref-btn')) {
+            const btn = target.id === 'copy-ref-btn' ? target : target.closest('#copy-ref-btn');
+            if (transactionRef) {
+                const textSpan = btn.querySelector('.copy-btn-text');
+                const onCopied = () => {
+                    btn.classList.add('copied');
+                    if (textSpan) textSpan.textContent = 'Copié ! ✓';
+                    announceCartAction('Référence de transaction copiée dans le presse-papier.');
+                    setTimeout(() => {
+                        btn.classList.remove('copied');
+                        if (textSpan) textSpan.textContent = 'Copier';
+                    }, 2000);
+                };
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(transactionRef).then(onCopied).catch(() => {
+                        const textarea = document.createElement('textarea');
+                        textarea.value = transactionRef;
+                        textarea.style.position = 'fixed';
+                        textarea.style.opacity = '0';
+                        document.body.appendChild(textarea);
+                        textarea.select();
+                        document.execCommand('copy');
+                        textarea.remove();
+                        onCopied();
+                    });
+                } else {
+                    const textarea = document.createElement('textarea');
+                    textarea.value = transactionRef;
+                    textarea.style.position = 'fixed';
+                    textarea.style.opacity = '0';
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    textarea.remove();
+                    onCopied();
+                }
             }
             return;
         }
