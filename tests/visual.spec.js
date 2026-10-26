@@ -480,6 +480,61 @@ test('in-page anchor links transfer focus to target section and announce section
   await expect(liveStatus).toHaveText(/Navigation vers la section : .*/);
 });
 
+test('copy transaction reference button in Orange Money confirmation screen copies reference and announces live status', async ({ page, context }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // Complete Orange Money order placement
+  await page.locator('.add-to-cart').first().click();
+  await page.locator('#header-cart-toggle').click();
+  await page.locator('#cart-validate').click();
+
+  await page.locator('input[name="name"]').fill('Demo User');
+  await page.locator('input[name="phone"]').fill('+224 628 00 00 00');
+  await page.locator('input[name="address"]').fill('Kaloum, Conakry');
+  await page.locator('#cart-validate').click();
+
+  await page.locator('[data-payment="orange_money"]').click();
+  await page.locator('input[name="omPhone"]').fill('628000000');
+  await page.locator('#cart-validate').click();
+
+  // Wait for confirmation view
+  const copyRefBtn = page.locator('#copy-ref-btn');
+  await expect(copyRefBtn).toBeVisible({ timeout: 5000 });
+
+  await copyRefBtn.click();
+
+  // Verify visual feedback state on button
+  await expect(copyRefBtn).toHaveClass(/copied/);
+  await expect(copyRefBtn.locator('.copy-btn-text')).toHaveText('Copié ! ✓');
+
+  // Verify screen reader live status announcement
+  const liveStatus = page.locator('#cart-live-status');
+  await expect(liveStatus).toHaveText('Référence de transaction copiée dans le presse-papier.');
+});
+
+test('demo social media footer links prevent default scroll jump and announce live status', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // Scroll to footer
+  await page.locator('.site-footer').scrollIntoViewIfNeeded();
+
+  const initialScroll = await page.evaluate(() => window.scrollY);
+  expect(initialScroll).toBeGreaterThan(500);
+
+  // Click Instagram demo social link
+  const instagramLink = page.locator('.footer-socials a[aria-label="CrazyCook sur Instagram"]');
+  await instagramLink.click();
+
+  // Verify scroll position did not jump to top
+  const afterClickScroll = await page.evaluate(() => window.scrollY);
+  expect(afterClickScroll).toBeGreaterThan(500);
+
+  // Verify screen reader live status announcement
+  const liveStatus = page.locator('#cart-live-status');
+  await expect(liveStatus).toHaveText('Lien de démonstration : CrazyCook sur Instagram');
+});
+
 test('contact form submission sets aria-busy, displays loading spinner, announces live status, and transfers focus on submit and reset', async ({ page }) => {
   await page.goto('/', { waitUntil: 'networkidle' });
 
