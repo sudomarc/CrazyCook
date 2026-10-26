@@ -546,7 +546,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h4 class="cart-confirmation-title">
                         ${paymentMethod === 'orange_money' ? 'Paiement confirmé ✅' : 'Commande envoyée !'}
                     </h4>
-                    ${paymentMethod === 'orange_money' ? `<p class="cart-ref-text">Référence : <strong>${transactionRef}</strong></p>` : ''}
+                    ${paymentMethod === 'orange_money' ? `<p class="cart-ref-text">Référence : <strong id="cart-ref-value">${transactionRef}</strong> <button type="button" id="copy-ref-btn" class="copy-btn" aria-label="Copier la référence de transaction dans le presse-papier" title="Copier la référence de transaction"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><span class="copy-btn-text">Copier</span></button></p>` : ''}
                     <p class="cart-congrats-text">Votre commande a été générée et transmise. Vous pouvez aussi ouvrir WhatsApp directement ci-dessous.</p>
                     <p><strong>Client :</strong> ${escapeHtml(deliveryInfo.name)}</p>
                     <p><strong>Téléphone :</strong> ${escapeHtml(deliveryInfo.phone)}</p>
@@ -1126,6 +1126,29 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
             return;
         }
 
+        if (target.id === 'copy-ref-btn' || target.closest('#copy-ref-btn')) {
+            const copyBtn = target.closest('#copy-ref-btn') || target;
+            const refEl = document.getElementById('cart-ref-value');
+            if (refEl) {
+                const textToCopy = refEl.textContent.trim();
+                try {
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(textToCopy).catch(() => {});
+                    }
+                } catch (e) {}
+                const textSpan = copyBtn.querySelector('.copy-btn-text');
+                const originalText = textSpan ? textSpan.textContent : 'Copier';
+                copyBtn.classList.add('copied');
+                if (textSpan) textSpan.textContent = 'Copié ! ✓';
+                announceCartAction('Référence de transaction copiée dans le presse-papier.');
+                setTimeout(() => {
+                    copyBtn.classList.remove('copied');
+                    if (textSpan) textSpan.textContent = originalText;
+                }, 2000);
+            }
+            return;
+        }
+
         if (target.id === 'open-whatsapp-btn' || target.closest('#open-whatsapp-btn')) {
             sendWhatsAppOrder();
             announceCartAction('Commande ouverte sur WhatsApp.');
@@ -1519,6 +1542,15 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
                 const headingText = targetEl.querySelector('h2, h3, .eyebrow')?.textContent?.trim() || targetId;
                 announceCartAction(`Navigation vers la section : ${headingText}`);
             }, 100);
+        });
+    });
+
+    // Éviter le saut de page vers le haut lors du clic sur les liens de démonstration des réseaux sociaux
+    document.querySelectorAll('.footer-socials a[href="#"]').forEach((socialLink) => {
+        socialLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            const label = socialLink.getAttribute('aria-label') || 'Réseau social';
+            announceCartAction(`Lien de démonstration : ${label}`);
         });
     });
 });
