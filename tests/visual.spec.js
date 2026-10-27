@@ -480,6 +480,44 @@ test('in-page anchor links transfer focus to target section and announce section
   await expect(liveStatus).toHaveText(/Navigation vers la section : .*/);
 });
 
+test('Orange Money order confirmation presents copy transaction reference button with live status feedback', async ({ page, context }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // Add item to cart and navigate to checkout
+  await page.locator('.add-to-cart').first().click();
+  await page.locator('#header-cart-toggle').click();
+  await page.locator('#cart-validate').click();
+
+  // Fill delivery details
+  await page.locator('input[name="name"]').fill('Mamadou Diallo');
+  await page.locator('input[name="phone"]').fill('+224 628 00 00 00');
+  await page.locator('input[name="address"]').fill('Kaloum, Conakry');
+  await page.locator('#cart-validate').click();
+
+  // Select Orange Money payment option
+  await page.locator('[data-payment="orange_money"]').click();
+  await page.locator('input[name="omPhone"]').fill('+224 628 00 00 00');
+  await page.locator('#cart-validate').click();
+
+  // Wait for order confirmation
+  await expect(page.locator('.cart-confirmation h4')).toContainText('Paiement confirmé', { timeout: 5000 });
+
+  // Verify copy transaction reference button is present with proper ARIA attributes
+  const copyRefBtn = page.locator('#copy-ref-btn');
+  await expect(copyRefBtn).toBeVisible();
+  await expect(copyRefBtn).toHaveAttribute('aria-label', 'Copier la référence de transaction dans le presse-papier');
+  await expect(copyRefBtn).toHaveAttribute('title', 'Copier la référence');
+
+  // Click copy button and verify state and screen reader announcement
+  await copyRefBtn.click();
+  await expect(copyRefBtn).toHaveClass(/copied/);
+  await expect(copyRefBtn.locator('.copy-btn-text')).toHaveText('Copié ! ✓');
+
+  const liveStatus = page.locator('#cart-live-status');
+  await expect(liveStatus).toHaveText('Référence de transaction copiée dans le presse-papier.');
+});
+
 test('contact form submission sets aria-busy, displays loading spinner, announces live status, and transfers focus on submit and reset', async ({ page }) => {
   await page.goto('/', { waitUntil: 'networkidle' });
 
