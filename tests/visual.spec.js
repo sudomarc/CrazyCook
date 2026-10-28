@@ -612,6 +612,28 @@ test('checkout back navigation buttons present descriptive ARIA labels and title
   await expect(backToPaymentBtn).toHaveAttribute('title', 'Retourner aux modes de paiement');
 });
 
+test('demo social media footer links prevent scroll jump and announce action via live status', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // Scroll to footer
+  await page.locator('.site-footer').scrollIntoViewIfNeeded();
+
+  const scrollYBefore = await page.evaluate(() => window.scrollY);
+  expect(scrollYBefore).toBeGreaterThan(0);
+
+  // Click Instagram demo link
+  const instagramLink = page.locator('.footer-socials a[href="#"]').first();
+  await instagramLink.click();
+
+  // Verify page scroll position is preserved
+  const scrollYAfter = await page.evaluate(() => window.scrollY);
+  expect(scrollYAfter).toEqual(scrollYBefore);
+
+  // Verify live status announcement
+  const liveStatus = page.locator('#cart-live-status');
+  await expect(liveStatus).toHaveText('Lien de démonstration : CrazyCook sur Instagram.');
+});
+
 test('empty cart CTA closes drawer, transfers focus to menu section, and announces section navigation', async ({ page }) => {
   await page.goto('/', { waitUntil: 'networkidle' });
 

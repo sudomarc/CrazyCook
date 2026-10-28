@@ -1550,6 +1550,15 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
 
     setupScrollSync();
 
+    // Prevent default jump-to-top on demo social media footer links and announce action to screen readers
+    document.querySelectorAll('.footer-socials a[href="#"]').forEach((socialLink) => {
+        socialLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            const socialName = socialLink.getAttribute('aria-label') || socialLink.getAttribute('title') || 'Réseau social';
+            announceCartAction(`Lien de démonstration : ${socialName}.`);
+        });
+    });
+
     // Smooth anchor navigation focus management & screen reader announcements
     document.querySelectorAll('a[href^="#"]:not([href="#"])').forEach((anchorLink) => {
         anchorLink.addEventListener('click', (e) => {
