@@ -1572,8 +1572,10 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
 
             setTimeout(() => {
                 targetEl.focus({ preventScroll: true });
-                const headingText = targetEl.querySelector('h2, h3, .eyebrow')?.textContent?.trim() || targetId;
-                announceCartAction(`Navigation vers la section : ${headingText}`);
+                if (!category) {
+                    const headingText = targetEl.querySelector('h2, h3, .eyebrow')?.textContent?.trim() || targetId;
+                    announceCartAction(`Navigation vers la section : ${headingText}`);
+                }
             }, 100);
         });
     });
