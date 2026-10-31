@@ -61,3 +61,7 @@
 ## 2026-12-05 - [Accessible Async Form Submission States and Post-Submit Focus Transfer]
 **Learning:** When async form submissions dynamically replace inner markup with success or reset panels, screen readers require explicit `aria-busy="true"` indicators and live status updates (`#cart-live-status`) to announce submission progress and results. Deferring DOM focus (`setTimeout(..., 50)`) to the newly injected primary action (such as `#contact-reset` or `#contact-nom`) prevents focus loss to `document.body` and maintains seamless keyboard flows.
 **Action:** Always combine `aria-busy="true"` and live status announcements with asynchronous focus transfer when forms replace target DOM nodes on submit or reset.
+
+## 2026-12-18 - [Scroll Preservation & Live Announcements for Demo Anchor Links]
+**Learning:** In single-page websites and demo templates, placeholder links using `href="#"` (such as social icons) natively cause the browser to jump to `#` at the top of the page, disorienting users who were browsing the footer and discarding their scroll position. Intercepting click events on demo links to call `event.preventDefault()` preserves viewport continuity, and announcing demo link status via screen reader live regions provides transparent feedback without disruptive layout shifts.
+**Action:** Attach click event listeners on demo anchor links (`a[href="#"]`) to prevent scroll jumps and broadcast contextual status via `announceCartAction`.
