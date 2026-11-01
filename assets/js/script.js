@@ -955,6 +955,15 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
         }
     });
 
+    // Empêcher le saut vers le haut de page sur les liens de réseaux sociaux démo et annoncer l'action
+    document.querySelectorAll('.footer-socials a[href="#"]').forEach((link) => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const label = link.getAttribute('aria-label') || 'Réseau social';
+            announceCartAction(`${label} (lien de démonstration).`);
+        });
+    });
+
     // Clics sur l'icône de panier de la barre collante mobile
     mobileCartToggle?.addEventListener('click', () => {
         const isOpen = cartDrawer?.classList.contains('is-open');
