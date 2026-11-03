@@ -480,6 +480,28 @@ test('in-page anchor links transfer focus to target section and announce section
   await expect(liveStatus).toHaveText(/Navigation vers la section : .*/);
 });
 
+test('footer social media demo links prevent default scroll jump and announce action', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // Scroll to footer
+  await page.locator('.site-footer').scrollIntoViewIfNeeded();
+
+  const scrollYBefore = await page.evaluate(() => window.scrollY);
+
+  const instagramLink = page.locator('.footer-socials a').first();
+  await instagramLink.click();
+
+  const scrollYAfter = await page.evaluate(() => window.scrollY);
+
+  // Verify page did not jump to top (scrollY preserved)
+  expect(scrollYAfter).toBeGreaterThan(0);
+  expect(Math.abs(scrollYAfter - scrollYBefore)).toBeLessThan(50);
+
+  // Verify live region announcement
+  const liveStatus = page.locator('#cart-live-status');
+  await expect(liveStatus).toHaveText('CrazyCook sur Instagram (lien de démonstration).');
+});
+
 test('Orange Money order confirmation presents copy transaction reference button with live status feedback', async ({ page, context }) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
   await page.goto('/', { waitUntil: 'networkidle' });
