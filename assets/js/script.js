@@ -380,7 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <strong>${item.name}</strong>
                                     <p>${formatPrice(item.price)} / unité</p>
                                 </div>
-                                <button type="button" class="cart-remove" data-remove="${item.name}" aria-label="Supprimer ${item.name} du panier">Supprimer</button>
+                                <button type="button" class="cart-remove" data-remove="${item.name}" aria-label="Supprimer ${item.name} du panier" title="Supprimer ${item.name} du panier">Supprimer</button>
                             </div>
                             <div class="cart-item-card__meta">
                                 <div class="cart-stepper">
