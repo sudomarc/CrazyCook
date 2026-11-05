@@ -705,8 +705,10 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCartToggleLabels();
 
         // Restituer le focus à l'élément précédemment actif
-        if (previouslyFocusedElement && typeof previouslyFocusedElement.focus === 'function') {
+        if (previouslyFocusedElement && document.body.contains(previouslyFocusedElement) && typeof previouslyFocusedElement.focus === 'function') {
             previouslyFocusedElement.focus();
+        } else if (cartToggle && typeof cartToggle.focus === 'function') {
+            cartToggle.focus();
         }
     };
 
@@ -1575,6 +1577,15 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
                 const headingText = targetEl.querySelector('h2, h3, .eyebrow')?.textContent?.trim() || targetId;
                 announceCartAction(`Navigation vers la section : ${headingText}`);
             }, 100);
+        });
+    });
+
+    // Liens sociaux de démonstration du footer : éviter le saut en haut de page et annoncer le statut
+    document.querySelectorAll('.footer-socials a[href="#"]').forEach((socialLink) => {
+        socialLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            const label = socialLink.getAttribute('aria-label') || 'Réseau social';
+            announceCartAction(`Lien de démonstration : ${label}`);
         });
     });
 });
