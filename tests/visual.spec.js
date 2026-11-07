@@ -500,6 +500,11 @@ test('Orange Money order confirmation presents copy transaction reference button
   await page.locator('input[name="omPhone"]').fill('+224 628 00 00 00');
   await page.locator('#cart-validate').click();
 
+  // Wait for processing state and verify accessible role and live status announcement
+  const processingEl = page.locator('.om-processing');
+  await expect(processingEl).toHaveAttribute('role', 'status');
+  await expect(processingEl).toHaveAttribute('aria-live', 'polite');
+
   // Wait for order confirmation
   await expect(page.locator('.cart-confirmation h4')).toContainText('Paiement confirmé', { timeout: 5000 });
 

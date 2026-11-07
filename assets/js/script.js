@@ -524,7 +524,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // ÉTAPE 3ter : Chargement (simulation de traitement du paiement)
         if (currentStep === 'processing') {
             cartBody.innerHTML = `
-                <div class="om-processing">
+                <div class="om-processing" role="status" aria-live="polite">
                     <div class="om-spinner" aria-hidden="true"></div>
                     <p>Traitement du paiement en cours...</p>
                 </div>
@@ -815,6 +815,7 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
 
             // SIMULATION — pas de vrai paiement, prototype de démonstration
             currentStep = 'processing';
+            announceCartAction('Traitement du paiement en cours...');
             renderCart();
 
             setTimeout(() => {
