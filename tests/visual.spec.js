@@ -480,6 +480,38 @@ test('in-page anchor links transfer focus to target section and announce section
   await expect(liveStatus).toHaveText(/Navigation vers la section : .*/);
 });
 
+test('cart drawer focus trap restricts cycling to visible elements and cart-remove has descriptive title', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // 1. In empty cart state: #cart-validate is hidden, focus trap must cycle between #drawer-close and #empty-cart-cta
+  await page.locator('#header-cart-toggle').click();
+  const drawerCloseBtn = page.locator('#drawer-close');
+  const emptyCta = page.locator('#empty-cart-cta');
+  await expect(drawerCloseBtn).toBeFocused();
+
+  // Tab forward from #drawer-close to #empty-cart-cta
+  await page.keyboard.press('Tab');
+  await expect(emptyCta).toBeFocused();
+
+  // Tab forward from #empty-cart-cta should cycle back to #drawer-close (skipping hidden #cart-validate)
+  await page.keyboard.press('Tab');
+  await expect(drawerCloseBtn).toBeFocused();
+
+  // Shift+Tab backward from #drawer-close should cycle to #empty-cart-cta
+  await page.keyboard.press('Shift+Tab');
+  await expect(emptyCta).toBeFocused();
+
+  // Close drawer
+  await page.keyboard.press('Escape');
+
+  // 2. Add an item and check .cart-remove has title tooltip
+  await page.locator('.add-to-cart').first().click();
+  await page.locator('#header-cart-toggle').click();
+  const removeBtn = page.locator('.cart-remove').first();
+  await expect(removeBtn).toBeVisible();
+  await expect(removeBtn).toHaveAttribute('title', 'Supprimer Soupe de haricot noir du panier');
+});
+
 test('footer social media demo links prevent default scroll jump and announce action', async ({ page }) => {
   await page.goto('/', { waitUntil: 'networkidle' });
 

@@ -380,7 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <strong>${item.name}</strong>
                                     <p>${formatPrice(item.price)} / unité</p>
                                 </div>
-                                <button type="button" class="cart-remove" data-remove="${item.name}" aria-label="Supprimer ${item.name} du panier">Supprimer</button>
+                                <button type="button" class="cart-remove" data-remove="${item.name}" aria-label="Supprimer ${item.name} du panier" title="Supprimer ${item.name} du panier">Supprimer</button>
                             </div>
                             <div class="cart-item-card__meta">
                                 <div class="cart-stepper">
@@ -705,8 +705,10 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCartToggleLabels();
 
         // Restituer le focus à l'élément précédemment actif
-        if (previouslyFocusedElement && typeof previouslyFocusedElement.focus === 'function') {
+        if (previouslyFocusedElement && typeof previouslyFocusedElement.focus === 'function' && document.body.contains(previouslyFocusedElement)) {
             previouslyFocusedElement.focus();
+        } else if (cartToggle) {
+            cartToggle.focus();
         }
     };
 
@@ -1011,8 +1013,9 @@ Merci et à très bientôt chez CrazyCook ! ✨`;
         }
 
         if (e.key === 'Tab') {
-            // Liste de tous les éléments focalisables à l'intérieur du tiroir panier
-            const focusableElements = cartDrawer.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            // Liste de tous les éléments focalisables visibles à l'intérieur du tiroir panier
+            const rawFocusable = Array.from(cartDrawer.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'));
+            const focusableElements = rawFocusable.filter((el) => !el.hidden && !el.closest('[hidden]') && !el.disabled && el.offsetParent !== null);
             if (focusableElements.length === 0) return;
 
             const firstElement = focusableElements[0];
