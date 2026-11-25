@@ -1,8 +1,6 @@
 name: Verify and deploy CrazyCook
 
 on:
-  push:
-    branches: ["main"]
   pull_request:
     branches: ["main"]
   workflow_dispatch:
