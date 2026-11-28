@@ -111,6 +111,14 @@ const replacements = new Map([
 ]);
 for (const [from, to] of replacements) html = html.replaceAll(from, to);
 
+// Demo testimonials are fictional examples, not verified customer reviews.
+// Never include them in the public artifact or leave a dead navigation anchor.
+html = html.replace(
+  /\s*<!-- Avis \/ Témoignages -->\s*<section id="avis" class="section section-avis">[\s\S]*?<\/section>\s*/m,
+  '\n',
+);
+html = html.replace(/\s*<li><a href="#avis">Témoignages<\/a><\/li>/g, '');
+
 // Remove empty placeholder-only UI generated from optional template data.
 html = html.replace(/\s*<span class="order-pill">\s*<\/span>/g, '');
 html = html.replace(/<div class="rating-badge"[^>]*>\s*<\/div>/g, '');
