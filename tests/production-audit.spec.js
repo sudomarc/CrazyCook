@@ -30,6 +30,11 @@ test('production artifact has no browser or resource errors', async ({ page }) =
 
   await page.goto('/', { waitUntil: 'networkidle' });
   await expect(page.locator('h1')).toHaveCount(1);
+  await expect(page.locator('#avis')).toHaveCount(0);
+  await expect(page.locator('body')).not.toContainText(
+    /Mamadou S\\.|Fatoumata D\\.|Alexandre M\\.|Témoignages de nos convives|4\\.8 ★ · 210 avis/
+  );
+  await expect(page.locator('a[href="#avis"]')).toHaveCount(0);
 
   const anchors = await page.locator('a[href^="#"]').evaluateAll((items) =>
     items.map((item) => item.getAttribute('href')).filter((href) => href && href !== '#')
